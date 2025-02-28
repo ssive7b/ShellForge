@@ -1,7 +1,7 @@
 ---
 name: Subtasks Template
 about: Create subtasks and link them to parent issues
-title: "[Feature #]"
+title: 'Feature #[number] - [Short Name]'
 labels: ''
 assignees: ''
 
