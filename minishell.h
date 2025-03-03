@@ -6,7 +6,7 @@
 /*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 00:54:33 by cschnath          #+#    #+#             */
-/*   Updated: 2025/03/03 12:30:39 by cschnath         ###   ########.fr       */
+/*   Updated: 2025/03/03 12:50:39 by cschnath         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,14 +20,14 @@
 #include <readline/history.h>
 #include <string.h>
 
-struct s_cmd
+typedef struct s_cmd
 {
     // **commands
     // Input / output files
     // Arguments
     // Operators 
     // Number of pipes
-}; t_cmd;
+} t_cmd;
 
 void	ft_init(int argc, char **argv);
 
