@@ -60,7 +60,7 @@ MAGENTA			=	\033[1;35m
 
 ###	Target rules
 #	Default Target
-all						:	$(OBJ) $(NAME)
+all						:	$(NAME)
 
 #	prod
 $(NAME)					:	$(OBJ) 
