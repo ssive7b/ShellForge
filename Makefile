@@ -13,8 +13,8 @@ SRC_DIR_PARSER			=	$(SRC_DIR)/parser
 SRC_DIR_EXEC			=	$(SRC_DIR)/executioner
 #	files
 SRC_FILES_APP			=	main.c
-SRC_FILES_PARSER		=	parse_placeholder.c
-SRC_FILES_EXEC			=	pseudo_test.c
+SRC_FILES_PARSER		=	parse_placeholder.c lexer.c
+SRC_FILES_EXEC			=	pseudo_exec.c
 SRC						=	$(addprefix $(SRC_DIR_APP)/, $(SRC_FILES_APP))				\
 							$(addprefix $(SRC_DIR_PARSER)/, $(SRC_FILES_PARSER))		\
 							$(addprefix $(SRC_DIR_EXEC)/, $(SRC_FILES_EXEC))
@@ -41,13 +41,13 @@ COUNT					:=	0
 
 ###	</Testing set-up
 TEST_DIR				=	tests
-TEST_SRC_FILES			=	test_harness.c
+TEST_SRC_FILES			=	test_lexer.c
 TEST_SRC_DIR			=	$(TEST_DIR)/src
 TEST_OBJ_DIR			=	$(TEST_DIR)/obj
 TEST_SRC				= 	$(addprefix $(TEST_SRC_DIR)/, $(TEST_SRC_FILES))
 TEST_OBJ				=	$(addprefix $(TEST_OBJ_DIR)/, $(TEST_SRC_FILES:.c=.o))
-CFLAGS_TEST				=	$(CFLAGS) -g
-LDFLAGS_TEST			=	$(LDFLAGS) -lcriterion
+CFLAGS_TEST				=	$(CFLAGS) -DCRITERION_LOGGING_LEVEL=CR_LOG_INFO
+LDFLAGS_TEST			=	$(LDFLAGS) -lcriterion 
 ###	Testing set-up />
 
 ###	Color Schemes
@@ -71,7 +71,7 @@ $(NAME)					:	$(OBJ)
 							@$(CC) $(CFLAGS) -o $(NAME) $(OBJ) $(LDFLAGS)
 							@printf "\n$(BOLD_GREEN)[$(NAME)]:\t✅ $(NAME) compiled successfully!$(DEF_COLOR)\n"
 #	test
-$(TEST_EXEC)			:	$(OBJ_PARSER) $(OBJ_EXEC) $(TEST_OBJ)
+$(TEST_EXEC)			:	$(OBJ) $(TEST_OBJ)
 							@make -C $(LIBFT) 
 							@echo "$(ORANGE)[$(NAME)]:\t🔧 Testing mode activated.$(DEF_COLOR)"
 							@$(CC) $(CFLAGS) -o $(TEST_EXEC) $(OBJ_PARSER) $(OBJ_EXEC) $(TEST_OBJ) $(LDFLAGS_TEST)
@@ -103,7 +103,7 @@ $(TEST_OBJ_DIR)/%.o		:	$(TEST_SRC_DIR)/%.c | $(TEST_OBJ_DIR)
 							@$(CC) $(CFLAGS_TEST) -I$(INCLUDES) -c $< -o $@
 
 test					:	$(TEST_EXEC)
-							@./$(TEST_EXEC)
+							@CRITERION_LOG_LEVEL=INFO ./$(TEST_EXEC) --verbose
 
 clean					:
 							@$(RM) $(OBJ_DIR) $(TEST_OBJ_DIR)
