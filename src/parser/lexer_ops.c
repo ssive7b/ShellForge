@@ -21,12 +21,18 @@ void	ft_append_token(t_lexer *lexer, t_token *new_token)
 	t_token	*temp;
 
 	if(!lexer->tokens)
+	{
 		lexer->tokens = new_token;
+		new_token->prev = NULL;
+		new_token->next = NULL;
+	}
 	else
 	{
 		temp = lexer->tokens;
 		while (temp->next)
 			temp = temp->next;
 		temp->next = new_token;
+		new_token->next = NULL;
+		new_token->prev = temp;
 	}
 }

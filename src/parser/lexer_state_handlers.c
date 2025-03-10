@@ -6,8 +6,8 @@ void	ft_finalize_token(t_lexer *lx)
 {
 	if (lx->buff_idx > 0)
 	{
-		lx->buffer[lx->buff_idx] = '\0';
-		ft_append_token(&lx->tokens, lx->buffer);
+		lx->token_buffer[lx->buff_idx] = '\0';
+		ft_append_token(&lx->tokens, lx->token_buffer);
 		lx->buff_idx = 0;
 	}
 }

@@ -5,10 +5,9 @@
 
 typedef enum e_token_type {
 	TOKEN_WORD,
-	TOKEN_OPERATOR,
-	TOKEN_COMMENT,
-	TOKEN_QUOTE,
-	TOKEN_END
+	TOKEN_OPERATOR,	// <<, >>, <, >, |, ||, &, && 
+	TOKEN_NEW_LINE,	// 
+	TOKEN_END		// 
 }	t_token_type;
 
 typedef struct	e_token
@@ -22,18 +21,20 @@ typedef struct	e_token
 typedef enum	e_lexer_state
 {
 	LEXER_DEFAULT,
-	LEXER_IN_SING_QUOTE,
-	LEXER_IN_DOUBLE_QUOTE,
+	LEXER_IN_WORD,
+	LEXER_IN_QUOTE,
+	LEXER_IN_EXPANSION,
+	LEXER_IN_SUBSTITUTION,
 	LEXER_IN_COMMENT
 }	t_lexer_state;
 
 typedef struct s_lexer
 {
 	char			*input;
-	size_t			i;
+	size_t			char_idx;
 	t_lexer_state	state;
 	t_token			*tokens;
-	char			buffer[MAX_TOKEN_SIZE];
+	char			*token_buffer; // initialize with the size of the input, free once tokenized
 	size_t			buff_idx;
 }	t_lexer;
 
