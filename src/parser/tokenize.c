@@ -6,12 +6,12 @@
 /*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 22:35:48 by cschnath          #+#    #+#             */
-/*   Updated: 2025/03/06 23:04:36 by cschnath         ###   ########.fr       */
+/*   Updated: 2025/03/10 17:28:36 by cschnath         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../minishell.h"
-#include "../libft.h"
+#include "minishell.h"
+#include "libft.h"
 
 // Resizes the token array if needed
 char	**resize_tokens(char **tokens, int *capacity, int count)

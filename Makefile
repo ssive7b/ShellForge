@@ -12,9 +12,9 @@ SRC_DIR_APP				=	$(SRC_DIR)/app
 SRC_DIR_PARSER			=	$(SRC_DIR)/parser
 SRC_DIR_EXEC			=	$(SRC_DIR)/executioner
 #	files
-SRC_FILES_APP			=	main.c
-SRC_FILES_PARSER		=	parse_placeholder.c lexer.c
-SRC_FILES_EXEC			=	pseudo_exec.c
+SRC_FILES_APP			=	main.c init.c
+SRC_FILES_PARSER		=	parser.c tokenize.c
+SRC_FILES_EXEC			=	
 SRC						=	$(addprefix $(SRC_DIR_APP)/, $(SRC_FILES_APP))				\
 							$(addprefix $(SRC_DIR_PARSER)/, $(SRC_FILES_PARSER))		\
 							$(addprefix $(SRC_DIR_EXEC)/, $(SRC_FILES_EXEC))
