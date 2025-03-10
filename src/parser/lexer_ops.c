@@ -36,3 +36,19 @@ void	ft_append_token(t_lexer *lexer, t_token *new_token)
 		new_token->prev = temp;
 	}
 }
+
+void	ft_finalize_token(t_lexer *lx, t_token_type type)
+{
+	if (lx->buff_idx > 0)
+	{
+		lx->token_buffer[lx->buff_idx] = '\0';
+		ft_append_token(lx, ft_create_token(type, lx->token_buffer));
+		lx->buff_idx = 0;
+	}
+}
+
+void	ft_append_char(t_lexer *lx, char c)
+{
+	lx->token_buffer[lx->buff_idx] = c;
+	lx->buff_idx++;
+}

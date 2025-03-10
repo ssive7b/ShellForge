@@ -1,16 +1,22 @@
 #ifndef LEXER_H
 # define LEXER_H
 
+# include <stdio.h>
+
 # define MAX_TOKEN_SIZE 4096
 
 typedef enum e_token_type {
 	TOKEN_WORD,
 	TOKEN_OPERATOR,	// <<, >>, <, >, |, ||, &, && 
-	TOKEN_NEW_LINE,	// 
-	TOKEN_END		// 
+	TOKEN_QUOTE,
+	TOKEN_EXPANSION,
+	TOKEN_NEWLINE,
+	TOKEN_WHITESPACE,
+	TOKEN_COMMENT, 
+	TOKEN_EOF
 }	t_token_type;
 
-typedef struct	e_token
+typedef struct	s_token
 {
 	t_token_type	type;
 	char			*value;
@@ -21,8 +27,9 @@ typedef struct	e_token
 typedef enum	e_lexer_state
 {
 	LEXER_DEFAULT,
-	LEXER_IN_WORD,
-	LEXER_IN_QUOTE,
+	LEXER_IN_OPERATOR,
+	LEXER_IN_SINGLE_QUOTE,
+	LEXER_IN_DOUBLE_QUOTE,
 	LEXER_IN_EXPANSION,
 	LEXER_IN_SUBSTITUTION,
 	LEXER_IN_COMMENT
@@ -42,15 +49,23 @@ typedef struct s_lexer
 // lexer.c
 t_token	*ft_lexer(char *input);
 
-// lexer_state_handlers.c
-void	ft_finalize_token(t_lexer *lx);
-void	ft_handle_default_state(t_lexer *lx, char current_char);
-void	ft_handle_single_quote_state(t_lexer *lx, char current_char);
-void	ft_handle_double_quote_state(t_lexer *lx, char current_char);
+// lexer_handler_funcs.c
+void	ft_handle_eof(t_lexer *lx);
+void	ft_handle_operator(t_lexer *lx, char c);
+void	ft_handle_quotes(t_lexer *lx, char c);
+void	ft_handle_expansion(t_lexer *lx, char c);
+void	ft_handle_standalone_operator(t_lexer *lx, char c);
+void	ft_handle_newline(t_lexer *lx);
+void	ft_handle_whitespace(t_lexer *lx);
+void	ft_handle_word_continuation(t_lexer *lx, char c);
+void	ft_handle_comment(t_lexer *lx);
+void	ft_handle_new_word(t_lexer *lx, char c);
 
 // lexer_ops.c
 t_token	*ft_create_token(t_token_type type, const char *value);
 void	ft_append_token(t_lexer *lexer, t_token *new_token);
+void	ft_finalize_token(t_lexer *lx, t_token_type type);
+void	ft_append_char(t_lexer *lx, char c);
 
 // lexer_utils.c
 int	ft_is_whitespace(char c);
