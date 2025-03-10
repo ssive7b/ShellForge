@@ -49,10 +49,9 @@ static void ft_process_char(t_lexer *lx, char current_char)
 	else if (current_char == '#')
 		// discard all until new line (i.e. handle commented section)
 	else // start of new word (check if buff->idx == 0?)
-		lx->state = LEXER_IN_WORD
+		lx->state = LEXER_IN_WORD;
 	
-
-
+	/*
 	if (lx->state == LEXER_DEFAULT)
 		ft_handle_default_state(lx, current_char);
 	else if (lx->state == LEXER_IN_SING_QUOTE)
@@ -61,6 +60,7 @@ static void ft_process_char(t_lexer *lx, char current_char)
 		ft_handle_double_quote_state(lx, current_char);
 	else if (lx->state == LEXER_IN_COMMENT)
 		return ;
+	*/
 }
 
 static char	*get_prev_char(t_lexer *lx)
