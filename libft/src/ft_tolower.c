@@ -1,13 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser.c                                           :+:      :+:    :+:   */
+/*   ft_tolower.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/03 00:48:19 by cschnath          #+#    #+#             */
-/*   Updated: 2025/03/06 22:54:13 by cschnath         ###   ########.fr       */
+/*   Created: 2024/10/11 22:50:21 by cschnath          #+#    #+#             */
+/*   Updated: 2024/11/25 22:30:13 by cschnath         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../minishell.h"
+#include "../include/libft.h"
+
+int	ft_tolower(int c)
+{
+	if (c >= 'A' && c <= 'Z')
+		c += 32;
+	return (c);
+}
+/*
+int	main(void)
+{
+	printf("%c\n", ft_tolower('L'));
+	printf("%c\n", ft_tolower('h'));
+	printf("%c\n", ft_tolower('S'));
+}
+*/

@@ -1,13 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser.c                                           :+:      :+:    :+:   */
+/*   ft_putchar_fd.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/03 00:48:19 by cschnath          #+#    #+#             */
-/*   Updated: 2025/03/06 22:54:13 by cschnath         ###   ########.fr       */
+/*   Created: 2024/10/11 22:47:31 by cschnath          #+#    #+#             */
+/*   Updated: 2024/11/25 22:30:13 by cschnath         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../minishell.h"
+#include "../include/libft.h"
+
+void	ft_putchar_fd(char c, int fd)
+{
+	write(fd, &c, 1);
+}
+
+/*
+int	main()
+{
+	ft_putchar_fd('a', 1);
+}
+*/

@@ -1,41 +1,40 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   ft_lstiter_bonus.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/03 00:53:38 by cschnath          #+#    #+#             */
-/*   Updated: 2025/03/06 22:56:48 by cschnath         ###   ########.fr       */
+/*   Created: 2024/10/11 14:58:24 by cschnath          #+#    #+#             */
+/*   Updated: 2024/11/25 22:30:13 by cschnath         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-// Compile with cc -Wall -Werror -Wextra main.c init.c -lreadline
-// Run with ./a.out
+#include "../include/libft.h"
 
-#include "minishell.h"
-
-int	main(int argc, char **argv)
+void	ft_lstiter(t_list *lst, void (*f)(void *))
 {
-	char *line;
-    
-	ft_init(argc, argv);
-	while (1)
+	while (lst)
 	{
-		line = readline("> ");
-		if (!line)
-			break ;
-		make_tokens(line);
-		if (line[0] != '\0')
-			add_history(line);
-		printf("%s\n", line);
-		free(line);
+		(*f)(lst->content);
+		lst = lst->next;
 	}
-	return (0);
 }
 
+/*
+void	print_content(void *content)
+{
+	printf("Content: %s\n", (char *)content);
+}
 
+int	main(void)
+{
+	t_list	*head;
 
-
-
-
+	head = ft_lstnew("First");
+	ft_lstadd_back(&head, ft_lstnew("Second"));
+	ft_lstadd_back(&head, ft_lstnew("Third"));
+	ft_lstiter(head, print_content);
+	return (0);
+}
+*/
