@@ -1,5 +1,4 @@
 #include "lexer.h"
-#include "../../libft/include/libft.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>

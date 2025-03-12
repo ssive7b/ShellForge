@@ -14,6 +14,7 @@
 # define LEXER_H
 
 # include <stdio.h>
+# include "../libft/include/libft.h"
 
 # define MAX_TOKEN_SIZE 4096
 

@@ -1,5 +1,4 @@
 #include "lexer.h"
-#include "../../libft/include/libft.h"
 #include <stdio.h>
 
 void	ft_handle_eof(t_lexer *lx)

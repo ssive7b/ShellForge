@@ -3,6 +3,7 @@
 #include <readline/history.h>
 #include <signal.h>
 #include <stdlib.h>
+#include <linux/limits.h>
 
 int	main(void)
 {

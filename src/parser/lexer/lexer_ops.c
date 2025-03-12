@@ -1,5 +1,4 @@
 #include "lexer.h"
-#include "../../libft/include/libft.h"
 #include <stdio.h>
 
 t_token	*ft_create_token(t_token_type type, const char *value)
