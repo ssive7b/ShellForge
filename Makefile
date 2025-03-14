@@ -13,9 +13,9 @@ SRC_DIR					=	src
 SRC						=	$(SRC_DIR)/app/main.c											\
 							$(SRC_DIR)/executioner/pseudo_exec.c							\
 							$(SRC_DIR)/parser/lexer/lexer.c									\
-							$(SRC_DIR)/parser/lexer/lexer_ops.c								\
-							$(SRC_DIR)/parser/lexer/lexer_handler_funcs.c					\
 							$(SRC_DIR)/parser/lexer/lexer_utils.c							\
+							$(SRC_DIR)/utils/string_utils.c									\
+							$(SRC_DIR)/utils/char_designation.c
 
 TOTAL_SRC_FILES			:=	$(words $(SRC))
 
@@ -37,7 +37,8 @@ COUNT					:=	0
 TEST_DIR				=	tests
 TEST_SRC_DIR			=	$(TEST_DIR)/src
 TEST_OBJ_DIR			=	$(TEST_DIR)/obj
-TEST_SRC				= 	$(TEST_SRC_DIR)/test_lexer.c
+TEST_SRC				= 	$(TEST_SRC_DIR)/test_lexer.c									\
+							$(TEST_SRC_DIR)/test_lexer_utils.c
 TEST_OBJ				=	$(filter-out $(OBJ_DIR)/app/%, $(OBJ))							\
 							$(patsubst $(TEST_SRC_DIR)/%, $(TEST_OBJ_DIR)/%, $(TEST_SRC:.c=.o))
 CFLAGS_TEST				=	$(CFLAGS) -DCRITERION_LOGGING_LEVEL=CR_LOG_INFO
@@ -79,6 +80,7 @@ $(OBJ_DIR)				:
 							@mkdir -p $(OBJ_DIR)/app
 							@mkdir -p $(OBJ_DIR)/parser/lexer
 							@mkdir -p $(OBJ_DIR)/executioner
+							@mkdir -p $(OBJ_DIR)/utils
 
 #	test
 $(TEST_OBJ_DIR)			:
