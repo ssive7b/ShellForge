@@ -97,7 +97,7 @@ $(TEST_OBJ_DIR)/%.o		:	$(TEST_SRC_DIR)/%.c | $(TEST_OBJ_DIR)
 							@$(CC) $(CFLAGS_TEST) -I$(INCLUDES) -c $< -o $@
 
 test					:	$(TEST_EXEC)
-							@CRITERION_LOG_LEVEL=INFO ./$(TEST_EXEC)
+							@CRITERION_LOG_LEVEL=INFO ./$(TEST_EXEC) --verbose
 
 clean					:
 							@$(RM) $(OBJ_DIR) $(TEST_OBJ_DIR)
