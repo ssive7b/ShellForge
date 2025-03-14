@@ -56,7 +56,7 @@ void	ft_print_tokens(t_token *tokens)
 	int		token_type;
 
 	current_token = tokens;
-	while(current_token->next)
+	while(current_token)
 	{
 		token_value = current_token->value;
 		token_type = current_token->type;
