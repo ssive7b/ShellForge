@@ -8,29 +8,23 @@ MAKEFLAGS				+=	--no-print-directory
 ###	Source files specs
 #	dirs
 SRC_DIR					=	src
-SRC_DIR_APP				=	$(SRC_DIR)/app
-SRC_DIR_PARSER			=	$(SRC_DIR)/parser
-SRC_DIR_EXEC			=	$(SRC_DIR)/executioner
+
 #	files
-SRC_FILES_APP			=	main.c
-SRC_FILES_PARSER		=	parse_placeholder.c lexer.c
-SRC_FILES_EXEC			=	pseudo_exec.c
-SRC						=	$(addprefix $(SRC_DIR_APP)/, $(SRC_FILES_APP))				\
-							$(addprefix $(SRC_DIR_PARSER)/, $(SRC_FILES_PARSER))		\
-							$(addprefix $(SRC_DIR_EXEC)/, $(SRC_FILES_EXEC))
+SRC						=	$(SRC_DIR)/app/main.c											\
+							$(SRC_DIR)/executioner/pseudo_exec.c							\
+							$(SRC_DIR)/parser/lexer/lexer.c									\
+							$(SRC_DIR)/parser/lexer/lexer_utils.c							\
+							$(SRC_DIR)/utils/string_utils.c									\
+							$(SRC_DIR)/utils/char_designation.c
+
 TOTAL_SRC_FILES			:=	$(words $(SRC))
 
 ### Object files specs
 #	dirs
 OBJ_DIR					=	obj
-OBJ_DIR_APP				=	$(OBJ_DIR)/app
-OBJ_DIR_PARSER			=	$(OBJ_DIR)/parser
-OBJ_DIR_EXEC			=	$(OBJ_DIR)/executioner
+
 #	files
-OBJ_APP					=	$(addprefix $(OBJ_DIR_APP)/, $(SRC_FILES_APP:.c=.o))
-OBJ_PARSER				=	$(addprefix $(OBJ_DIR_PARSER)/, $(SRC_FILES_PARSER:.c=.o))
-OBJ_EXEC				=	$(addprefix $(OBJ_DIR_EXEC)/, $(SRC_FILES_EXEC:.c=.o))
-OBJ						=	$(OBJ_APP) $(OBJ_PARSER) $(OBJ_EXEC)
+OBJ						=	$(patsubst $(SRC_DIR)/%, $(OBJ_DIR)/%, $(SRC:.c=.o))
 
 ###	Compilation/ Linking configs
 CC						=	cc
@@ -41,11 +35,12 @@ COUNT					:=	0
 
 ###	</Testing set-up
 TEST_DIR				=	tests
-TEST_SRC_FILES			=	test_lexer.c
 TEST_SRC_DIR			=	$(TEST_DIR)/src
 TEST_OBJ_DIR			=	$(TEST_DIR)/obj
-TEST_SRC				= 	$(addprefix $(TEST_SRC_DIR)/, $(TEST_SRC_FILES))
-TEST_OBJ				=	$(addprefix $(TEST_OBJ_DIR)/, $(TEST_SRC_FILES:.c=.o))
+TEST_SRC				= 	$(TEST_SRC_DIR)/test_lexer.c									\
+							$(TEST_SRC_DIR)/test_lexer_utils.c
+TEST_OBJ				=	$(filter-out $(OBJ_DIR)/app/%, $(OBJ))							\
+							$(patsubst $(TEST_SRC_DIR)/%, $(TEST_OBJ_DIR)/%, $(TEST_SRC:.c=.o))
 CFLAGS_TEST				=	$(CFLAGS) -DCRITERION_LOGGING_LEVEL=CR_LOG_INFO
 LDFLAGS_TEST			=	$(LDFLAGS) -lcriterion 
 ###	Testing set-up />
@@ -71,22 +66,21 @@ $(NAME)					:	$(OBJ)
 							@$(CC) $(CFLAGS) -o $(NAME) $(OBJ) $(LDFLAGS)
 							@printf "\n$(BOLD_GREEN)[$(NAME)]:\t✅ $(NAME) compiled successfully!$(DEF_COLOR)\n"
 #	test
-$(TEST_EXEC)			:	$(OBJ) $(TEST_OBJ)
+$(TEST_EXEC)			:	$(TEST_OBJ)
 							@make -C $(LIBFT) 
 							@echo "$(ORANGE)[$(NAME)]:\t🔧 Testing mode activated.$(DEF_COLOR)"
-							@$(CC) $(CFLAGS) -o $(TEST_EXEC) $(OBJ_PARSER) $(OBJ_EXEC) $(TEST_OBJ) $(LDFLAGS_TEST)
+							@$(CC) $(CFLAGS) -o $(TEST_EXEC) $(TEST_OBJ) $(LDFLAGS_TEST)
 
 $(OBJ)					:	$(OBJ_DIR)
-$(OBJ_PARSER)			:	$(OBJ_DIR)
-$(OBJ_EXEC)				:	$(OBJ_DIR)
 $(TEST_OBJ)				:	$(TEST_OBJ_DIR)
 
 #	Create the object directory if it doesn't exist
 $(OBJ_DIR)				:	
 							@mkdir -p $(OBJ_DIR)
-							@mkdir -p $(OBJ_DIR_APP)
-							@mkdir -p $(OBJ_DIR_PARSER)
-							@mkdir -p $(OBJ_DIR_EXEC)
+							@mkdir -p $(OBJ_DIR)/app
+							@mkdir -p $(OBJ_DIR)/parser/lexer
+							@mkdir -p $(OBJ_DIR)/executioner
+							@mkdir -p $(OBJ_DIR)/utils
 
 #	test
 $(TEST_OBJ_DIR)			:

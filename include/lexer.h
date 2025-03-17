@@ -1,0 +1,62 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   lexer.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sstoev <sstoev@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/11 00:40:24 by sstoev            #+#    #+#             */
+/*   Updated: 2025/03/11 00:40:28 by sstoev           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#ifndef LEXER_H
+# define LEXER_H
+
+# include "../libft/include/libft.h"
+# include <stdio.h>
+
+typedef enum e_token_type 
+{
+	TOKEN_UNKNOWN,
+	TOKEN_PIPE,
+	TOKEN_REDIR_OUT,
+	TOKEN_REDIR_IN,
+	TOKEN_REDIR_APPEND,
+	TOKEN_REDIR_HEREDOC,
+	TOKEN_WORD_UNQUOTED,
+	TOKEN_WORD_DQUOTED,
+	TOKEN_WORD_SQUOTED,
+	TOKEN_DELIMITER
+}	t_token_type;
+
+typedef struct	s_token
+{
+	char			*value;
+	t_token_type	type;
+	struct s_token	*next;
+}	t_token;
+
+typedef struct s_lexer
+{
+	char			*input;
+	size_t			idx;
+	int				line_number;	// for error reporting
+	int				column_number;	// for error reporting			
+	t_token			*tokens;
+	int				error;			// error state
+}	t_lexer;
+
+// function pointers for state transitioning
+typedef void	*(*t_lexer_state)(t_lexer *lexer);
+
+// lexer.c
+t_token	*ft_lexer(char *input);
+
+// lexer_utils.c
+void	ft_init_lex(t_lexer *lx, char *input);
+t_token	*ft_create_token(t_token token_data);
+void	ft_append_token(t_token **tokens_queue, t_token *new_token);
+void	ft_print_tokens(t_token *tokens);
+
+#endif
