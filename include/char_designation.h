@@ -6,10 +6,6 @@
 # define DOUBLE_QUOTE '"'
 # define SINGLE_QUOTE '\''
 # define PIPE '|'
-# define REDIR_OUT '>'
-# define REDIR_IN '<'
-# define REDIR_APPEND '>>'
-# define REDIR_HEREDOC '<<'
 
 int	ft_is_whitespace(char c);
 int	ft_is_operator(char c);
