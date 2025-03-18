@@ -11,9 +11,17 @@ SRC_DIR					=	src
 
 #	files
 SRC						=	$(SRC_DIR)/app/main.c											\
-							$(SRC_DIR)/executioner/pseudo_exec.c							\
 							$(SRC_DIR)/parser/lexer/lexer.c									\
 							$(SRC_DIR)/parser/lexer/lexer_utils.c							\
+							$(SRC_DIR)/executioner/execute.c								\
+							$(SRC_DIR)/executioner/builtins/builtins_utils.c				\
+							$(SRC_DIR)/executioner/builtins/cd.c							\
+							$(SRC_DIR)/executioner/builtins/echo.c							\
+							$(SRC_DIR)/executioner/builtins/env.c							\
+							$(SRC_DIR)/executioner/builtins/exit.c							\
+							$(SRC_DIR)/executioner/builtins/export.c						\
+							$(SRC_DIR)/executioner/builtins/pwd.c							\
+							$(SRC_DIR)/executioner/builtins/unset.c							\
 							$(SRC_DIR)/utils/string_utils.c									\
 							$(SRC_DIR)/utils/char_designation.c
 

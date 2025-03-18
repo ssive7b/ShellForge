@@ -41,7 +41,7 @@ typedef struct s_redirection
 typedef struct	s_ast_node
 {
 	t_node_type	type;
-	char					*cmd;
+	char					*cmd_name;
 	char					**args;
 	int						pid;
 	int						fd_in;
