@@ -12,16 +12,39 @@
 
 #include "lexer.h"
 #include "minishell.h"
+#include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/wait.h>
+#include <error.h>
 
 void	ft_execute(t_tty *minish, t_ast_node *ast_node)
 {
+	int		fd[2];
+	pid_t	pid;
+
 	if (ft_is_builtin(ast_node->cmd_name))
 	{
-		ft_execute_builtin();
+		return ;
 	}
 	else
 	{
-		ft_execute_external();
+		if (pipe(fd) == -1)
+			return ;
+		pid = fork();
+		if (pid == -1)
+		{
+			close(fd[0]);
+			close(fd[1]);
+			return ;
+		}
+		else if (pid == 0)
+		{
+			close(fd[0]);
+			dup2(fd[1], STDOUT_FILENO);
+			close(fd[1]);
+			execve();
+		}
 	}
 
 }
