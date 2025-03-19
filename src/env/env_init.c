@@ -1,27 +1,41 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   execute.c                                          :+:      :+:    :+:   */
+/*   env_init.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sstoev <sstoev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/18 19:38:18 by sstoev            #+#    #+#             */
-/*   Updated: 2025/03/18 19:38:20 by sstoev           ###   ########.fr       */
+/*   Created: 2025/03/19 13:00:06 by sstoev            #+#    #+#             */
+/*   Updated: 2025/03/19 13:00:07 by sstoev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "lexer.h"
 #include "minishell.h"
 
-void	ft_execute(t_tty *minish, t_ast_node *ast_node)
+t_list	**get_env(void)
 {
-	if (ft_is_builtin(ast_node->cmd_name))
-	{
-		ft_execute_builtin();
-	}
-	else
-	{
-		ft_execute_external();
-	}
+	static t_list	*env = NULL;
 
+	return (&env);
 }
+
+void	init_env(char **envp)
+{
+	t_list	*env_list;
+	t_list	*env_node;
+	size_t	i;
+
+	if (!envp)
+		return ;
+	env_list = NULL;
+	i = 0;
+	while (envp[i])
+	{
+		env_node = to_env_node(envp[i]);
+		ft_lstadd_back(&env_list, env_node);
+		i++;
+	}
+	*get_env() = env_list;
+}
+
+

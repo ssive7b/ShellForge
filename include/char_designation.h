@@ -1,8 +1,6 @@
 #ifndef CHAR_DESIGNATION_H
 # define CHAR_DESIGNATION_H
 
-# include "minishell.h"
-
 # define DOUBLE_QUOTE '"'
 # define SINGLE_QUOTE '\''
 # define PIPE '|'

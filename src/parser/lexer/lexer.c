@@ -10,13 +10,12 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
-#include "lexer.h"
-#include "char_designation.h"
-#include "utils.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include "lexer.h"
+#include "char_designation.h"
+#include "utils.h"
 
 static t_token_type		get_op_token_type(const char *input);
 static t_lexer_state	word_state(t_lexer *lx);
@@ -83,7 +82,7 @@ t_lexer_state	operator_state(t_lexer *lx)
 		len = 2;
 	else
 		return (NULL);
-	token.value = ft_substr(lx->input, lx->idx, len); // rethink if we need it? can just put it as NULL and deduce from the type
+	token.value = NULL;
 	lx->idx = lx->idx + len - 1;
 	if (ft_strlen(token.value) > 0)
 		ft_append_token(&lx->tokens, ft_create_token(token));

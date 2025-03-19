@@ -28,8 +28,10 @@ int	ft_is_builtin(char *cmd_name)
 		return (1);
 	else if (ft_strncmp(cmd_name, "unset", 5) == 0)
 		return (1);
+	return (0);
 }
 
+/*
 void	ft_exec_builtin(t_ast_node *cmd_node)
 {
 	if (ft_strncmp(cmd_node->cmd_name, "cd", 2) == 0)
@@ -47,3 +49,4 @@ void	ft_exec_builtin(t_ast_node *cmd_node)
 	else if (ft_strncmp(cmd_node->cmd_name, "unset", 5) == 0)
 		ft_exec_unset(cmd_node);
 }
+*/

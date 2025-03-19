@@ -11,10 +11,11 @@ SRC_DIR					=	src
 
 #	files
 SRC						=	$(SRC_DIR)/app/main.c											\
+							$(SRC_DIR)/env/env_init.c										\
+							$(SRC_DIR)/env/env_utils.c										\
 							$(SRC_DIR)/parser/lexer/lexer.c									\
 							$(SRC_DIR)/parser/lexer/lexer_utils.c							\
-							$(SRC_DIR)/executioner/execute.c								\
-							$(SRC_DIR)/executioner/builtins/builtins_utils.c				\
+							$(SRC_DIR)/executioner/builtins/builtin_utils.c					\
 							$(SRC_DIR)/executioner/builtins/cd.c							\
 							$(SRC_DIR)/executioner/builtins/echo.c							\
 							$(SRC_DIR)/executioner/builtins/env.c							\
@@ -87,8 +88,9 @@ $(TEST_OBJ)				:	$(TEST_OBJ_DIR)
 $(OBJ_DIR)				:	
 							@mkdir -p $(OBJ_DIR)
 							@mkdir -p $(OBJ_DIR)/app
+							@mkdir -p $(OBJ_DIR)/env
 							@mkdir -p $(OBJ_DIR)/parser/lexer
-							@mkdir -p $(OBJ_DIR)/executioner
+							@mkdir -p $(OBJ_DIR)/executioner/builtins
 							@mkdir -p $(OBJ_DIR)/utils
 
 #	test

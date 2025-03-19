@@ -16,7 +16,4 @@ typedef struct	s_tty
 	int			exit_status;
 }	t_tty;
 
-// string_utils.c
-int	ft_skip_whitespaces(const char *str);
-
 #endif
