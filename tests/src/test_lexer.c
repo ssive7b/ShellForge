@@ -3,10 +3,10 @@
 #include "lexer.h"
 #include "test.h"
 
-#define SEPARATOR "\n------------------------------------------\n"
 
+TestSuite(lexer_suite);
 
-Test(lexer_tests, empty_input_test)
+Test(lexer_suite, empty_input_test)
 {
     ft_check_lexer_output("", NULL);
 	ft_check_lexer_output("''", "SW");
@@ -14,7 +14,7 @@ Test(lexer_tests, empty_input_test)
 	ft_check_lexer_output("\"\"''", "DW SW");
 }
 
-Test(lexer_tests, simple_pipe)
+Test(lexer_suite, simple_pipe)
 {
 	ft_check_lexer_output("echo \"a\" | cat", "UW D DW D P D UW");
 }

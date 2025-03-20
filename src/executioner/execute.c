@@ -10,15 +10,24 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "executioner.h"
 #include "lexer.h"
 #include "minishell.h"
+#include "ast_mock.h"
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/wait.h>
 #include <error.h>
 
-void	ft_execute(t_tty *minish, t_ast_node *ast_node)
+void	ft_exec_astree(t_tty *sh, t_ast_node *cmd_node)
+{
+	t_exec_mode	next_to_execute;
+
+	
+}
+
+void	ft_execute(t_tty *minish, t_ast_node *cmd_node)
 {
 	int		fd[2];
 	pid_t	pid;
