@@ -36,59 +36,49 @@ t_list	*to_env_node(char *env_string)
 	return (env_node);
 }
 
-/*
-char	*ft_find_key_paths(char *key, t_list *env_list)
+char	*get_envp_value(char *key, t_list *env_list)
 {
-	int	key_len;
+	char	*value;
+	t_list	*current_envp;
+	t_env	*env_entry;
+	size_t	key_len;
 
 	if (!env_list)
 		return (NULL);
+	current_envp = env_list;
 	key_len = ft_strlen(key);
-	while (*dirp)
+	value = NULL;
+	while (current_envp)
 	{
-		if (ft_strncmp(key, *dirp, key_len) == 0 && (*dirp)[key_len] == '=')
-			return (*dirp + key_len + 1);
-		dirp++;
+		env_entry = current_envp->content;
+		if (ft_strncmp(key, env_entry->key, key_len) == 0)
+		{
+			value = env_entry->value;
+			break ;
+		}
+		current_envp = current_envp->next;
 	}
-	return (NULL);
+	return (value);
 }
 
-char	**ft_split_key_paths(char **dirp)
-{
-	char	*path;
-
-	if (!dirp)
-		return (NULL);
-	path = ft_find_key_paths("PATH", dirp);
-	if (!path)
-		return (NULL);
-	return (ft_split(path, ':'));
-}
-
-char	*ft_find_path(char *cmd, char **envp)
+char	*find_exec_pathname(t_tty *tty, t_env *env_list, char *cmd_name)
 {
 	char	**paths;
 	char	*path;
 	char	*full_path;
 	int		i;
 
-	paths = ft_split_key_paths(envp);
+	paths = ft_split(get_envp_value('PATH', env_list), ':');
 	if (!paths || !(*paths))
-		paths = ft_split(".", ' ');
+		return (NULL);			// do we need to throw an error here or look in cwd?
 	i = -1;
 	while (paths[++i])
 	{
-		path = ft_strjoin(paths[i], "/");
-		if (!path)
-			break ;
-		full_path = ft_get_full_path(path, cmd);
-		free(path);
+		full_path = ft_strjoin_multiple((char *[]){paths[i], "/", cmd_name}, 3); // check if dir can be accessed before that too?
 		if (!full_path)
 			break ;
 		if (access(full_path, F_OK) == 0)
 			return (ft_free_2d_array(paths, -1), full_path);
-		free(full_path);
 	}
 	return (ft_free_2d_array(paths, -1), NULL);
 }
-*/

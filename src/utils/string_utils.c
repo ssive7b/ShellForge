@@ -14,6 +14,31 @@
 #include "utils.h"
 #include "char_designation.h"
 
+char	*ft_strjoin_multiple(const char **str_list, size_t num_strings)
+{
+	char	*result;
+	size_t	len_total;
+	size_t	len_result;
+	size_t	i;
+
+	if (!str_list || num_strings == 0)
+		return (NULL);
+	i = -1;
+	len_total = 0;
+	while(++i < num_strings)
+		len_total += ft_strlen(str_list[i]);
+	if (len_total == 0)
+		return (ft_strdup(""));
+	result = malloc(sizeof(char) * (len_total + 1));
+	if (!result)
+		return (NULL);
+	i = -1;
+	len_result = 0;
+	while (++i < num_strings && str_list[i])
+		len_result += ft_strlcpy(&result[len_result], str_list[i], len_total);
+	return (result);
+}
+
 int	ft_skip_whitespaces(const char *str)
 {
 	size_t	i;

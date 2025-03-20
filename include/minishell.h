@@ -5,10 +5,11 @@
 # include "../libft/include/libft.h"
 # include "ast_mock.h"
 # include "env_utils.h"
+# include "utils.h"
 
 typedef struct	s_tty
 {
-	char		cwd[PATH_MAX];
+	char		*cwd;
 	char		*prompt;
 	char		*line;
 	t_env		*env_list;

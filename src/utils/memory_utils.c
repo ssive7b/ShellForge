@@ -1,35 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pwd.c                                              :+:      :+:    :+:   */
+/*   memory_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sstoev <sstoev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/20 12:24:39 by sstoev            #+#    #+#             */
-/*   Updated: 2025/03/20 12:24:41 by sstoev           ###   ########.fr       */
+/*   Created: 2025/03/20 15:21:13 by sstoev            #+#    #+#             */
+/*   Updated: 2025/03/20 15:21:14 by sstoev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include <stdlib.h>
+#include <unistd.h>
+#include "utils.h"
 
-t_list	**get_cwd(void)
+void	ft_free_2d_array(char **array, int n)
 {
-	static t_list	*cwd = NULL;
+	int	i;
 
-	return (&cwd);
-}
-
-void	ft_exec_pwd(t_list *env_list)
-{
-	char	*buffer;
-	size_t	size_buffer;
-
-	(void)env_list;
-	size_buffer = PATH_MAX + 1;
-	buffer = malloc(sizeof(char) * size_buffer);
-	if (!buffer)
+	i = 0;
+	if (!array)
 		return ;
-	getcwd(buffer, size_buffer);
-	printf("%s\n", buffer);
-	*get_cwd() = buffer;
+	while ((n == -1 || i < n) && array[i])
+	{
+		free(array[i]);
+		i++;
+	}
+	free(array);
 }
