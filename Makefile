@@ -24,6 +24,7 @@ SRC						=	$(SRC_DIR)/app/main.c											\
 							$(SRC_DIR)/executioner/builtins/pwd.c							\
 							$(SRC_DIR)/executioner/builtins/unset.c							\
 							$(SRC_DIR)/utils/string_utils.c									\
+							$(SRC_DIR)/utils/memory_utils.c									\
 							$(SRC_DIR)/utils/char_designation.c
 
 TOTAL_SRC_FILES			:=	$(words $(SRC))

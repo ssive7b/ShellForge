@@ -14,7 +14,7 @@
 #include "utils.h"
 #include "char_designation.h"
 
-char	*ft_strjoin_multiple(const char **str_list, size_t num_strings)
+char	*ft_strjoin_multiple(char **str_list, size_t num_strings)
 {
 	char	*result;
 	size_t	len_total;

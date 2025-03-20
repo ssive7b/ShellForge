@@ -10,7 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "env_utils.h"
+#include "utils.h"
 
 t_list	*to_env_node(char *env_string)
 {
@@ -61,14 +62,14 @@ char	*get_envp_value(char *key, t_list *env_list)
 	return (value);
 }
 
-char	*find_exec_pathname(t_tty *tty, t_env *env_list, char *cmd_name)
+char	*find_exec_pathname(t_tty *tty, t_list *env_list, char *cmd_name)
 {
 	char	**paths;
-	char	*path;
 	char	*full_path;
 	int		i;
 
-	paths = ft_split(get_envp_value('PATH', env_list), ':');
+	(void)tty;
+	paths = ft_split(get_envp_value("PATH", env_list), ':');
 	if (!paths || !(*paths))
 		return (NULL);			// do we need to throw an error here or look in cwd?
 	i = -1;

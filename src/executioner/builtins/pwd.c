@@ -10,11 +10,12 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <stdio.h>
 #include "minishell.h"
 
-t_list	**get_cwd(void)
+char	**get_cwd(void)
 {
-	static t_list	*cwd = NULL;
+	static char	*cwd = NULL;
 
 	return (&cwd);
 }
