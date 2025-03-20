@@ -82,7 +82,7 @@ t_lexer_state	operator_state(t_lexer *lx)
 		len = 2;
 	else
 		return (NULL);
-	token.value = NULL;
+	token.value = ft_substr(lx->input, lx->idx, len); // rethink if we need it? can just put it as NULL and deduce from the type
 	lx->idx = lx->idx + len - 1;
 	if (ft_strlen(token.value) > 0)
 		ft_append_token(&lx->tokens, ft_create_token(token));

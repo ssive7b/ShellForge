@@ -1,8 +1,7 @@
 #ifndef TEST_H
 # define TEST_H
 
-# include "lexer.h"
-# include "ast_mock.h"
+typedef struct s_token	t_token;
 
 // test_lexer_utils.c
 char	*ft_get_token_alias(t_token *token);

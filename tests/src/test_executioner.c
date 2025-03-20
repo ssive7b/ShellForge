@@ -1,11 +1,14 @@
 #include <criterion/criterion.h>
 #include <criterion/logging.h>
 #include <fcntl.h>
+#include "lexer.h"
+#include "ast_mock.h"
 #include "test.h"
+
 
 Test(executioner, test_redirection_output)
 {
-    t_redirection redir = { .file = "output.txt", .type = 1 };  // ">"
+    t_redirection redir = {.type = REDIR_OUTPUT, .file_name = "output.txt"};  // ">"
     handle_redirections(&redir);
 
     int fd = open("output.txt", O_WRONLY | O_CREAT | O_TRUNC, 0644);
