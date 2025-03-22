@@ -12,6 +12,7 @@ typedef struct	s_tty
 	struct s_list		*env_list;
 	struct s_ast_node	*ast_tree;
 	int					exit_status;
+	char				**envp;
 }	t_tty;
 
 #endif

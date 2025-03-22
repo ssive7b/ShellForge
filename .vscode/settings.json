@@ -2,6 +2,7 @@
 	"files.associations": {
 		"libft.h": "c",
 		"stdio.h": "c",
-		"stdlib.h": "c"
+		"stdlib.h": "c",
+		"ast_mock.h": "c"
 	}
 }

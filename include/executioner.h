@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   executioner.h                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sstoev <sstoev@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/22 12:55:10 by sstoev            #+#    #+#             */
+/*   Updated: 2025/03/22 12:55:11 by sstoev           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef EXECUTIONER_H
 # define EXECUTIONER_H
 
@@ -7,7 +19,27 @@ typedef struct s_tty		t_tty;
 typedef struct s_ast_node	t_ast_node;
 
 // function pointer for exec mode
-typedef void	*(*t_exec_mode)(t_tty *sh, t_ast_node);
+// t_exec_mode is a type alias for a pointer to the below func
+typedef void				*(*t_exec_mode)(t_tty *sh, t_ast_node *node);
+
+// Function pointer tables for passing the executioner functions pointers
+typedef struct s_exec_table
+{
+	t_exec_mode	exec_modes[NODE_TYPES_COUNT];
+}	t_exec_table;
+
+// main executioner logic handlers
+void	*execute_command(t_tty *sh, t_ast_node *node);
+void	*execute_pipe(t_tty *sh, t_ast_node *node);
+void	*execute_redirection(t_tty *sh, t_ast_node *node);
+void	*execute_and(t_tty *sh, t_ast_node *node);
+void	*execute_or(t_tty *sh, t_ast_node *node);
+
+// init_execs.c
+void	init_exec_table(t_exec_table *exec_table);
+
+// execute.c
+void	ft_exec_astree(t_tty *sh, t_ast_node *node);
 
 // builtins
 // pwd

@@ -19,7 +19,8 @@ typedef enum e_node_type
 	NODE_PIPE,
 	NODE_REDIRECTION,
 	NODE_AND,
-	NODE_OR
+	NODE_OR,
+	NODE_TYPES_COUNT
 }	t_node_type;
 
 typedef enum e_redir_type
@@ -41,7 +42,7 @@ typedef struct s_redirection
 typedef struct	s_ast_node
 {
 	t_node_type	type;
-	char					*cmd_name;
+	char					*cmd_pathname;
 	char					**args;
 	int						pid;
 	int						fd_in;

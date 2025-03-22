@@ -15,6 +15,9 @@ SRC						=	$(SRC_DIR)/app/main.c											\
 							$(SRC_DIR)/env/env_utils.c										\
 							$(SRC_DIR)/parser/lexer/lexer.c									\
 							$(SRC_DIR)/parser/lexer/lexer_utils.c							\
+							$(SRC_DIR)/executioner/init_execs.c								\
+							$(SRC_DIR)/executioner/execute.c								\
+							$(SRC_DIR)/executioner/exec_mode_handlers.c						\
 							$(SRC_DIR)/executioner/builtins/builtin_utils.c					\
 							$(SRC_DIR)/executioner/builtins/cd.c							\
 							$(SRC_DIR)/executioner/builtins/echo.c							\
