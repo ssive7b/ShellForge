@@ -4,12 +4,23 @@
 #include "lexer.h"
 #include "ast_mock.h"
 #include "test.h"
+#include "executioner.h"
+#include "minishell.h"
 
+TestSuite(execution_suite);
 
-Test(executioner, test_redirection_output)
+Test(execution_suite, test_redirection_output)
 {
+	t_tty		sh;
+	t_ast_node	node;
     t_redirection redir = {.type = REDIR_OUTPUT, .file_name = "output.txt"};  // ">"
-    handle_redirections(&redir);
+    
+	node.type = NODE_COMMAND;
+	node.args = (char *[]){"ls", NULL};
+	node.cmd_pathname = "/bin/ls";
+	node.redir = &redir;
+	
+	handle_redirections(&redir);
 
     int fd = open("output.txt", O_WRONLY | O_CREAT | O_TRUNC, 0644);
     dup2(fd, STDOUT_FILENO);
@@ -25,7 +36,7 @@ Test(executioner, test_redirection_output)
     cr_assert_str_eq(buffer, "Hello Test\n", "Output redirection failed!");
 }
 
-Test(executioner, test_pipe_execution)
+Test(execution_suite, test_pipe_execution)
 {
     t_ast_node *cmd1 = malloc(sizeof(t_ast_node));
     cmd1->type = NODE_COMMAND;
@@ -60,7 +71,7 @@ Test(executioner, test_pipe_execution)
     cr_assert(strstr(buffer, "main") != NULL, "Pipe execution failed!");
 }
 
-Test(executioner, test_command_execution)
+Test(execution_suite, test_command_execution)
 {
     t_ast_node cmd_name = { .type = NODE_COMMAND, .cmd_name = "echo", .args = (char *[]){"echo", "Hello", NULL} };
     

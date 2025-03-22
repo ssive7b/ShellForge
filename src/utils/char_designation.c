@@ -43,24 +43,24 @@ int	ft_is_quote(char c)
 int	ft_is_meta_char(const char c)
 {
 	return (c == ' '
-			|| c == '\t'
-			|| c == '\n'
-			|| c == '|'
-			|| c == '&'
-			|| c == ';'
-			|| c == '('
-			|| c == ')'
-			|| c == ','
-			|| c == '<'
-			|| c == '>');
+		|| c == '\t'
+		|| c == '\n'
+		|| c == '|'
+		|| c == '&'
+		|| c == ';'
+		|| c == '('
+		|| c == ')'
+		|| c == ','
+		|| c == '<'
+		|| c == '>');
 }
 
 int	ft_is_unquoted_char(const char c)
 {
 	return (!ft_is_meta_char(c)
-			&& !ft_is_quote(c)
-			&& !ft_is_whitespace(c)
-			&& c != '\0');
+		&& !ft_is_quote(c)
+		&& !ft_is_whitespace(c)
+		&& c != '\0');
 }
 
 int	ft_is_expansion(char c)

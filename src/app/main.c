@@ -20,7 +20,10 @@ int	main(int argc, char **argv, char **envp)
 	{
 		minish.line = readline(minish.prompt);
 		if (!minish.line)
+		{
+			printf("breaking\n");
 			break ;
+		}
 		if (*minish.line)
 		{
 			ft_print_tokens(ft_lexer(minish.line));

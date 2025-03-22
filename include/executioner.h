@@ -13,6 +13,7 @@
 #ifndef EXECUTIONER_H
 # define EXECUTIONER_H
 
+# include <sys/types.h>
 # include "../libft/include/libft.h"
 # include "ast_mock.h"
 
@@ -39,6 +40,12 @@ void	*execute_or(t_tty *sh, t_ast_node *node);
 
 // init_execs.c
 void	init_exec_table(t_exec_table *exec_table);
+
+// exec_utils.c
+void	setup_redirections(t_ast_node *node);
+pid_t	fork_and_execute_child(t_tty *sh, t_ast_node *node);
+void	wait_for_child(pid_t cpid, int *exit_status);
+int		open_redirection_flle(const char *file_name, t_redir_type redir_type);
 
 // execute.c
 void	exec_astree(t_tty *sh, t_ast_node *node);

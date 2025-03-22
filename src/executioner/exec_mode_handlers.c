@@ -29,70 +29,76 @@ void	*execute_command(t_tty *sh, t_ast_node *node)
 		return (NULL);
 	if (is_builtin(node->args[0]))
 	{
-		return (NULL);
+		return (NULL);			// to be done: implement the logic for handling builtins
 	}
 	else
 	{
-		cpid = fork();
+		cpid = fork_and_execute_child(sh, node);
 		if (cpid == -1)
-		{
-			perror("fork");
 			return (NULL);
-		}
-		if (cpid == 0)
-		{
-			if (node->fd_in != STDIN_FILENO)
-			{
-				dup2(node->fd_in, STDIN_FILENO);
-				close(node->fd_in);
-			}
-			if (node->fd_out != STDOUT_FILENO)
-			{
-				dup2(node->fd_out, STDOUT_FILENO);
-				close(node->fd_out);
-			}
-			execve(node->cmd_pathname, node->args, sh->envp);
-			perror("execve");
-			return (NULL);
-		}
-		else
-		{
-			close(node->fd_in);
-			close(node->fd_out);
-			if (waitpid(cpid, &node->exit_status, 0) == -1)
-			{
-				perror("waitpid");
-				return (NULL);
-			}
-		}
+		node->pid = cpid;
+		wait_for_child(cpid, &node->exit_status);
 	}
 	return (NULL);
 }
 
 void	*execute_pipe(t_tty *sh, t_ast_node *node)
 {
-	(void)sh;
-	(void)node;
+	int pipefd[2];
+
+	if (!node)
+		return (NULL);
+	if (pipe(pipefd) == -1)
+	{
+		perror("pipe");
+		return (NULL);
+	}
+	node->left->fd_out = pipefd[1];
+	node->right->fd_in = pipefd[0];
+	exec_astree(sh, node->left);
+	close(pipefd[1]);
+	exec_astree(sh, node->right);
+	close(pipefd[0]);
 	return (NULL);
 }
 
-void	*execute_redirection(t_tty *sh, t_ast_node *node)
+void	*execute_redirection(t_tty *sh, t_ast_node *node) // to-do: allow for HEREDOC in the below implementation
 {
-	(void)sh;
-	(void)node;
+	int	fd;
+
+	if (!node)
+		return (NULL);
+	fd = open_redirection_flle(node->redir->file_name, node->redir->type);
+	if (fd == -1)
+	{
+		perror("open");
+		return (NULL);
+	}
+	if (node->redir->type == REDIR_INPUT)
+		node->left->fd_in = fd;
+	else
+		node->left->fd_out = fd;
+	exec_astree(sh, node->left);
+	close(fd);
 	return (NULL);
 }
 
 void	*execute_and(t_tty *sh, t_ast_node *node)
 {
-	(void)sh;
-	(void)node;
+	if (!node)
+		return (NULL);
+	exec_astree(sh, node->left);
+	if (node->left->exit_status == 0)
+		exec_astree(sh, node->right);
 	return (NULL);
 }
 
 void	*execute_or(t_tty *sh, t_ast_node *node)
 {
-	(void)sh;
-	(void)node;
+	if (!node)
+		return (NULL);
+	exec_astree(sh, node->left);
+	if (node->left->exit_status != 0)
+		exec_astree(sh, node->right);
 	return (NULL);
 }

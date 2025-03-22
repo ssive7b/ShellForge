@@ -25,7 +25,7 @@ char	*ft_strjoin_multiple(char **str_list, size_t num_strings)
 		return (NULL);
 	i = -1;
 	len_total = 0;
-	while(++i < num_strings)
+	while (++i < num_strings)
 		len_total += ft_strlen(str_list[i]);
 	if (len_total == 0)
 		return (ft_strdup(""));
@@ -75,7 +75,7 @@ int	ft_find_char_idx(const char *str, char char_to_find)
 	idx = 0;
 	while (str[idx] && (str[idx] != char_to_find || ft_is_escaped(str, idx)))
 		idx++;
-	if (!str[idx]) // if not found
+	if (!str[idx])
 		idx--;
 	return (idx);
 }
