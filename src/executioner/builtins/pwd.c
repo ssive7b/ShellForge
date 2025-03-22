@@ -20,7 +20,7 @@ char	**get_cwd(void)
 	return (&cwd);
 }
 
-void	ft_exec_pwd(t_list *env_list)
+void	exec_pwd(t_list *env_list)
 {
 	char	*buffer;
 	size_t	size_buffer;

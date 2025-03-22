@@ -11,6 +11,7 @@ SRC_DIR					=	src
 
 #	files
 SRC						=	$(SRC_DIR)/app/main.c											\
+							$(SRC_DIR)/app/inits.c											\
 							$(SRC_DIR)/env/env_init.c										\
 							$(SRC_DIR)/env/env_utils.c										\
 							$(SRC_DIR)/parser/lexer/lexer.c									\

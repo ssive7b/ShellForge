@@ -23,14 +23,13 @@
 
 void	*execute_command(t_tty *sh, t_ast_node *node)
 {
-	char	*exec_pathname;
 	pid_t	cpid;
 
 	if (!node)
 		return (NULL);
-	if (ft_is_builtin(node->args[0]))
+	if (is_builtin(node->args[0]))
 	{
-		return ;
+		return (NULL);
 	}
 	else
 	{
@@ -38,7 +37,7 @@ void	*execute_command(t_tty *sh, t_ast_node *node)
 		if (cpid == -1)
 		{
 			perror("fork");
-			return ;
+			return (NULL);
 		}
 		if (cpid == 0)
 		{
@@ -60,31 +59,40 @@ void	*execute_command(t_tty *sh, t_ast_node *node)
 		{
 			close(node->fd_in);
 			close(node->fd_out);
-			if (waitpid(cpid, &node->exit_status, NULL) == -1)
+			if (waitpid(cpid, &node->exit_status, 0) == -1)
 			{
 				perror("waitpid");
-				return ;
+				return (NULL);
 			}
 		}
 	}
+	return (NULL);
 }
 
 void	*execute_pipe(t_tty *sh, t_ast_node *node)
 {
+	(void)sh;
+	(void)node;
 	return (NULL);
 }
 
 void	*execute_redirection(t_tty *sh, t_ast_node *node)
 {
+	(void)sh;
+	(void)node;
 	return (NULL);
 }
 
 void	*execute_and(t_tty *sh, t_ast_node *node)
 {
+	(void)sh;
+	(void)node;
 	return (NULL);
 }
 
 void	*execute_or(t_tty *sh, t_ast_node *node)
 {
+	(void)sh;
+	(void)node;
 	return (NULL);
 }

@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-int	ft_is_builtin(char *cmd_name)
+int	is_builtin(char *cmd_name)
 {
 	if (ft_strncmp(cmd_name, "cd", 2) == 0)
 		return (1);
@@ -45,7 +45,7 @@ void	ft_exec_builtin(t_ast_node *cmd_node)
 	else if (ft_strncmp(cmd_node->cmd_name, "export", 6) == 0)
 		ft_exec_export(cmd_node);
 	else if (ft_strncmp(cmd_node->cmd_name, "pwd", 3) == 0)
-		ft_exec_pwd(cmd_node);
+		exec_pwd(cmd_node);
 	else if (ft_strncmp(cmd_node->cmd_name, "unset", 5) == 0)
 		ft_exec_unset(cmd_node);
 }

@@ -14,8 +14,10 @@
 # define EXECUTIONER_H
 
 # include "../libft/include/libft.h"
+# include "ast_mock.h"
 
 typedef struct s_tty		t_tty;
+typedef enum e_node_type	t_node_type;
 typedef struct s_ast_node	t_ast_node;
 
 // function pointer for exec mode
@@ -39,11 +41,13 @@ void	*execute_or(t_tty *sh, t_ast_node *node);
 void	init_exec_table(t_exec_table *exec_table);
 
 // execute.c
-void	ft_exec_astree(t_tty *sh, t_ast_node *node);
+void	exec_astree(t_tty *sh, t_ast_node *node);
 
 // builtins
+int		is_builtin(char *cmd_name);
+
 // pwd
 char	**get_cwd(void);
-void	ft_exec_pwd(t_list *env_list);
+void	exec_pwd(t_list *env_list);
 
 #endif

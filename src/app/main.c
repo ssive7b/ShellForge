@@ -6,34 +6,28 @@
 #include <linux/limits.h>
 #include "lexer.h"
 #include "env_utils.h"
+#include "minishell.h"
+#include "executioner.h"
 
 int	main(int argc, char **argv, char **envp)
 {
-	char	*input;
-	t_list	*env_list;
-	t_env	*env_entry;
+	t_tty	minish;
 
 	(void)argc;
 	(void)argv;
-	init_env(envp);
-	env_list = *get_env();
-	while (env_list)
-	{
-		env_entry = env_list->content;
-		printf("key: <%s>, value: <%s>\n", env_entry->key, env_entry->value);
-		env_list = env_list->next;
-	}
+	init_minishell(&minish, envp);
 	while(1)
 	{
-		input = readline("minishell$> ");
-		if (!input)
+		minish.line = readline(minish.prompt);
+		if (!minish.line)
 			break ;
-		if (*input)
+		if (*minish.line)
 		{
-			ft_print_tokens(ft_lexer(input));
-			add_history(input);
+			ft_print_tokens(ft_lexer(minish.line));
+			add_history(minish.line);
 		}
-		free(input);
+		exec_astree(&minish, minish.ast_tree);
+		free(minish.line);
 	}
 	return (0);
 }

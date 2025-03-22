@@ -15,4 +15,7 @@ typedef struct	s_tty
 	char				**envp;
 }	t_tty;
 
+// inits.c
+void	*init_minishell(t_tty *minish, char **envp);
+
 #endif
