@@ -29,11 +29,13 @@ void	setup_redirections(t_ast_node *node)
 		dup2(node->fd_in, STDIN_FILENO);
 		close(node->fd_in);
 	}
+	else
+		close(node->fd_in);
 	if (node->fd_out != STDOUT_FILENO)
 	{
 		dup2(node->fd_out, STDOUT_FILENO);
 		close(node->fd_out);
-	}		
+	}
 }
 
 pid_t	fork_and_execute_child(t_tty *sh, t_ast_node *node)
@@ -56,10 +58,19 @@ pid_t	fork_and_execute_child(t_tty *sh, t_ast_node *node)
 	return (cpid);
 }
 
-void	wait_for_child(pid_t cpid, int *exit_status)
+void	wait_for_child(pid_t cpid, int *exit_status) // add some more robust handling later, e.g. WIFSIGNALED, WIFSTOPPED, WIFCONTINUED, etc.
 {
-	if (waitpid(cpid, exit_status, 0) == -1)
+	int	status;
+
+	if (waitpid(cpid, &status, 0) == -1)
+	{
 		perror("waitpid");
+		return ;
+	}
+	if (WIFEXITED(status))
+    	*exit_status = WEXITSTATUS(status);
+ 	else
+    	*exit_status = 1;
 }
 
 int	open_redirection_flle(const char *file_name, t_redir_type redir_type) // add some better handling of fds, i.e. proper handling of errors on opening/access, etc.

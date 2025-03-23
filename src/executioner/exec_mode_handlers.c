@@ -27,10 +27,12 @@ void	*execute_command(t_tty *sh, t_ast_node *node)
 
 	if (!node)
 		return (NULL);
+	/*
 	if (is_builtin(node->args[0]))
 	{
 		return (NULL);			// to be done: implement the logic for handling builtins
 	}
+	*/
 	else
 	{
 		cpid = fork_and_execute_child(sh, node);
