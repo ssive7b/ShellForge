@@ -44,7 +44,7 @@ void	exec_builtin(t_ast_node *cmd_node)
 	else if (ft_strcmp(cmd_node->args[0], "env") == 0)
 		exec_env(cmd_node, *get_env());
 	else if (ft_strcmp(cmd_node->args[0], "exit") == 0)
-		ft_exec_exit(cmd_node);
+		exec_exit(cmd_node);
 	else if (ft_strcmp(cmd_node->args[0], "export") == 0)
 		ft_exec_export(cmd_node);
 	else if (ft_strcmp(cmd_node->args[0], "pwd") == 0)

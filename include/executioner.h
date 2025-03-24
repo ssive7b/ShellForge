@@ -54,13 +54,16 @@ void	exec_astree(t_tty *sh, t_ast_node *node);
 int		is_builtin(char *cmd_name);
 void	exec_builtin(t_ast_node *cmd_node);
 
-// env
+// env.c
 void	exec_env(t_ast_node *node, const t_list *env_list);
 
-// echo
+// echo.c
 void	exec_echo(t_ast_node *node);
 
-// pwd
+// exit.c
+void	exec_exit(t_ast_node *node);
+
+// pwd.c
 char	**get_cwd(void);
 void	exec_pwd(t_ast_node *node);
 
