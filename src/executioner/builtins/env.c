@@ -15,7 +15,7 @@
 #include "minishell.h"
 #include "env_utils.h"
 
-void	exec_env(t_ast_node *node, const t_list *env_list)
+void	exec_env(t_ast_node *node, t_list *env_list)
 {
 	t_list	*env_node_current;
 	t_env	*env_entry;

@@ -67,4 +67,7 @@ void	exec_exit(t_ast_node *node);
 char	**get_cwd(void);
 void	exec_pwd(t_ast_node *node);
 
+// unset.c
+void	exec_unset(t_ast_node *node);
+
 #endif

@@ -30,12 +30,13 @@ Test(execution_suite, test_command_execution)
 	t_tty *sh = malloc(sizeof(t_tty));
 	sh->envp = NULL;
 
-    t_ast_node *cmd = malloc(sizeof(t_ast_node));
-    cmd->type = NODE_COMMAND;
-    cmd->cmd_pathname = "/bin/echo";
-    cmd->args = (char *[]){"echo", "main test", NULL};
-    cmd->fd_in = STDIN_FILENO;
-    cmd->fd_out = STDOUT_FILENO; 
+	t_ast_node cmd_node = {
+		.type = NODE_COMMAND,
+		.cmd_pathname = "/bin/echo",
+		.args = (char *[]){"echo", "main test", NULL},
+		.fd_in = STDIN_FILENO,
+		.fd_out = STDOUT_FILENO
+	};
 
     int stdout_backup = dup(STDOUT_FILENO);
     int fd[2];
@@ -43,13 +44,13 @@ Test(execution_suite, test_command_execution)
     if (pipe(fd) == -1)
 		printf("pipe_error\n");
 
-	cmd->fd_in = fd[0];
-	cmd->fd_out = fd[1];
+	cmd_node.fd_in = fd[0];
+	cmd_node.fd_out = fd[1];
 	
-    mock_exec_astree(sh, cmd);
+    mock_exec_astree(sh, &cmd_node);
 
 	close(fd[1]);
-	waitpid(cmd->pid, NULL, 0);
+	waitpid(cmd_node.pid, NULL, 0);
 	
     dup2(stdout_backup, STDOUT_FILENO);
     close(stdout_backup);
@@ -65,36 +66,39 @@ Test(execution_suite, test_pipe_execution)
 	t_tty *sh = malloc(sizeof(t_tty));
 	sh->envp = NULL;
 
-    t_ast_node *cmd1 = malloc(sizeof(t_ast_node));
-    cmd1->type = NODE_COMMAND;
-    cmd1->cmd_pathname = "/bin/echo";
-    cmd1->args = (char *[]){"echo", "main test", NULL};
-    cmd1->fd_in = STDIN_FILENO;
-    cmd1->fd_out = STDOUT_FILENO; 
+	t_ast_node cmd1 = {
+		.type = NODE_COMMAND,
+		.cmd_pathname = "/bin/ls",
+		.args = (char *[]){"ls", NULL, NULL},
+		.fd_in = STDIN_FILENO,
+		.fd_out = STDOUT_FILENO
+	};
 
-    t_ast_node *cmd2 = malloc(sizeof(t_ast_node));
-    cmd2->type = NODE_COMMAND;
-    cmd2->cmd_pathname = "/bin/grep";
-    cmd2->args = (char *[]){"grep", "main", NULL};
-    cmd2->fd_in = STDIN_FILENO;
-    cmd2->fd_out = STDOUT_FILENO;
+	t_ast_node cmd2 = {
+		.type = NODE_COMMAND,
+		.cmd_pathname = "/bin/grep",
+		.args = (char *[]){"grep", "Make", NULL},
+		.fd_in = STDIN_FILENO,
+		.fd_out = STDOUT_FILENO
+	};
 
-    t_ast_node *pipe_node = malloc(sizeof(t_ast_node));
-    pipe_node->type = NODE_PIPE;
-    pipe_node->left = cmd1;
-    pipe_node->right = cmd2;
+	t_ast_node pipe_node = {
+		.type = NODE_PIPE,
+		.left = &cmd1,
+		.right = &cmd2
+	};
 
     int stdout_backup = dup(STDOUT_FILENO);
     int pipe_fd[2];
     pipe(pipe_fd);
 
-    cmd1->fd_out = pipe_fd[1];  // Left command writes to pipe
-    cmd2->fd_in = pipe_fd[0];   // Right command reads from pipe
+    cmd1.fd_out = pipe_fd[1];  // Left command writes to pipe
+    cmd2.fd_in = pipe_fd[0];   // Right command reads from pipe
 
     dup2(pipe_fd[1], STDOUT_FILENO);
     close(pipe_fd[1]);
 
-    execute_pipe(sh, pipe_node); // Execute pipe logic
+    execute_pipe(sh, &pipe_node); // Execute pipe logic
 
     dup2(stdout_backup, STDOUT_FILENO);
     close(stdout_backup);
@@ -103,36 +107,71 @@ Test(execution_suite, test_pipe_execution)
     read(pipe_fd[0], buffer, sizeof(buffer) - 1);
     close(pipe_fd[0]);
 
-	printf("buffer: %s\n", buffer);
-    cr_assert(strstr(buffer, "main") != NULL, "Pipe execution failed!");
+    cr_assert(strstr(buffer, "Makefile") != NULL, "Pipe execution failed!");
 }
 
-/*
+
 Test(execution_suite, test_redirection_output)
 {
-    t_ast_node cmd_node = {.type = NODE_COMMAND, .cmd_pathname = "/bin/echo", .args = (char *[]){"echo", "Hello", NULL}};
-    t_redirection redir = {.type = REDIR_OUTPUT, .file_name = "output.txt"};
-    t_ast_node redir_node = {.type = NODE_REDIRECTION, .redir = &redir, .left = &cmd_node};
+	t_tty *sh = malloc(sizeof(t_tty));
+	sh->envp = NULL;
+	
+    t_ast_node cmd_node = {
+		.type = NODE_COMMAND,
+		.cmd_pathname = "/bin/echo",
+		.args = (char *[]){"echo", "Hello" , "How", "Are", "You", NULL},
+		.fd_in = STDIN_FILENO,
+		.fd_out = STDOUT_FILENO
+	};
 
-    mock_exec_astree(NULL, &redir_node);
+    t_redirection redir = {
+		.type = REDIR_OUTPUT,
+		.file_name = "output.txt"
+	};
+
+    t_ast_node redir_node = {
+		.type = NODE_REDIRECTION,
+		.redir = &redir,
+		.left = &cmd_node
+	};
+
+    mock_exec_astree(sh, &redir_node);
 
     FILE *fp = fopen("output.txt", "r");
-    char buffer[100];
+    char buffer[100] = {0};
     fgets(buffer, sizeof(buffer), fp);
     fclose(fp);
-
-    cr_assert_str_eq(buffer, "Hello\n", "Output redirection failed!");
+    cr_assert_str_eq(buffer, "Hello How Are You\n", "Output redirection failed!");
 }
+
 
 Test(execution_suite, test_redirection_input)
 {
+	t_tty *sh = malloc(sizeof(t_tty));
+	sh->envp = NULL;
+
     FILE *fp = fopen("input.txt", "w");
     fputs("Hello Input Test\n", fp);
     fclose(fp);
 
-    t_ast_node cmd_node = {.type = NODE_COMMAND, .cmd_pathname = "/bin/cat", .args = (char *[]){"cat", NULL}};
-    t_redirection redir = {.type = REDIR_INPUT, .file_name = "input.txt"};
-    t_ast_node redir_node = {.type = NODE_REDIRECTION, .redir = &redir, .left = &cmd_node};
+    t_ast_node cmd_node = {
+		.type = NODE_COMMAND,
+		.cmd_pathname = "/bin/cat",
+		.args = (char *[]){"cat", NULL},
+		.fd_in = STDIN_FILENO,
+		.fd_out = STDOUT_FILENO
+	};
+
+    t_redirection redir = {
+		.type = REDIR_INPUT,
+		.file_name = "input.txt"
+	};
+
+    t_ast_node redir_node = {
+		.type = NODE_REDIRECTION,
+		.redir = &redir,
+		.left = &cmd_node
+	};
 
     int stdout_backup = dup(STDOUT_FILENO);
     int fd[2];
@@ -140,31 +179,48 @@ Test(execution_suite, test_redirection_input)
     dup2(fd[1], STDOUT_FILENO);
     close(fd[1]);
 
-    mock_exec_astree(NULL, &redir_node);
+    mock_exec_astree(sh, &redir_node);
 
     dup2(stdout_backup, STDOUT_FILENO);
     close(stdout_backup);
 
-    char buffer[100];
+    char buffer[100] = {0};
     read(fd[0], buffer, sizeof(buffer));
     close(fd[0]);
-
     cr_assert_str_eq(buffer, "Hello Input Test\n", "Input redirection failed!");
 }
 
 Test(execution_suite, test_redirection_append)
 {
+	t_tty *sh = malloc(sizeof(t_tty));
+	sh->envp = NULL;
+
     FILE *fp = fopen("output_append.txt", "w");
     fclose(fp);
 
-    t_ast_node cmd_node = {.type = NODE_COMMAND, .cmd_pathname = "/bin/echo", .args = (char *[]){"echo", "Appended Text", NULL}};
-    t_redirection redir = {.type = REDIR_APPEND, .file_name = "output_append.txt"};
-    t_ast_node redir_node = {.type = NODE_REDIRECTION, .redir = &redir, .left = &cmd_node};
+    t_ast_node cmd_node = {
+		.type = NODE_COMMAND,
+		.cmd_pathname = "/bin/echo",
+		.args = (char *[]){"echo", "Appended Text", NULL},
+		.fd_in = STDIN_FILENO,
+		.fd_out = STDOUT_FILENO
+	};
 
-    mock_exec_astree(NULL, &redir_node);
+    t_redirection redir = {
+		.type = REDIR_APPEND,
+		.file_name = "output_append.txt"
+	};
+
+    t_ast_node redir_node = {
+		.type = NODE_REDIRECTION,
+		.redir = &redir,
+		.left = &cmd_node
+	};
+
+    mock_exec_astree(sh, &redir_node);
 
     FILE *fp_read = fopen("output_append.txt", "r");
-    char buffer[100];
+    char buffer[100] = {0};
     fgets(buffer, sizeof(buffer), fp_read);
     fclose(fp_read);
 
@@ -173,9 +229,30 @@ Test(execution_suite, test_redirection_append)
 
 Test(execution_suite, test_and_execution)
 {
-    t_ast_node cmd_fail = {.type = NODE_COMMAND, .cmd_pathname = "/bin/false", .args = (char *[]){"false", NULL}};
-    t_ast_node cmd_echo = {.type = NODE_COMMAND, .cmd_pathname = "/bin/echo", .args = (char *[]){"echo", "Success", NULL}};
-    t_ast_node and_node = {.type = NODE_AND, .left = &cmd_fail, .right = &cmd_echo};
+	t_tty *sh = malloc(sizeof(t_tty));
+	sh->envp = NULL;
+
+    t_ast_node cmd_fail = {
+		.type = NODE_COMMAND,
+		.cmd_pathname = "/bin/false",
+		.args = (char *[]){"false", NULL},
+		.fd_in = STDIN_FILENO,
+		.fd_out = STDOUT_FILENO
+	};
+
+    t_ast_node cmd_echo = {
+		.type = NODE_COMMAND,
+		.cmd_pathname = "/bin/echo",
+		.args = (char *[]){"echo", "Success", NULL},
+		.fd_in = STDIN_FILENO,
+		.fd_out = STDOUT_FILENO
+	};
+
+    t_ast_node and_node = {
+		.type = NODE_AND,
+		.left = &cmd_fail,
+		.right = &cmd_echo
+	};
 
     int stdout_backup = dup(STDOUT_FILENO);
     int fd[2];
@@ -183,12 +260,12 @@ Test(execution_suite, test_and_execution)
     dup2(fd[1], STDOUT_FILENO);
     close(fd[1]);
 
-    mock_exec_astree(NULL, &and_node);
+    mock_exec_astree(sh, &and_node);
 
     dup2(stdout_backup, STDOUT_FILENO);
     close(stdout_backup);
 
-    char buffer[100];
+    char buffer[100] = {0};
     read(fd[0], buffer, sizeof(buffer));
     close(fd[0]);
 
@@ -197,9 +274,30 @@ Test(execution_suite, test_and_execution)
 
 Test(execution_suite, test_or_execution)
 {
-    t_ast_node cmd_fail = {.type = NODE_COMMAND, .cmd_pathname = "/bin/false", .args = (char *[]){"false", NULL}};
-    t_ast_node cmd_echo = {.type = NODE_COMMAND, .cmd_pathname = "/bin/echo", .args = (char *[]){"echo", "Success", NULL}};
-    t_ast_node or_node = {.type = NODE_OR, .left = &cmd_fail, .right = &cmd_echo};
+	t_tty *sh = malloc(sizeof(t_tty));
+	sh->envp = NULL;
+
+    t_ast_node cmd_fail = {
+		.type = NODE_COMMAND,
+		.cmd_pathname = "/bin/false",
+		.args = (char *[]){"false", NULL},
+		.fd_in = STDIN_FILENO,
+		.fd_out = STDOUT_FILENO
+	};
+
+    t_ast_node cmd_echo = {
+		.type = NODE_COMMAND,
+		.cmd_pathname = "/bin/echo",
+		.args = (char *[]){"echo", "Success", NULL},
+		.fd_in = STDIN_FILENO,
+		.fd_out = STDOUT_FILENO
+	};
+
+    t_ast_node or_node = {
+		.type = NODE_OR,
+		.left = &cmd_fail,
+		.right = &cmd_echo
+	};
 
     int stdout_backup = dup(STDOUT_FILENO);
     int fd[2];
@@ -207,15 +305,14 @@ Test(execution_suite, test_or_execution)
     dup2(fd[1], STDOUT_FILENO);
     close(fd[1]);
 
-    mock_exec_astree(NULL, &or_node);
+    mock_exec_astree(sh, &or_node);
 
     dup2(stdout_backup, STDOUT_FILENO);
     close(stdout_backup);
 
-    char buffer[100];
+    char buffer[100] = {0};
     read(fd[0], buffer, sizeof(buffer));
     close(fd[0]);
 
     cr_assert_str_eq(buffer, "Success\n", "OR execution failed!");
 }
-*/
