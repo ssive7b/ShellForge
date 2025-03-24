@@ -114,6 +114,8 @@ $(OBJ_DIR)/%.o			:	$(SRC_DIR)/%.c | $(OBJ_DIR)
 $(TEST_OBJ_DIR)/%.o		:	$(TEST_SRC_DIR)/%.c | $(TEST_OBJ_DIR)
 							@$(CC) $(CFLAGS_TEST) -I$(INCLUDES) -c $< -o $@
 
+libft					:	@make -C $(LIBFT)
+
 test					:	$(TEST_EXEC)
 							@env CRITERION_LOG_LEVEL=INFO CRITERION_JOBS=1 ./$(TEST_EXEC) --verbose
 

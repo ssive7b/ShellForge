@@ -30,7 +30,7 @@ void	*execute_command(t_tty *sh, t_ast_node *node)
 	if (is_builtin(node->args[0]))
 	{
 		exec_builtin(node);
-		return ;
+		return (NULL);
 	}
 	else
 	{
