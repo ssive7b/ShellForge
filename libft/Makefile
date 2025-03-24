@@ -30,7 +30,7 @@ FTSTR_DIR		=	ft_str/
 FTSTR			=	ft_strlen ft_strlcpy ft_strlcat ft_strchr \
 					ft_strrchr ft_strncmp ft_strnstr ft_strdup \
 					ft_substr ft_strjoin ft_strtrim ft_split \
-					ft_strmapi ft_striteri
+					ft_strmapi ft_striteri ft_strcmp
 
 FTLST_DIR		=	ft_lst/
 FTLST			=	ft_lstnew_bonus ft_lstadd_front_bonus ft_lstsize_bonus \

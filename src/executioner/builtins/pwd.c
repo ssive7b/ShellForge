@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include <stdio.h>
+#include "ast_mock.h"
 #include "minishell.h"
 
 char	**get_cwd(void)
@@ -20,12 +21,12 @@ char	**get_cwd(void)
 	return (&cwd);
 }
 
-void	exec_pwd(t_list *env_list)
+void	exec_pwd(t_ast_node *node)
 {
 	char	*buffer;
 	size_t	size_buffer;
 
-	(void)env_list;
+	(void)node;
 	size_buffer = PATH_MAX + 1;
 	buffer = malloc(sizeof(char) * size_buffer);
 	if (!buffer)
@@ -33,4 +34,5 @@ void	exec_pwd(t_list *env_list)
 	getcwd(buffer, size_buffer);
 	printf("%s\n", buffer);
 	*get_cwd() = buffer;
+	// free buffer???
 }
