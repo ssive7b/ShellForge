@@ -12,6 +12,8 @@
 
 #include "ast_mock.h"
 #include "minishell.h"
+#include "executioner.h"
+#include "env_utils.h"
 
 int	is_builtin(char *cmd_name)
 {
@@ -33,14 +35,14 @@ int	is_builtin(char *cmd_name)
 }
 
 
-void	ft_exec_builtin(t_ast_node *cmd_node)
+void	exec_builtin(t_ast_node *cmd_node)
 {
 	if (ft_strcmp(cmd_node->args[0], "cd") == 0)
 		ft_exec_cd(cmd_node);
 	else if (ft_strcmp(cmd_node->args[0], "echo") == 0)
-		ft_exec_echo(cmd_node);
+		exec_echo(cmd_node);
 	else if (ft_strcmp(cmd_node->args[0], "env") == 0)
-		ft_exec_env(cmd_node);
+		exec_env(cmd_node, *get_env());
 	else if (ft_strcmp(cmd_node->args[0], "exit") == 0)
 		ft_exec_exit(cmd_node);
 	else if (ft_strcmp(cmd_node->args[0], "export") == 0)

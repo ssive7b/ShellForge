@@ -29,7 +29,8 @@ void	*execute_command(t_tty *sh, t_ast_node *node)
 		return (NULL);
 	if (is_builtin(node->args[0]))
 	{
-		return (NULL);			// to be done: implement the logic for handling builtins
+		exec_builtin(node);
+		return ;
 	}
 	else
 	{

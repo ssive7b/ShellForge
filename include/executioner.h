@@ -52,6 +52,10 @@ void	exec_astree(t_tty *sh, t_ast_node *node);
 
 // builtins
 int		is_builtin(char *cmd_name);
+void	exec_builtin(t_ast_node *cmd_node);
+
+// env
+void	exec_env(t_ast_node *node, const t_list *env_list);
 
 // echo
 void	exec_echo(t_ast_node *node);
