@@ -27,9 +27,9 @@ int	is_builtin(char *cmd_name)
 		return (1);
 	else if (ft_strcmp(cmd_name, "unset") == 0)
 		return (1);
-	/*
 	else if (ft_strcmp(cmd_name, "export") == 0)
 		return (1);
+	/*
 	else if (ft_strcmp(cmd_name, "cd") == 0)
 		return (1);
 	*/
@@ -49,9 +49,9 @@ void	exec_builtin(t_ast_node *cmd_node)
 		exec_pwd(cmd_node);
 	else if (ft_strcmp(cmd_node->args[0], "unset") == 0)
 		exec_unset(cmd_node);
-	/*
 	else if (ft_strcmp(cmd_node->args[0], "export") == 0)
-		ft_exec_export(cmd_node);
+		exec_export(cmd_node);
+	/*
 	else if (ft_strcmp(cmd_node->args[0], "cd") == 0)
 		ft_exec_cd(cmd_node);
 	*/

@@ -63,6 +63,9 @@ void	exec_echo(t_ast_node *node);
 // exit.c
 void	exec_exit(t_ast_node *node);
 
+// export.c
+void	exec_export(t_ast_node *node);
+
 // pwd.c
 char	**get_cwd(void);
 void	exec_pwd(t_ast_node *node);

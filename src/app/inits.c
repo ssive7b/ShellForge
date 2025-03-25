@@ -40,8 +40,8 @@ static t_ast_node	*get_new_astree(t_tty *minish) // mocking version, change once
 	args = malloc(sizeof(char *) * 3);
 	if (!args)
 		return (NULL);
-	args[0] = "echo";
-	args[1] = "main";
+	args[0] = "export";
+	args[1] = NULL;
 	args[2] = NULL;
 	new_astree = malloc(sizeof(t_ast_node));
 	if (!new_astree)
@@ -49,7 +49,7 @@ static t_ast_node	*get_new_astree(t_tty *minish) // mocking version, change once
 		perror("new_astree");
 		return (NULL);
 	}
-	new_astree->cmd_pathname = find_exec_pathname(minish, minish->env_list, "echo");
+	new_astree->cmd_pathname = find_exec_pathname(minish, minish->env_list, "export");
 	new_astree->args = args;
 	new_astree->pid = 0;
 	new_astree->fd_in = STDIN_FILENO;
