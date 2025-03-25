@@ -70,8 +70,8 @@ void	exec_unset(t_ast_node *node)
 		node->exit_status = 1;
 		return ;
 	}
-	i = 1;
-	while (node->args[i])
+	i = 0;
+	while (node->args[++i])
 	{
 		if (!is_valid_var_name(node->args[i]))
 		{
@@ -83,6 +83,5 @@ void	exec_unset(t_ast_node *node)
 		}
 		else
 			unset_var(node->args[i]);
-		i++;
 	}
 }

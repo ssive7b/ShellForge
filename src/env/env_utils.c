@@ -62,6 +62,22 @@ char	*get_envp_value(char *key, t_list *env_list)
 	return (value);
 }
 
+t_env	*get_env_entry(char *key, t_list *env_list)
+{
+	t_list	*current_env_node;
+	t_env	*env_entry;
+
+	current_env_node = env_list;
+	while (current_env_node)
+	{
+		env_entry = current_env_node->content;
+		if (ft_strcmp(env_entry->key, key) == 0)
+			return (env_entry);
+		current_env_node = current_env_node->next;
+	}
+	return (NULL);
+}
+
 char	*find_exec_pathname(t_tty *tty, t_list *env_list, char *cmd_name)
 {
 	char	**paths;
@@ -82,4 +98,20 @@ char	*find_exec_pathname(t_tty *tty, t_list *env_list, char *cmd_name)
 			return (ft_free_2d_array(paths, -1), full_path);
 	}
 	return (ft_free_2d_array(paths, -1), NULL);
+}
+
+t_list	*create_new_env_node(char *key, char *value)
+{
+	t_list	*env_node;
+	t_env	*env_entry;
+
+	env_entry = malloc(sizeof(t_env));
+	if (!env_entry)
+		return (NULL);
+	env_entry->key = key;
+	env_entry->value = value;
+	env_node = ft_lstnew((t_env *)env_entry);
+	if (!env_node)
+		return (NULL);
+	return (env_node);
 }

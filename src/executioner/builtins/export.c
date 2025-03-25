@@ -15,10 +15,11 @@
 #include "ast_mock.h"
 #include "minishell.h"
 #include "env_utils.h"
+#include "executioner.h"
 
 static void	print_no_args_case(t_ast_node *node, t_list *env_list);
 static bool	is_valid_export_expr(const char *str);
-// static void	export_var(const char *var);
+static void	export_var(char *var, t_list *env_list);
 
 void	exec_export(t_ast_node *node)
 {
@@ -29,8 +30,8 @@ void	exec_export(t_ast_node *node)
 		print_no_args_case(node, *get_env());
 		return ;
 	}
-	i = 1;
-	while (node->args[i])
+	i = 0;
+	while (node->args[++i])
 	{
 		if (!is_valid_export_expr(node->args[i]))
 		{
@@ -40,8 +41,9 @@ void	exec_export(t_ast_node *node)
 			node->exit_status = 1;
 			continue ;
 		}
+		export_var(node->args[i], *get_env());
 	}
-
+	exec_env(node, *get_env());
 }
 
 static void	print_no_args_case(t_ast_node *node, t_list *env_list)
@@ -55,9 +57,12 @@ static void	print_no_args_case(t_ast_node *node, t_list *env_list)
 		env_entry = env_node_current->content;
 		ft_putstr_fd("declare -x ", node->fd_out);
 		ft_putstr_fd(env_entry->key, node->fd_out);
-		ft_putstr_fd("=\"", node->fd_out);
-		ft_putstr_fd(env_entry->value, node->fd_out);
-		ft_putstr_fd("\"", node->fd_out);
+		if (env_entry->value)
+		{
+			ft_putstr_fd("=\"", node->fd_out);
+			ft_putstr_fd(env_entry->value, node->fd_out);
+			ft_putstr_fd("\"", node->fd_out);
+		}
 		ft_putstr_fd("\n", node->fd_out);
 		env_node_current = env_node_current->next;
 	}
@@ -72,15 +77,22 @@ static bool	is_valid_export_expr(const char *str)
 	i = 1;
 	while (ft_isalnum(str[i]) || str[i] == '_')
 		i++;
-	if (str[i] == '=' || !str[i])
+	if (str[i] == '=' || str[i] == '\0')
 		return (true);
-	else
-		return (false);
+	return (false);
 }
 
-/*
-static void	export_var(const char *var)
+
+static void	export_var(char *var, t_list *env_list)
 {
+	t_list	*new_node;
 
+	new_node = to_env_node(var);
+	if (!new_node)
+	{
+		if (get_envp_value(var, env_list))
+			return ;
+		new_node = create_new_env_node(ft_strdup(var), ft_strdup(""));
+	}
+	ft_lstadd_back(&env_list, new_node);
 }
-*/
