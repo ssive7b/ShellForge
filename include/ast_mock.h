@@ -35,6 +35,7 @@ typedef struct s_redirection
 {
 	t_redir_type	type;
 	char			*file_name;
+	char			*delimiter_heredoc;
 	int				fd;
 	int				open_flags;
 }	t_redirection;

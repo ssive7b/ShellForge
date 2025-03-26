@@ -59,6 +59,7 @@ Test(execution_suite, test_command_execution)
     read(fd[0], buffer, sizeof(buffer) - 1);
 	close(fd[0]);
     cr_assert_str_eq(buffer, "main test\n", "Command execution failed!");
+	free(sh);
 }
 
 Test(execution_suite, test_pipe_execution)
@@ -108,6 +109,7 @@ Test(execution_suite, test_pipe_execution)
     close(pipe_fd[0]);
 
     cr_assert(strstr(buffer, "Makefile") != NULL, "Pipe execution failed!");
+	free(sh);
 }
 
 
@@ -143,6 +145,7 @@ Test(execution_suite, test_redirection_output)
     fclose(fp);
     cr_assert_str_eq(buffer, "Hello How Are You\n", "Output redirection failed!");
 	unlink("output.txt");
+	free(sh);
 }
 
 
@@ -190,6 +193,7 @@ Test(execution_suite, test_redirection_input)
     close(fd[0]);
     cr_assert_str_eq(buffer, "Hello Input Test\n", "Input redirection failed!");
 	unlink("input.txt");
+	free(sh);
 }
 
 Test(execution_suite, test_redirection_append)
@@ -228,6 +232,7 @@ Test(execution_suite, test_redirection_append)
 
     cr_assert_str_eq(buffer, "Appended Text\n", "Append redirection failed!");
 	unlink("output_append.txt");
+	free(sh);
 }
 
 Test(execution_suite, test_and_execution)
@@ -273,6 +278,7 @@ Test(execution_suite, test_and_execution)
     close(fd[0]);
 
     cr_assert(buffer[0] == '\0', "AND execution failed!");
+	free(sh);
 }
 
 Test(execution_suite, test_or_execution)
@@ -318,4 +324,59 @@ Test(execution_suite, test_or_execution)
     close(fd[0]);
 
     cr_assert_str_eq(buffer, "Success\n", "OR execution failed!");
+	free(sh);
+}
+
+Test(execution_suite, test_heredoc)
+{
+    t_tty *sh = malloc(sizeof(t_tty));
+    sh->envp = NULL;
+
+    int stdin_backup = dup(STDIN_FILENO);
+    int pipefd[2];
+    pipe(pipefd);
+    write(pipefd[1], "heredoc test\nEOF\n", 17);
+    close(pipefd[1]);
+    dup2(pipefd[0], STDIN_FILENO);
+    close(pipefd[0]);
+
+    t_ast_node cmd_node = {
+        .type = NODE_COMMAND,
+        .cmd_pathname = "/bin/cat",
+        .args = (char *[]){"cat", NULL},
+        .fd_in = STDIN_FILENO,
+        .fd_out = STDOUT_FILENO
+    };
+
+    t_redirection redir = {
+        .type = REDIR_HEREDOC,
+        .delimiter_heredoc = "EOF"
+    };
+
+    t_ast_node redir_node = {
+        .type = NODE_REDIRECTION,
+        .redir = &redir,
+        .left = &cmd_node
+    };
+
+    int stdout_backup = dup(STDOUT_FILENO);
+    int fd[2];
+    pipe(fd);
+    dup2(fd[1], STDOUT_FILENO);
+    close(fd[1]);
+
+    mock_exec_astree(sh, &redir_node);
+
+    dup2(stdout_backup, STDOUT_FILENO);
+    close(stdout_backup);
+    dup2(stdin_backup, STDIN_FILENO);
+    close(stdin_backup);
+
+    char buffer[100] = {0};
+    read(fd[0], buffer, sizeof(buffer));
+	char *buffer_ = ft_substr(buffer, 21, 100);
+    close(fd[0]);
+	printf("heredoc buffer: %s\n", buffer_);
+    cr_assert_str_eq(buffer_, "heredoc test\n", "Heredoc handling failed!");
+    free(sh);
 }
