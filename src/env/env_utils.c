@@ -42,17 +42,15 @@ char	*get_envp_value(char *key, t_list *env_list)
 	char	*value;
 	t_list	*current_envp;
 	t_env	*env_entry;
-	size_t	key_len;
 
 	if (!env_list)
 		return (NULL);
 	current_envp = env_list;
-	key_len = ft_strlen(key);
 	value = NULL;
 	while (current_envp)
 	{
 		env_entry = current_envp->content;
-		if (ft_strncmp(key, env_entry->key, key_len) == 0)
+		if (ft_strcmp(key, env_entry->key) == 0)
 		{
 			value = env_entry->value;
 			break ;
