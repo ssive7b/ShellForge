@@ -43,6 +43,9 @@ FTREADS			=	get_next_line
 FTWRITES_DIR	=	ft_writes/
 FTWRITES		=	ft_printf ft_printf_utils auxiliary_funcs	
 
+FTSORTS_DIR		=	ft_sorts/
+FTSORTS			=	ft_bubble_sort	
+
 # Aggregate source files
 SRC_FILES+=$(addprefix $(FTIS_DIR), $(FTIS))
 SRC_FILES+=$(addprefix $(FTMEM_DIR), $(FTMEM))
@@ -52,6 +55,7 @@ SRC_FILES+=$(addprefix $(FTSTR_DIR), $(FTSTR))
 SRC_FILES+=$(addprefix $(FTLST_DIR), $(FTLST))
 SRC_FILES+=$(addprefix $(FTREADS_DIR), $(FTREADS))
 SRC_FILES+=$(addprefix $(FTWRITES_DIR), $(FTWRITES))
+SRC_FILES+=$(addprefix $(FTSORTS_DIR), $(FTSORTS))
 
 SRC				=	$(addprefix $(SRC_DIR), $(addsuffix .c, $(SRC_FILES)))
 OBJ 			= 	$(addprefix $(OBJ_DIR), $(addsuffix .o, $(SRC_FILES)))
@@ -80,6 +84,7 @@ $(OBJ_DIR):
 			@mkdir -p $(OBJ_DIR)$(FTLST_DIR)
 			@mkdir -p $(OBJ_DIR)$(FTREADS_DIR)
 			@mkdir -p $(OBJ_DIR)$(FTWRITES_DIR)
+			@mkdir -p $(OBJ_DIR)$(FTSORTS_DIR)
 
 # Clean up object filesss
 clean:

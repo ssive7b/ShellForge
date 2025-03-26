@@ -26,6 +26,7 @@ SRC						=	$(SRC_DIR)/app/main.c											\
 							$(SRC_DIR)/executioner/builtins/env.c							\
 							$(SRC_DIR)/executioner/builtins/exit.c							\
 							$(SRC_DIR)/executioner/builtins/export.c						\
+							$(SRC_DIR)/executioner/builtins/export_utils.c					\
 							$(SRC_DIR)/executioner/builtins/pwd.c							\
 							$(SRC_DIR)/executioner/builtins/unset.c							\
 							$(SRC_DIR)/utils/string_utils.c									\
@@ -55,7 +56,8 @@ TEST_OBJ_DIR			=	$(TEST_DIR)/obj
 TEST_SRC				= 	$(TEST_SRC_DIR)/test_lexer.c									\
 							$(TEST_SRC_DIR)/test_lexer_utils.c								\
 							$(TEST_SRC_DIR)/test_env.c										\
-							$(TEST_SRC_DIR)/test_executioner.c
+							$(TEST_SRC_DIR)/test_executioner.c								\
+							$(TEST_SRC_DIR)/test_builtins.c
 TEST_OBJ				=	$(filter-out $(OBJ_DIR)/app/%, $(OBJ))							\
 							$(patsubst $(TEST_SRC_DIR)/%, $(TEST_OBJ_DIR)/%, $(TEST_SRC:.c=.o))
 CFLAGS_TEST				=	$(CFLAGS) -DCRITERION_LOGGING_LEVEL=CR_LOG_INFO

@@ -40,8 +40,8 @@ static t_ast_node	*get_new_astree(t_tty *minish) // mocking version, change once
 	args = malloc(sizeof(char *) * 3);
 	if (!args)
 		return (NULL);
-	args[0] = "export";
-	args[1] = "USSS=testing";
+	args[0] = "env";
+	args[1] = NULL;
 	args[2] = NULL;
 	new_astree = malloc(sizeof(t_ast_node));
 	if (!new_astree)

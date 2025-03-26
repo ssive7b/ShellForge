@@ -66,7 +66,7 @@ int	ft_is_escaped(const char *str, size_t idx)
 	return (0);
 }
 
-int	ft_find_char_idx(const char *str, char char_to_find)
+int	ft_find_char_qadjusted(const char *str, char char_to_find)
 {
 	size_t	idx;
 
@@ -78,4 +78,18 @@ int	ft_find_char_idx(const char *str, char char_to_find)
 	if (!str[idx])
 		idx--;
 	return (idx);
+}
+
+int	ft_find_char(const char *str, char char_to_find)
+{
+	size_t	i;
+
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] == char_to_find)
+			return (i);
+		i++;
+	}
+	return (-1);
 }

@@ -24,7 +24,7 @@ void	exec_env(t_ast_node *node, t_list *env_list)
 	while(env_node_current)
 	{
 		env_entry = env_node_current->content;
-		if (env_entry->value && *env_entry->value)
+		if (env_entry->value)
 		{
 			ft_putstr_fd(env_entry->key, node->fd_out);
 			ft_putstr_fd("=", node->fd_out);

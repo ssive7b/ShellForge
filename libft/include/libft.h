@@ -63,6 +63,9 @@ char	*ft_strmapi(char const *s, char (*f)(unsigned int, char));
 void	ft_striteri(char *s, void (*f)(unsigned int, char*));
 int		ft_strcmp(const char *s1, const char *s2);
 
+// ft_sorts
+void	ft_bubble_sort(char **arr, size_t size);
+
 // ft_lst
 typedef struct s_list
 {

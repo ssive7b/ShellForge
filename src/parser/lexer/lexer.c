@@ -47,12 +47,12 @@ static t_lexer_state	word_state(t_lexer *lx)
 	if (lx->input[lx->idx] == DOUBLE_QUOTE)
 	{
 		token.type = TOKEN_WORD_DQUOTED;
-		lx->idx += ft_find_char_idx(&lx->input[lx->idx + 1], DOUBLE_QUOTE) + 1;
+		lx->idx += ft_find_char_qadjusted(&lx->input[lx->idx + 1], DOUBLE_QUOTE) + 1;
 	}
 	else if (lx->input[lx->idx] == SINGLE_QUOTE)
 	{
 		token.type = TOKEN_WORD_SQUOTED;
-		lx->idx += ft_find_char_idx(&lx->input[lx->idx + 1], SINGLE_QUOTE) + 1; 
+		lx->idx += ft_find_char_qadjusted(&lx->input[lx->idx + 1], SINGLE_QUOTE) + 1; 
 	}
 	else
 	{

@@ -19,6 +19,7 @@
 
 typedef struct s_tty		t_tty;
 typedef enum e_node_type	t_node_type;
+typedef struct s_env		t_env;
 typedef struct s_ast_node	t_ast_node;
 
 // function pointer for exec mode
@@ -63,8 +64,12 @@ void	exec_echo(t_ast_node *node);
 // exit.c
 void	exec_exit(t_ast_node *node);
 
-// export.c
+// export.c export_utils.c
 void	exec_export(t_ast_node *node);
+void 	update_existing_env_entry(t_env *existing_entry, char *value);
+void	add_new_env_entry(char *key, char *value, t_list *env_list);
+char 	**get_sorted_env_array(t_list *env_list);
+void 	print_sorted_env_list(t_ast_node *node, char **sorted_env_array);
 
 // pwd.c
 char	**get_cwd(void);

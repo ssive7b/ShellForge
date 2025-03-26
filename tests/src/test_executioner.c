@@ -142,6 +142,7 @@ Test(execution_suite, test_redirection_output)
     fgets(buffer, sizeof(buffer), fp);
     fclose(fp);
     cr_assert_str_eq(buffer, "Hello How Are You\n", "Output redirection failed!");
+	unlink("output.txt");
 }
 
 
@@ -188,6 +189,7 @@ Test(execution_suite, test_redirection_input)
     read(fd[0], buffer, sizeof(buffer));
     close(fd[0]);
     cr_assert_str_eq(buffer, "Hello Input Test\n", "Input redirection failed!");
+	unlink("input.txt");
 }
 
 Test(execution_suite, test_redirection_append)
@@ -225,6 +227,7 @@ Test(execution_suite, test_redirection_append)
     fclose(fp_read);
 
     cr_assert_str_eq(buffer, "Appended Text\n", "Append redirection failed!");
+	unlink("output_append.txt");
 }
 
 Test(execution_suite, test_and_execution)

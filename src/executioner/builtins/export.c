@@ -16,6 +16,7 @@
 #include "minishell.h"
 #include "env_utils.h"
 #include "executioner.h"
+#include "utils.h"
 
 static void	print_no_args_case(t_ast_node *node, t_list *env_list);
 static bool	is_valid_export_expr(const char *str);
@@ -43,29 +44,16 @@ void	exec_export(t_ast_node *node)
 		}
 		export_var(node->args[i], *get_env());
 	}
-	exec_env(node, *get_env());
 }
 
 static void	print_no_args_case(t_ast_node *node, t_list *env_list)
 {
-	t_list	*env_node_current;
-	t_env	*env_entry;
+	char	**sorted_env_array;
 
-	env_node_current = env_list;
-	while (env_node_current)
-	{
-		env_entry = env_node_current->content;
-		ft_putstr_fd("declare -x ", node->fd_out);
-		ft_putstr_fd(env_entry->key, node->fd_out);
-		if (env_entry->value)
-		{
-			ft_putstr_fd("=\"", node->fd_out);
-			ft_putstr_fd(env_entry->value, node->fd_out);
-			ft_putstr_fd("\"", node->fd_out);
-		}
-		ft_putstr_fd("\n", node->fd_out);
-		env_node_current = env_node_current->next;
-	}
+	sorted_env_array = get_sorted_env_array(env_list);
+	if (!sorted_env_array)
+		return ;
+	print_sorted_env_list(node, sorted_env_array);
 }
 
 static bool	is_valid_export_expr(const char *str)
@@ -82,17 +70,32 @@ static bool	is_valid_export_expr(const char *str)
 	return (false);
 }
 
-
 static void	export_var(char *var, t_list *env_list)
 {
-	t_list	*new_node;
+	t_env	*existing_entry;
+	t_list	*new_env_node;
+	int		eq_index;
+	char	*key;
+	char	*value;
 
-	new_node = to_env_node(var);
-	if (!new_node)
+	eq_index = ft_find_char(var, '=');
+	if (eq_index == -1)
 	{
-		if (get_envp_value(var, env_list))
-			return ;
-		new_node = create_new_env_node(ft_strdup(var), ft_strdup(""));
+		if (!get_env_entry(var, env_list))
+		{
+			new_env_node = create_new_env_node(ft_strdup(var), NULL);
+			ft_lstadd_back(&env_list, new_env_node);
+		}
+		return ;
 	}
-	ft_lstadd_back(&env_list, new_node);
+	key = ft_substr(var, 0, eq_index);
+	value = ft_strdup(var + eq_index + 1);
+	existing_entry = get_env_entry(key, env_list);
+	if (existing_entry)
+	{
+		update_existing_env_entry(existing_entry, value);
+		free(key);
+	}
+	else
+		add_new_env_entry(key, value, env_list);
 }
