@@ -77,6 +77,16 @@ int	open_redirection_flle(const char *file_name, t_redir_type redir_type) // add
 {
 	int	fd;
 
+	if (!file_name)
+	{
+		ft_putstr_fd("Error: No filename provided for rediraction\n", STDERR_FILENO);
+		return (-1);
+	}
+	if (access(file_name, F_OK) == -1 && (redir_type == REDIR_INPUT))
+	{
+		ft_putstr_fd("Error: File not found.\n", STDERR_FILENO);
+		return (-1);
+	}
 	if (redir_type == REDIR_INPUT)	// populate the open_flags variable in the redir struct later
 		fd = open(file_name, O_RDONLY);
 	else if (redir_type == REDIR_OUTPUT)

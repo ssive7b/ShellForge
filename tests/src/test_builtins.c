@@ -17,7 +17,7 @@ Test(builtins_suite, test_export_args)
 	char **env = __environ;
 	init_env(env);
 
-	int fd_out = open("test_export_noargs.txt", O_RDWR | O_CREAT | O_TRUNC, 0644);
+	int fd_out = open("test_export.txt", O_RDWR | O_CREAT | O_TRUNC, 0644);
 	t_ast_node cmd_node = {
 		.type = NODE_COMMAND,
 		.cmd_pathname = NULL,
@@ -32,6 +32,7 @@ Test(builtins_suite, test_export_args)
 
 	cmd_node.args = (char *[]){"export", NULL};
 	exec_builtin(&cmd_node);
+	unlink("test_export.txt"); // comment if needed to see the outputs
 }
 
 Test(builtins_suite, test_export_change_existing)
@@ -39,7 +40,7 @@ Test(builtins_suite, test_export_change_existing)
 	char **env = __environ;
 	init_env(env);
 
-	int fd_out = open("test_export_noargs.txt", O_RDWR | O_CREAT | O_TRUNC, 0644);
+	int fd_out = open("test_export.txt", O_RDWR | O_CREAT | O_TRUNC, 0644);
 	t_ast_node cmd_node = {
 		.type = NODE_COMMAND,
 		.cmd_pathname = NULL,
@@ -58,6 +59,7 @@ Test(builtins_suite, test_export_change_existing)
 
 	cmd_node.args = (char *[]){"export", NULL};
 	exec_builtin(&cmd_node);
+	unlink("test_export.txt");
 }
 
 Test(builtins_suite, test_cd)
@@ -65,27 +67,23 @@ Test(builtins_suite, test_cd)
 	char **env = __environ;
 	init_env(env);
 
-	int fd_out = open("test_cd.txt", O_RDWR | O_CREAT | O_TRUNC, 0644);
 	t_ast_node cmd_node = {
 		.type = NODE_COMMAND,
 		.cmd_pathname = NULL,
 		.args = (char *[]){"cd", NULL},
 		.fd_in = STDIN_FILENO,
-		.fd_out = fd_out
+		.fd_out = STDOUT_FILENO
 	};
 	
     exec_builtin(&cmd_node);
 	char *path = get_envp_value("PWD", *get_env());
-	printf("pwd: %s\n", path);
     cr_assert(ft_strcmp(path, "/home/svet") == 0, "Failed to change pwd to home");
 
 	cmd_node.args = (char *[]){"cd", "/home/svet/Documents", NULL};
 	exec_builtin(&cmd_node);
 	path = get_envp_value("PWD", *get_env());
-	printf("pwd: %s\n", path);
 	cr_assert(ft_strcmp(path, "/home/svet/Documents") == 0, "Failed to change to new pwd!");
 
 	path = get_envp_value("OLDPWD", *get_env());
-	printf("oldpwd: %s\n", path);
-	cr_assert(ft_strcmp(path, "/home/svet") == 0, "Failed to oldpwd!");
+	cr_assert(ft_strcmp(path, "/home/svet") == 0, "Failed to change oldpwd!");
 }

@@ -67,15 +67,18 @@ void	*execute_redirection(t_tty *sh, t_ast_node *node) // to-do: allow for HERED
 {
 	int	fd;
 
-	if (!node)
+	if (!node || !node->redir)
 		return (NULL);
-	fd = open_redirection_flle(node->redir->file_name, node->redir->type);
+	if (node->redir->type == REDIR_HEREDOC)
+		fd = get_heredoc_fd(node->redir);
+	else
+		fd = open_redirection_flle(node->redir->file_name, node->redir->type);
 	if (fd == -1)
 	{
-		perror("open");
+		perror("redirection error");
 		return (NULL);
 	}
-	if (node->redir->type == REDIR_INPUT)
+	if (node->redir->type == REDIR_INPUT || node->redir->type == REDIR_HEREDOC)
 		node->left->fd_in = fd;
 	else
 		node->left->fd_out = fd;

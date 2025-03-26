@@ -20,6 +20,7 @@ SRC						=	$(SRC_DIR)/app/main.c											\
 							$(SRC_DIR)/executioner/execute.c								\
 							$(SRC_DIR)/executioner/exec_mode_handlers.c						\
 							$(SRC_DIR)/executioner/exec_utils.c								\
+							$(SRC_DIR)/executioner/heredoc.c								\
 							$(SRC_DIR)/executioner/builtins/builtin_utils.c					\
 							$(SRC_DIR)/executioner/builtins/cd.c							\
 							$(SRC_DIR)/executioner/builtins/echo.c							\
