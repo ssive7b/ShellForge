@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   lexer.c                                            :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/14 00:57:52 by sstoev            #+#    #+#             */
-/*   Updated: 2025/03/27 23:07:07 by cschnath         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "char_designation.h"
 #include "lexer.h"
 #include "utils.h"
@@ -46,19 +34,18 @@ static t_lexer_state	word_state(t_lexer *lx)
 {
 	t_token	token;
 	size_t	start_idx;
+	char	*quoted_str;
 
 	start_idx = lx->idx;
 	if (lx->input[lx->idx] == DOUBLE_QUOTE)
 	{
 		token.type = TOKEN_WORD_DQUOTED;
-		lx->idx += ft_find_char_qadjusted(&lx->input[lx->idx + 1], DOUBLE_QUOTE)
-			+ 1;
+		quoted_str = handle_quotes(lx, DOUBLE_QUOTE);
 	}
 	else if (lx->input[lx->idx] == SINGLE_QUOTE)
 	{
 		token.type = TOKEN_WORD_SQUOTED;
-		lx->idx += ft_find_char_qadjusted(&lx->input[lx->idx + 1], SINGLE_QUOTE)
-			+ 1;
+		quoted_str = handle_quotes(lx, SINGLE_QUOTE);
 	}
 	else
 	{
@@ -67,14 +54,15 @@ static t_lexer_state	word_state(t_lexer *lx)
 			|| ft_is_escaped(lx->input, lx->idx))
 			lx->idx++;
 		lx->idx--;
+		quoted_str = ft_substr(lx->input, start_idx, lx->idx - start_idx + 1);
 	}
-	token.value = ft_substr(lx->input, start_idx, lx->idx - start_idx + 1);
-	if (ft_strlen(token.value) > 0)
+	token.value = quoted_str;
+	if (token.value && ft_strlen(token.value) > 0)
 		ft_append_token(&lx->tokens, ft_create_token(token));
 	if (lx->input[lx->idx + 1] == '\0')
 		return (NULL);
 	// Check if the next character is an operator or meta-character
-	if ((lx->input[lx->idx + 1]) && ft_is_operator(lx->input[lx->idx + 1]))
+	if (ft_is_operator(lx->input[lx->idx + 1]))
 		return ((t_lexer_state)operator_state);
 	return ((t_lexer_state)delimiter_state);
 }
