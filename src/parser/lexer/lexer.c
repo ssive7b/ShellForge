@@ -1,5 +1,6 @@
 #include "char_designation.h"
 #include "lexer.h"
+#include "parser.h"
 #include "utils.h"
 #include <stdio.h>
 #include <stdlib.h>

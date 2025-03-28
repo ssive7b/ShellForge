@@ -6,7 +6,7 @@
 /*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 00:40:24 by sstoev            #+#    #+#             */
-/*   Updated: 2025/03/28 22:41:27 by cschnath         ###   ########.fr       */
+/*   Updated: 2025/03/28 23:16:04 by cschnath         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,8 +60,5 @@ void	ft_init_lex(t_lexer *lx, char *input);
 t_token	*ft_create_token(t_token token_data);
 void	ft_append_token(t_token **tokens_queue, t_token *new_token);
 void	ft_print_tokens(t_token *tokens);
-
-// parser.c
-char	*handle_quotes(t_lexer *lx, char quote_type);
 
 #endif
