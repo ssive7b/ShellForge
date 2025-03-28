@@ -1,19 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   init.c                                             :+:      :+:    :+:   */
+/*   ft_putendl_fd.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sstoev <sstoev@student.42malaga.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/03 01:13:31 by cschnath          #+#    #+#             */
-/*   Updated: 2025/03/03 01:14:07 by cschnath         ###   ########.fr       */
+/*   Created: 2024/09/26 12:51:42 by sstoev            #+#    #+#             */
+/*   Updated: 2024/09/26 12:53:31 by sstoev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "libft.h"
 
-void	ft_init(int argc, char **argv)
+void	ft_putendl_fd(char *s, int fd)
 {
-    (void)argc;
-    (void)argv;
+	if (fd < 0 || !s)
+		return ;
+	ft_putstr_fd(s, fd);
+	write(fd, &"\n", 1);
 }

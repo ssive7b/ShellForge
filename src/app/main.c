@@ -1,41 +1,49 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/03 00:53:38 by cschnath          #+#    #+#             */
-/*   Updated: 2025/03/06 22:56:48 by cschnath         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
-// Compile with cc -Wall -Werror -Wextra main.c init.c -lreadline
-// Run with ./a.out
-
+#include "ast_mock.h"
+#include "env_utils.h"
+#include "executioner.h"
+#include "expansions.h"
+#include "lexer.h"
 #include "minishell.h"
+#include <linux/limits.h>
+#include <readline/history.h>
+#include <readline/readline.h>
+#include <signal.h>
+#include <stdio.h>
+#include <stdlib.h>
 
-int	main(int argc, char **argv)
+int	main(int argc, char **argv, char **envp)
 {
-	char *line;
-    
-	ft_init(argc, argv);
+	t_tty minish;
+	t_token *tokens;
+	t_ast_node *ast_root;
+
+	(void)argc;
+	(void)argv;
+	init_minishell(&minish, envp);
 	while (1)
 	{
-		line = readline("> ");
-		if (!line)
+		minish.line = readline(minish.prompt);
+		if (!minish.line)
+		{
+			printf("breaking\n");
 			break ;
-		make_tokens(line);
-		if (line[0] != '\0')
-			add_history(line);
-		printf("%s\n", line);
-		free(line);
+		}
+		if (*minish.line)
+		{
+			tokens = ft_lexer(minish.line);
+			if (!tokens)
+			{
+				printf("Lexer returned NULL\n");
+				return (1);
+			}
+			expand_tokens(tokens, minish.envp, minish.exit_status);
+			ft_print_tokens(tokens); // Debugging: Print tokens
+			ast_root = construct_ast(tokens);
+			print_ast(ast_root, 0); // Debugging: Print AST
+			add_history(minish.line);
+		}
+		// exec_astree(&minish, minish.ast_tree);
+		free(minish.line);
 	}
 	return (0);
 }
-
-
-
-
-
-

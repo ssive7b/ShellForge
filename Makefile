@@ -3,16 +3,7 @@ NAME					=	minishell
 TEST_EXEC				=	test_runner
 LIBFT 					=	libft
 INCLUDES				=	./include
-MAKEFLASRC_DIR)/parser/lexer/lexer.c									\
-							$(SRC_DIR)/parser/lexer/lexer_utils.c							\
-							$(SRC_DIR)/parser/parsing/parser.c								\
-							$(SRC_DIR)/executioner/init_execs.c								\
-							$(SRC_DIR)/executioner/execute.c								\
-							$(SRC_DIR)/executioner/exec_mode_handlers.c						\
-							$(SRC_DIR)/executioner/exec_utils.c								\
-							$(SRC_DIR)/executioner/heredoc.c								\
-							$(SRC_DIR)/executioner/builtins/builtin_utils.c					\
-							$(SRC_DIGS				+=	--no-print-directory
+MAKEFLAGS				+=	--no-print-directory
 
 ###	Source files specs
 #	dirs
@@ -24,8 +15,10 @@ SRC						=	$(SRC_DIR)/app/main.c											\
 							$(SRC_DIR)/env/env_init.c										\
 							$(SRC_DIR)/env/env_utils.c										\
 							$(SRC_DIR)/parser/ast/ast.c										\
+							$(SRC_DIR)/parser/lexer/lexer_utils.c							\
+							$(SRC_DIR)/parser/lexer/lexer.c									\
 							$(SRC_DIR)/parser/expansions/expander.c							\
-							$(R)/executioner/builtins/cd.c							\
+							$(SRC_DIR)/executioner/builtins/cd.c							\
 							$(SRC_DIR)/executioner/builtins/echo.c							\
 							$(SRC_DIR)/executioner/builtins/env.c							\
 							$(SRC_DIR)/executioner/builtins/exit.c							\

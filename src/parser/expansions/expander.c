@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <string.h>
 
-void expand_tokens(t_token *tokens, char **envp)
+void expand_tokens(t_token *tokens, char **envp, int last_exit_status)
 {
 	while (tokens)
 	{
@@ -25,21 +25,21 @@ void expand_tokens(t_token *tokens, char **envp)
 			continue;
 		}
 		expand_tilde(&tokens->value, envp);
-		expand_variables(&tokens->value, envp);
+		expand_variables(&tokens->value, envp, last_exit_status);
 		expand_wildcards(&tokens->value);
 		tokens = tokens->next;
 	}
 }
 
 // Replaces Tilde with the HOME environment variable
-void	expand_tilde(char **token, t_envp *env)
+void	expand_tilde(char **token, char **envp)
 {
 	char	*home;
 	char	*expanded;
 
 	if (!(*token) || **token != '~')
 		return ;
-	home = getenv_list(env, "HOME");
+	home = getenv_list(envp, "HOME");
 	if (!home)
 		return ;
 	if ((*token)[1] == '\0') // "~" alleine
@@ -51,26 +51,30 @@ void	expand_tilde(char **token, t_envp *env)
 }
 
 // Expands $VAR and $?
-void	expand_variables(char **token, t_envp *env)
+void	expand_variables(char **token, char **envp, int last_exit_status)
 {
 	int		i;
 	char	*var_start;
 	char	*expanded;
 	char	*var_value;
 
+	if (!token || !*token)
+		return ;
 	i = 0;
 	expanded = ft_strdup(*token);
+	if (!expanded)
+		return ;
 	while (expanded[i])
 	{
 		if (expanded[i] == '$' && valid_var_chr(expanded[i + 1]))
 		{
 			var_start = &expanded[i + 1];
 			if (*var_start == '?')
-				var_value = ft_itoa(env->last_exit_status);
+				var_value = ft_itoa(last_exit_status);
 			else
-				var_value = getenv_list(env, var_start);
+				var_value = getenv_list(envp, var_start);
 			replace_variable(&expanded, i, var_start, var_value);
-			if (var_value)
+			if (var_value && *var_start == '?')
 				free(var_value);
 		}
 		i++;
@@ -134,20 +138,19 @@ void	expand_wildcards(char **token)
 		free(expanded);
 }
 
-char	*getenv_list(t_envp *env, const char *name)
+char	*getenv_list(char **envp, const char *name)
 {
 	int		i;
 	size_t	name_len;
 
-	if (!env || !env->envp || !name)
+	if (!envp || !name)
 		return (NULL);
 	name_len = ft_strlen(name);
 	i = 0;
-	while (env->envp[i])
+	while (envp[i])
 	{
-		// Check if "KEY=" matches the start of the env var
-		if (ft_strncmp(env->envp[i], name, name_len) == 0 && env->envp[i][name_len] == '=')
-			return (env->envp[i] + name_len + 1); // Return pointer to VALUE part
+		if (ft_strncmp(envp[i], name, name_len) == 0 && envp[i][name_len] == '=')
+			return (envp[i] + name_len + 1);
 		i++;
 	}
 	return (NULL);
