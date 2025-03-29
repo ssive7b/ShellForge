@@ -42,7 +42,7 @@ int	main(int argc, char **argv, char **envp)
 			print_ast(ast_root, 0); // Debugging: Print AST
 			add_history(minish.line);
 		}
-		exec_astree(&minish, ast_root);
+		// exec_astree(&minish, ast_root);
 		free(minish.line);
 	}
 	return (0);
