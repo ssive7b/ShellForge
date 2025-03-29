@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sstoev <sstoev@student.42.fr>              +#+  +:+       +#+        */
+/*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 00:40:24 by sstoev            #+#    #+#             */
-/*   Updated: 2025/03/11 00:40:28 by sstoev           ###   ########.fr       */
+/*   Updated: 2025/03/28 23:16:04 by cschnath         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,15 +19,17 @@
 typedef enum e_token_type 
 {
 	TOKEN_UNKNOWN,
-	TOKEN_PIPE,
-	TOKEN_REDIR_OUT,
-	TOKEN_REDIR_IN,
-	TOKEN_REDIR_APPEND,
-	TOKEN_REDIR_HEREDOC,
-	TOKEN_WORD_UNQUOTED,
+	TOKEN_PIPE, // |
+	TOKEN_REDIR_OUT, // >
+	TOKEN_REDIR_IN, // <
+	TOKEN_REDIR_APPEND, // >>
+	TOKEN_REDIR_HEREDOC, // <<
+	TOKEN_OR, // || ADDED THIS
+	TOKEN_AND, // && ADDED THIS
+	TOKEN_WORD_UNQUOTED, 
 	TOKEN_WORD_DQUOTED,
 	TOKEN_WORD_SQUOTED,
-	TOKEN_DELIMITER
+	TOKEN_END, // end of input, replaced TOKEN_DELIMITER after every word
 }	t_token_type;
 
 typedef struct	s_token

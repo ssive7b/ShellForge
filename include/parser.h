@@ -1,26 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strlen.c                                        :+:      :+:    :+:   */
+/*   parser.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sstoev <sstoev@student.42malaga.com>       +#+  +:+       +#+        */
+/*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/19 14:20:36 by sstoev            #+#    #+#             */
-/*   Updated: 2024/09/19 14:59:47 by sstoev           ###   ########.fr       */
+/*   Created: 2025/03/28 23:15:48 by cschnath          #+#    #+#             */
+/*   Updated: 2025/03/28 23:19:08 by cschnath         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
+#ifndef PARSER_H
+# define PARSER_H
 
-size_t	ft_strlen(const char *str)
-{
-	size_t	len;
+# include "lexer.h"
+# include "ast_mock.h"
 
-	len = 0;
-	while (*str)
-	{
-		len++;
-		str++;
-	}
-	return (len);
-}
+// parser.c
+char	*handle_quotes(t_lexer *lx, char quote_type);
+void process_the_operators(t_ast_stack **op_stack, t_ast_stack **operand_stack);
+
+#endif
