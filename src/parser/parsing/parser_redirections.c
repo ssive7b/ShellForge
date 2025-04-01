@@ -43,7 +43,7 @@ bool	add_redirection_to_command(t_lexer *lexer, t_ast_node *cmd)
 
 t_redir	*create_redirection(t_lexer *lexer)
 {
-	t_redir	*redir;
+	t_redir			*redir;
 	t_token_type	token_type;
 
 	redir = malloc(sizeof(t_redir));
@@ -69,7 +69,7 @@ t_redir	*create_redirection(t_lexer *lexer)
 	return (redir);
 }
 
-bool set_redirection_target(t_lexer *lexer, t_redir *redir)
+bool	set_redirection_target(t_lexer *lexer, t_redir *redir)
 {
 	char	*value;
 

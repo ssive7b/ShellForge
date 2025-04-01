@@ -52,7 +52,7 @@ static t_lexer_state	word_state(t_lexer *lx)
 	else if (lx->input[lx->idx] == SINGLE_QUOTE)
 	{
 		token.type = TOKEN_WORD_SQUOTED;
-		lx->idx += ft_find_char_qadjusted(&lx->input[lx->idx + 1], SINGLE_QUOTE) + 1; 
+		lx->idx += ft_find_char_qadjusted(&lx->input[lx->idx + 1], SINGLE_QUOTE) + 1;
 	}
 	else
 	{
@@ -63,7 +63,7 @@ static t_lexer_state	word_state(t_lexer *lx)
 	}
 	token.value = ft_substr(lx->input, start_idx, lx->idx - start_idx + 1);
 	if (!token.value)
-		return (NULL); // handle properly later
+		return (NULL);
 	if (ft_strlen(token.value) > 0)
 		ft_append_token(&lx->tokens, ft_create_token(token));
 	return ((t_lexer_state) delimiter_state);
@@ -90,8 +90,8 @@ t_lexer_state	operator_state(t_lexer *lx)
 		len = 2;
 	else
 		return (NULL);
-	token.value = ft_substr(lx->input, lx->idx, len); // rethink if we need it? can just put it as NULL and deduce from the type
-	if (!token.value) // handle properly later
+	token.value = ft_substr(lx->input, lx->idx, len);
+	if (!token.value)
 		return (NULL);
 	lx->idx = lx->idx + len - 1;
 	if (ft_strlen(token.value) > 0)
@@ -123,7 +123,7 @@ static t_lexer_state	delimiter_state(t_lexer *lx)
 	return ((t_lexer_state) word_state);
 }
 
-static t_token_type		get_op_token_type(const char *input)
+static t_token_type	get_op_token_type(const char *input)
 {
 	if (!input || !*input)
 		return (TOKEN_UNKNOWN);

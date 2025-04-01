@@ -38,7 +38,8 @@ void	free_ast_node(t_ast_node *node)
 		return ;
 	if (node->type == NODE_COMMAND)
 	{
-		free(node->cmd_pathname);
+		if (node->cmd_pathname)
+			free(node->cmd_pathname);
 		if (node->args)
 		{
 			while(node->args[i])

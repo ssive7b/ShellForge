@@ -75,24 +75,25 @@ bool	parse_infix_operators(t_lexer *lexer, t_ast_stack **operator_stack, t_ast_s
 t_ast_node	*finalize_expression(t_ast_stack **operator_stack, t_ast_stack **operand_stack, t_lexer *lexer)
 {
 	t_ast_node	*result;
-    while (*operator_stack)
-    {
-        if (!process_operator(operator_stack, operand_stack))
-        {
-            perror("Error: Failed to process operator");
-            lexer->error = 1;
-            return (NULL);
-        }
-    }
-    result = pop_ast_stack(operand_stack);
-    if (*operand_stack)
-    {
-        perror("Syntax error: invalid expression");
+
+	while (*operator_stack)
+	{
+		if (!process_operator(operator_stack, operand_stack))
+		{
+			perror("Error: Failed to process operator");
+			lexer->error = 1;
+			return (NULL);
+		}
+	}
+	result = pop_ast_stack(operand_stack);
+	if (*operand_stack)
+	{
+		perror("Syntax error: invalid expression");
 		free_ast_node(result);
-        lexer->error = 1;
-        return (NULL);
-    }
-    return (result);
+		lexer->error = 1;
+		return (NULL);
+	}
+	return (result);
 }
 
 t_ast_node	*parse_command_with_redirects(t_lexer *lexer)
@@ -114,5 +115,3 @@ t_ast_node	*parse_command_with_redirects(t_lexer *lexer)
 	}
 	return (cmd);
 }
-
-

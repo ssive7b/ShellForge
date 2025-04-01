@@ -17,35 +17,35 @@
 
 bool	is_command_token(t_token_type type)
 {
-    return (type == TOKEN_WORD_UNQUOTED
-        || type == TOKEN_WORD_DQUOTED
-        || type == TOKEN_WORD_SQUOTED);
+	return (type == TOKEN_WORD_UNQUOTED
+		|| type == TOKEN_WORD_DQUOTED
+		|| type == TOKEN_WORD_SQUOTED);
 }
 
 bool	is_operator_token(t_token_type type)
 {
-    return (type == TOKEN_PIPE
-        || type == TOKEN_AND
-        || type == TOKEN_OR);
+	return (type == TOKEN_PIPE
+		|| type == TOKEN_AND
+		|| type == TOKEN_OR);
 }
 
 bool	is_argument_token(t_token_type type)
 {
-    return (type == TOKEN_WORD_UNQUOTED
-        || type == TOKEN_WORD_DQUOTED
-        || type == TOKEN_WORD_SQUOTED);
+	return (type == TOKEN_WORD_UNQUOTED
+		|| type == TOKEN_WORD_DQUOTED
+		|| type == TOKEN_WORD_SQUOTED);
 }
 
-bool is_command_separator(t_token_type type)
+bool	is_command_separator(t_token_type type)
 {
 	return (type == TOKEN_SEMICOLON
-        || type == TOKEN_AMPERSAND);
+		|| type == TOKEN_AMPERSAND);
 }
 
-bool is_redirection_token(t_token_type type)
+bool	is_redirection_token(t_token_type type)
 {
-    return (type == TOKEN_REDIR_IN
-        || type == TOKEN_REDIR_OUT
-        || type == TOKEN_REDIR_APPEND
+	return (type == TOKEN_REDIR_IN
+		|| type == TOKEN_REDIR_OUT
+		|| type == TOKEN_REDIR_APPEND
 		|| type == TOKEN_REDIR_HEREDOC);
 }
