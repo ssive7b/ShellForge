@@ -30,15 +30,15 @@ t_ast_node	*ast_new(t_node_type type, t_token *token)
     if (type == NODE_COMMAND)
     {
         new->cmd_pathname = token->value;
-        new->args = malloc(2 * sizeof(char *)); // Space for command name + NULL terminator
+        new->args = malloc(2 * sizeof(char *));
         if (!new->args)
         {
             free(new);
             printf("Error: Memory allocation failed for args in ast_new\n");
             return (NULL);
         }
-        new->args[0] = token->value; // Command name
-        new->args[1] = NULL;         // Null-terminate the array
+        new->args[0] = token->value;
+        new->args[1] = NULL;
     }
     return (new);
 }
@@ -47,34 +47,25 @@ int	get_operator_precedence(t_node_type type)
 {
 	if (type == NODE_PIPE)
 		return (1);
-	if (type == NODE_OR || type == NODE_AND)
+	if (type == NODE_OR)
 		return (2);
-	if (type == NODE_REDIRECTION)
+	if (type == NODE_AND)
 		return (3);
+	if (type == NODE_REDIRECTION)
+		return (4);
 	return (0);
 }
 
 void	push_ast_stack(t_ast_stack **stack, t_ast_node *node)
 {
 	t_ast_stack	*new_node;
-	t_ast_stack	*temp;
 
 	new_node = malloc(sizeof(t_ast_stack));
 	if (!new_node)
 		return ;
 	new_node->node = node;
-	new_node->next = NULL;
-	if (*stack == NULL)
-		*stack = new_node;
-	else
-	{
-		temp = *stack;
-		while (temp->next)
-		{
-			temp = temp->next;
-		}
-		temp->next = new_node;
-	}
+	new_node->next = *stack;
+	*stack = new_node;
 }
 
 t_ast_node	*pop_ast_stack(t_ast_stack **stack)
@@ -91,14 +82,13 @@ t_ast_node	*pop_ast_stack(t_ast_stack **stack)
 	return (node);
 }
 
-// Process operators and build subtrees
-bool	process_operator(t_ast_stack **op_stack, t_ast_stack **operand_stack)
+bool	process_operator(t_ast_stack **operator_stack, t_ast_stack **operand_stack)
 {
     t_ast_node	*op_node;
 
-    if (!op_stack || !*op_stack)
+    if (!operator_stack || !*operator_stack)
         return (false);
-    op_node = pop_ast_stack(op_stack);
+    op_node = pop_ast_stack(operator_stack);
     if (!op_node)
         return (false);
     op_node->right = pop_ast_stack(operand_stack);
@@ -110,46 +100,6 @@ bool	process_operator(t_ast_stack **op_stack, t_ast_stack **operand_stack)
     }
     push_ast_stack(operand_stack, op_node);
     return (true);
-}
-
-// Build AST from tokens
-t_ast_node	*construct_ast(t_token *tokens)
-{
-	t_ast_stack	*operand_stack;
-	t_ast_stack	*op_stack;
-	t_ast_node	*cmd_node;
-	t_node_type	op_type;
-	t_ast_node	*root;
-
-	operand_stack = NULL;
-	op_stack = NULL;
-	while (tokens)
-	{
-		if (tokens->type == TOKEN_WORD_UNQUOTED
-			|| tokens->type == TOKEN_WORD_DQUOTED
-			|| tokens->type == TOKEN_WORD_SQUOTED)
-		{
-			cmd_node = ast_new(NODE_COMMAND, tokens);
-			if (cmd_node)
-				push_ast_stack(&operand_stack, cmd_node);
-		}
-		else
-		{
-			op_type = get_ast_node_type_from_token(tokens->type);
-			// Convert token type to AST node type
-			while (op_stack
-				&& get_operator_precedence(op_stack->node->type) >= get_operator_precedence(op_type))
-				process_operator(&op_stack, &operand_stack);
-			push_ast_stack(&op_stack, ast_new(op_type, tokens));
-		}
-		tokens = tokens->next;
-	}
-	while (op_stack)
-		process_operator(&op_stack, &operand_stack);
-	root = pop_ast_stack(&operand_stack);
-	if (!root)
-		printf("AST construction failed: operand stack was empty\n");
-	return (root);
 }
 
 t_node_type	get_ast_node_type_from_token(t_token_type type)
@@ -170,6 +120,7 @@ t_node_type	get_ast_node_type_from_token(t_token_type type)
 void	print_ast(t_ast_node *node, int level)
 {
 	int	i;
+	int j;
 
 	if (!node)
 		return ;
@@ -180,7 +131,16 @@ void	print_ast(t_ast_node *node, int level)
 		i++;
 	}
 	if (node->type == NODE_COMMAND)
-		printf("CMD: %s\n", node->cmd_pathname);
+	{
+		j = 0;
+		printf("CMD: ");
+		while (node->args[j])
+		{
+			printf("%s ", node->args[j]);
+			j++;
+		}
+		printf("\n");
+	}
 	else if (node->type == NODE_PIPE)
 		printf("PIPE\n");
 	else if (node->type == NODE_AND)

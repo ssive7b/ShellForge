@@ -19,6 +19,8 @@ SRC						=	$(SRC_DIR)/app/main.c											\
 							$(SRC_DIR)/parser/ast/ast.c										\
 							$(SRC_DIR)/parser/expansions/expander.c							\
 							$(SRC_DIR)/parser/parsing/parser.c								\
+							$(SRC_DIR)/parser/parsing/parser_handlers.c						\
+							$(SRC_DIR)/parser/parsing/parser_utils.c						\
 							$(SRC_DIR)/executioner/init_execs.c								\
 							$(SRC_DIR)/executioner/execute.c								\
 							$(SRC_DIR)/executioner/exec_mode_handlers.c						\

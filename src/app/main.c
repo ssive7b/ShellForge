@@ -43,7 +43,7 @@ int	main(int argc, char **argv, char **envp)
 			lexer.error = 0;
 			//expand_tokens(tokens, minish.envp, minish.exit_status);
 			//ft_print_tokens(tokens); // Debugging: Print tokens
-			ast_root = parse_input(&lexer);
+			ast_root = parse_tokens(&lexer);
 			print_ast(ast_root, 0); // Debugging: Print AST
 			add_history(minish.line);
 		}
