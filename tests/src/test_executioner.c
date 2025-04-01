@@ -126,7 +126,7 @@ Test(execution_suite, test_redirection_output)
 		.fd_out = STDOUT_FILENO
 	};
 
-    t_redirection redir = {
+    t_redir redir = {
 		.type = REDIR_OUTPUT,
 		.file_name = "output.txt"
 	};
@@ -166,7 +166,7 @@ Test(execution_suite, test_redirection_input)
 		.fd_out = STDOUT_FILENO
 	};
 
-    t_redirection redir = {
+    t_redir redir = {
 		.type = REDIR_INPUT,
 		.file_name = "input.txt"
 	};
@@ -212,7 +212,7 @@ Test(execution_suite, test_redirection_append)
 		.fd_out = STDOUT_FILENO
 	};
 
-    t_redirection redir = {
+    t_redir redir = {
 		.type = REDIR_APPEND,
 		.file_name = "output_append.txt"
 	};
@@ -348,7 +348,7 @@ Test(execution_suite, test_heredoc)
         .fd_out = STDOUT_FILENO
     };
 
-    t_redirection redir = {
+    t_redir redir = {
         .type = REDIR_HEREDOC,
         .delimiter_heredoc = "EOF"
     };

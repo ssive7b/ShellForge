@@ -43,7 +43,7 @@ typedef struct s_redirection
 	char					*delimiter_heredoc;
 	int						fd;
 	int						open_flags;
-}							t_redirection;
+}							t_redir;
 
 typedef struct s_ast_node
 {

@@ -18,19 +18,31 @@
 
 // parser.c
 t_ast_node	*parse_tokens(t_lexer *lexer);
+t_ast_node	*parse_expression(t_lexer *lexer);
+bool		parse_infix_operators(t_lexer *lexer, t_ast_stack **operator_stack, t_ast_stack **operand_stack);
+t_ast_node	*finalize_expression(t_ast_stack **operator_stack, t_ast_stack **operand_stack, t_lexer *lexer);
+t_ast_node	*parse_command_with_redirects(t_lexer *lexer);
 
 // parser_handlers.c
+bool		handle_operator_precedence(t_lexer *lexer, t_ast_stack **operator_stack, t_ast_stack **operand_stack);
 t_ast_node	*parse_command(t_lexer *lexer);
-int		handle_operator(t_lexer *lexer, t_ast_stack **operator_stack, t_ast_stack **operand_stack);
-int 		handle_left_parenthesis(t_lexer *lexer, t_ast_stack **operator_stack);
-int 		handle_right_parenthesis(t_lexer *lexer, t_ast_stack **operator_stack, t_ast_stack **operand_stack);
+t_ast_node	*parse_parenthesized_expression(t_lexer *lexer);
+
+// parser_redirections.c
+bool		add_redirection_to_command(t_lexer *lexer, t_ast_node *cmd);
+t_redir		*create_redirection(t_lexer *lexer);
+bool 		set_redirection_target(t_lexer *lexer, t_redir *redir);
+
+// parser_aux.c
+void		advance_token(t_lexer *lexer);
+bool		add_argument_to_node(t_ast_node *node, const char *arg);
+void		print_stack(t_ast_stack *stack, const char *name);
 
 // parser_utils.c
-void		advance_token(t_lexer *lexer);
-int			is_command_token(t_token_type type);
-int			is_operator_token(t_token_type type);
-int			is_argument_token(t_token_type type);
-void		add_argument_to_node(t_ast_node *node, const char *arg);
-void		print_stack(t_ast_stack *stack, const char *name);
+bool		is_command_token(t_token_type type);
+bool		is_operator_token(t_token_type type);
+bool		is_argument_token(t_token_type type);
+bool 		is_command_separator(t_token_type type);
+bool 		is_redirection_token(t_token_type type);
 
 #endif

@@ -1,101 +1,118 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parser.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sstoev <sstoev@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/02 00:25:50 by sstoev            #+#    #+#             */
+/*   Updated: 2025/04/02 00:25:51 by sstoev           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "ast_mock.h"
 #include "lexer.h"
 #include "minishell.h"
 #include "parser.h"
 #include "utils.h"
 
-static int	process_token(t_lexer *lexer, t_ast_stack **operator_stack, t_ast_stack **operand_stack);
-static int	process_command_token(t_lexer *lexer, t_ast_stack **operand_stack);
-static int	process_operator_token(t_lexer *lexer, t_ast_stack **operator_stack, t_ast_stack **operand_stack);
-static int	finalize_ast(t_ast_stack **operator_stack, t_ast_stack **operand_stack, t_lexer *lexer, t_ast_node **ast_root);
-
 t_ast_node	*parse_tokens(t_lexer *lexer)
 {
-    t_ast_stack	*operator_stack = NULL;
-    t_ast_stack	*operand_stack = NULL;
-    t_ast_node	*ast_root = NULL;
+	t_ast_node	*result;
 
-    while (lexer->tokens)
-    {
-        if (!process_token(lexer, &operator_stack, &operand_stack))
-		{
-			free_ast_stack(&operator_stack);
-			free_ast_stack(&operand_stack);
-			return (NULL);
-		}
-    }
-    if (!finalize_ast(&operator_stack, &operand_stack, lexer, &ast_root))
-    {
+	result = parse_expression(lexer);
+	if (result && lexer->tokens)
+	{
+		perror("Error: Unexpected token after expression\n");
+		free_ast_node(result);
+		lexer->error = 1;
+		return (NULL);
+	}
+	return (result);
+}
+
+t_ast_node	*parse_expression(t_lexer *lexer)
+{
+	t_ast_stack	*operator_stack;
+	t_ast_stack	*operand_stack;
+	t_ast_node	*first_operand;
+	t_ast_node	*finalized_expression;
+
+	operator_stack = NULL;
+	operand_stack = NULL;
+	first_operand = parse_command_with_redirects(lexer);
+	if (!first_operand)
+		return (NULL);
+	if (!push_ast_stack(&operand_stack, first_operand))
+		return (NULL);
+	if (!parse_infix_operators(lexer, &operator_stack, &operand_stack))
+	{
 		free_ast_stack(&operator_stack);
 		free_ast_stack(&operand_stack);
 		return (NULL);
 	}
-    return (ast_root);
+	finalized_expression = finalize_expression(&operator_stack, &operand_stack, lexer);
+	return (finalized_expression);
 }
 
-static int	process_token(t_lexer *lexer, t_ast_stack **operator_stack, t_ast_stack **operand_stack)
+bool	parse_infix_operators(t_lexer *lexer, t_ast_stack **operator_stack, t_ast_stack **operand_stack)
 {
-    if (is_command_token(lexer->tokens->type))
-        return (process_command_token(lexer, operand_stack));
-    else if (is_operator_token(lexer->tokens->type))
-        return (process_operator_token(lexer, operator_stack, operand_stack));
-    else if (lexer->tokens->type == TOKEN_LPAREN)
-        return (handle_left_parenthesis(lexer, operator_stack));
-    else if (lexer->tokens->type == TOKEN_RPAREN)
-        return (handle_right_parenthesis(lexer, operator_stack, operand_stack));
-    else if (lexer->tokens->type == TOKEN_DELIMITER)
-    {
-        advance_token(lexer);
-        return (1);
-    }
-    else
-    {
-        perror("Syntax error: unexpected token");
-        lexer->error = 1;
-        return (0);
-    }
-}
+	t_ast_node	*next_operand;
 
-static int	process_command_token(t_lexer *lexer, t_ast_stack **operand_stack)
-{
-    t_ast_node	*command_node;
-	
-	command_node = parse_command(lexer);
-    if (!command_node)
-        return (0);
-    if (!push_ast_stack(operand_stack, command_node))
+	while (lexer->tokens && is_operator_token(lexer->tokens->type))
 	{
-		free_ast_node(command_node);
-		perror("Error: Failed to push command to stack");
-		lexer->error = 1;
-		return (0);
+		if (!handle_operator_precedence(lexer, operator_stack, operand_stack))
+			return (false);
+		next_operand = parse_command_with_redirects(lexer);
+		if (!next_operand)
+			return (false);
+		if (!push_ast_stack(operand_stack, next_operand))
+			return (false);
 	}
-    return (1);
+	return (true);
 }
 
-static int	process_operator_token(t_lexer *lexer, t_ast_stack **operator_stack, t_ast_stack **operand_stack)
+t_ast_node	*finalize_expression(t_ast_stack **operator_stack, t_ast_stack **operand_stack, t_lexer *lexer)
 {
-    return (handle_operator(lexer, operator_stack, operand_stack));
-}
-
-static int	finalize_ast(t_ast_stack **operator_stack, t_ast_stack **operand_stack, t_lexer *lexer, t_ast_node **ast_root)
-{
+	t_ast_node	*result;
     while (*operator_stack)
     {
         if (!process_operator(operator_stack, operand_stack))
         {
             perror("Error: Failed to process operator");
             lexer->error = 1;
-            return (0);
+            return (NULL);
         }
     }
-    *ast_root = pop_ast_stack(operand_stack);
+    result = pop_ast_stack(operand_stack);
     if (*operand_stack)
     {
-        fprintf(stderr, "%d\n", (*operand_stack)->node->type);
         perror("Syntax error: invalid expression");
+		free_ast_node(result);
         lexer->error = 1;
-        return (0);
+        return (NULL);
     }
-    return (1);
+    return (result);
 }
+
+t_ast_node	*parse_command_with_redirects(t_lexer *lexer)
+{
+	t_ast_node	*cmd;
+
+	if (lexer->tokens && lexer->tokens->type == TOKEN_LPAREN)
+		return (parse_parenthesized_expression(lexer));
+	cmd = parse_command(lexer);
+	if (!cmd)
+		return (NULL);
+	while (lexer->tokens && is_redirection_token(lexer->tokens->type))
+	{
+		if (!add_redirection_to_command(lexer, cmd))
+		{
+			free_ast_node(cmd);
+			return (NULL);
+		}
+	}
+	return (cmd);
+}
+
+

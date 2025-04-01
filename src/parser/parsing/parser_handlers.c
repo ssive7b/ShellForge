@@ -1,8 +1,42 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parser_handlers.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sstoev <sstoev@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/02 00:26:08 by sstoev            #+#    #+#             */
+/*   Updated: 2025/04/02 00:26:09 by sstoev           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "ast_mock.h"
 #include "lexer.h"
 #include "minishell.h"
 #include "parser.h"
 #include "utils.h"
+
+static bool	parse_command_arguments(t_lexer *lexer, t_ast_node *cmd);
+
+bool	handle_operator_precedence(t_lexer *lexer, t_ast_stack **operator_stack, t_ast_stack **operand_stack)
+{
+	t_node_type	current_op_type;
+	t_ast_node	*op_node;
+
+	current_op_type = get_ast_node_type_from_token(lexer->tokens->type);
+	while (*operator_stack && get_operator_precedence((*operand_stack)->node->type) >= get_operator_precedence(current_op_type))
+	{
+		if (!process_operator(operator_stack, operand_stack))
+			return (false);
+	}
+	op_node = ast_new(current_op_type, lexer->tokens);
+	if (!op_node)
+		return (false);
+	if (!push_ast_stack(operator_stack, op_node))
+		return (false);
+	advance_token(lexer);
+	return (true);
+}
 
 t_ast_node	*parse_command(t_lexer *lexer)
 {
@@ -18,84 +52,44 @@ t_ast_node	*parse_command(t_lexer *lexer)
 	if (!node)
 		return (NULL);
 	advance_token(lexer);
-	while (lexer->tokens && lexer->tokens->type == TOKEN_DELIMITER)
-		advance_token(lexer);
-	while (lexer->tokens && is_argument_token(lexer->tokens->type))
+	if (!parse_command_arguments(lexer, node))
 	{
-		add_argument_to_node(node, lexer->tokens->value);
-		advance_token(lexer);
-		while (lexer->tokens && lexer->tokens->type == TOKEN_DELIMITER)
-			advance_token(lexer);
+		free_ast_node(node);
+		return (NULL);
 	}
 	return (node);
 }
 
-int	handle_operator(t_lexer *lexer, t_ast_stack **operator_stack, t_ast_stack **operand_stack)
+t_ast_node	*parse_parenthesized_expression(t_lexer *lexer)
 {
-    t_node_type	op_type;
-	t_ast_node	*op_node;
-	
-	op_type = get_ast_node_type_from_token(lexer->tokens->type);
-    while (*operator_stack
-		&& (*operator_stack)->node->type != NODE_LPAREN
-		&& get_operator_precedence((*operator_stack)->node->type) >= get_operator_precedence(op_type))
+	t_ast_node	*expr;
+
+	advance_token(lexer);
+	expr = parse_expression(lexer);
+	if (!expr)
+		return (NULL);
+	if (!lexer->tokens || lexer->tokens->type != TOKEN_RPAREN)
 	{
-		if (!process_operator(operator_stack, operand_stack))
-		{
-			perror("Error: Failed to process operator");
-			lexer->error = 1;
-			return (0);
-		}
-	}
-	op_node = ast_new(op_type, lexer->tokens);
-	if (!op_node)
-	{
-		perror("Error: Memory allocation failed for operator node");
+		perror("Error: Missing closing parenthesis\n");
+		free_ast_node(expr);
 		lexer->error = 1;
-		return (0);
+		return (NULL);
 	}
-    push_ast_stack(operator_stack, op_node);
-    advance_token(lexer);
-	return (1);
+	advance_token(lexer);
+	return (expr);
 }
 
-int handle_left_parenthesis(t_lexer *lexer, t_ast_stack **operator_stack)
+static bool	parse_command_arguments(t_lexer *lexer, t_ast_node *cmd)
 {
-    t_ast_node *left_paren_node;
-	
-	left_paren_node = ast_new(NODE_LPAREN, lexer->tokens);
-    if (!left_paren_node)
-    {
-        fprintf(stderr, "Error: Memory allocation failed for left parenthesis\n");
-        lexer->error = 1;
-        return 0;
-    }
-    push_ast_stack(operator_stack, left_paren_node);
-    advance_token(lexer); // Move to the next token
-    return 1;
-}
-
-int handle_right_parenthesis(t_lexer *lexer, t_ast_stack **operator_stack, t_ast_stack **operand_stack)
-{
-	t_ast_node	*left_paren;
-
-    while (*operator_stack && (*operator_stack)->node->type != NODE_LPAREN)
-    {
-        if (!process_operator(operator_stack, operand_stack))
-        {
-            fprintf(stderr, "Error: Failed to process operator inside parentheses\n");
-            lexer->error = 1;
-            return 0;
-        }
-    }
-    if (!*operator_stack || (*operator_stack)->node->type != NODE_LPAREN)
-    {
-        fprintf(stderr, "Syntax error: unmatched right parenthesis\n");
-        lexer->error = 1;
-        return 0;
-    }
-	left_paren = pop_ast_stack(operator_stack);
-	free_ast_node(left_paren);
-    advance_token(lexer);
-    return (1);
+	while (lexer->tokens && lexer->tokens->type == TOKEN_DELIMITER)
+		advance_token(lexer);
+	while (lexer->tokens && is_argument_token(lexer->tokens->type))
+	{
+		if (!add_argument_to_node(cmd, lexer->tokens->value))
+			return (false);
+		advance_token(lexer);
+		while (lexer->tokens && lexer->tokens->type == TOKEN_DELIMITER)
+			advance_token(lexer);
+	}
+	return (true);
 }

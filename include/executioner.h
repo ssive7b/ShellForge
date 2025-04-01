@@ -52,7 +52,7 @@ int		open_redirection_flle(const char *file_name, t_redir_type redir_type);
 void	exec_astree(t_tty *sh, t_ast_node *node);
 
 // heredoc.c
-int		get_heredoc_fd(t_redirection *redir);
+int		get_heredoc_fd(t_redir *redir);
 
 // builtins
 int		is_builtin(char *cmd_name);
