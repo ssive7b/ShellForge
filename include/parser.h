@@ -21,7 +21,7 @@ t_ast_node	*parse_tokens(t_lexer *lexer);
 
 // parser_handlers.c
 t_ast_node	*parse_command(t_lexer *lexer);
-void		handle_operator(t_lexer *lexer, t_ast_stack **operator_stack, t_ast_stack **operand_stack);
+int		handle_operator(t_lexer *lexer, t_ast_stack **operator_stack, t_ast_stack **operand_stack);
 int 		handle_left_parenthesis(t_lexer *lexer, t_ast_stack **operator_stack);
 int 		handle_right_parenthesis(t_lexer *lexer, t_ast_stack **operator_stack, t_ast_stack **operand_stack);
 

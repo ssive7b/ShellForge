@@ -45,27 +45,28 @@ t_ast_node	*ast_new(t_node_type type, t_token *token)
 
 int	get_operator_precedence(t_node_type type)
 {
-	if (type == NODE_PIPE)
-		return (1);
-	if (type == NODE_OR)
-		return (2);
-	if (type == NODE_AND)
+	if (type == NODE_LPAREN || type == NODE_RPAREN)
 		return (3);
-	if (type == NODE_REDIRECTION)
-		return (4);
-	return (0);
+	else if (type == NODE_REDIRECTION)
+		return (2);
+	else if (type == NODE_PIPE)
+		return (1);
+	else if (type == NODE_AND || type == NODE_OR)
+		return (0);
+	return (-1);
 }
 
-void	push_ast_stack(t_ast_stack **stack, t_ast_node *node)
+int	push_ast_stack(t_ast_stack **stack, t_ast_node *node)
 {
 	t_ast_stack	*new_node;
 
 	new_node = malloc(sizeof(t_ast_stack));
 	if (!new_node)
-		return ;
+		return (0);
 	new_node->node = node;
 	new_node->next = *stack;
 	*stack = new_node;
+	return (1);
 }
 
 t_ast_node	*pop_ast_stack(t_ast_stack **stack)
