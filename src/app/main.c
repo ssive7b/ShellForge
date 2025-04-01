@@ -4,6 +4,7 @@
 #include "expansions.h"
 #include "lexer.h"
 #include "minishell.h"
+#include "parser.h"
 #include <linux/limits.h>
 #include <readline/history.h>
 #include <readline/readline.h>
@@ -13,9 +14,10 @@
 
 int	main(int argc, char **argv, char **envp)
 {
-	t_tty minish;
-	t_token *tokens;
-	t_ast_node *ast_root;
+	t_tty		minish;
+	t_token		*tokens;
+	t_ast_node	*ast_root;
+	t_lexer		lexer;
 
 	(void)argc;
 	(void)argv;
@@ -36,13 +38,16 @@ int	main(int argc, char **argv, char **envp)
 				printf("Lexer returned NULL\n");
 				return (1);
 			}
-			expand_tokens(tokens, minish.envp, minish.exit_status);
-			ft_print_tokens(tokens); // Debugging: Print tokens
-			ast_root = construct_ast(tokens);
+			ft_print_tokens(tokens); 
+			lexer.tokens = tokens;
+			lexer.error = 0;
+			//expand_tokens(tokens, minish.envp, minish.exit_status);
+			//ft_print_tokens(tokens); // Debugging: Print tokens
+			ast_root = parse_input(&lexer);
 			print_ast(ast_root, 0); // Debugging: Print AST
 			add_history(minish.line);
 		}
-		// exec_astree(&minish, ast_root);
+		//exec_astree(&minish, ast_root);
 		free(minish.line);
 	}
 	return (0);

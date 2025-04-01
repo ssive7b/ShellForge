@@ -17,7 +17,6 @@
 # include "ast_mock.h"
 
 // parser.c
-char	*handle_quotes(t_lexer *lx, char quote_type);
-void process_the_operators(t_ast_stack **op_stack, t_ast_stack **operand_stack);
+t_ast_node	*parse_input(t_lexer *lexer);
 
 #endif

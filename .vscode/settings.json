@@ -8,5 +8,6 @@
 		"stdbool.h": "c",
 		"utils.h": "c",
 		"executioner.h": "c"
-	}
+	},
+	"makefile.configureOnOpen": false
 }

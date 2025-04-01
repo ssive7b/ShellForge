@@ -26,10 +26,15 @@ typedef enum e_token_type
 	TOKEN_REDIR_HEREDOC, // <<
 	TOKEN_OR, // || ADDED THIS
 	TOKEN_AND, // && ADDED THIS
+	TOKEN_AMPERSAND, // &
+	TOKEN_SEMICOLON, // ;
 	TOKEN_WORD_UNQUOTED, 
 	TOKEN_WORD_DQUOTED,
 	TOKEN_WORD_SQUOTED,
-	TOKEN_END, // end of input, replaced TOKEN_DELIMITER after every word
+	TOKEN_LPAREN,
+	TOKEN_RPAREN,
+	TOKEN_DELIMITER,
+	TOKEN_END
 }	t_token_type;
 
 typedef struct	s_token

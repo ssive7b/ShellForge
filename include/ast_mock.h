@@ -13,6 +13,7 @@
 #ifndef AST_MOCK_H
 # define AST_MOCK_H
 
+# include <stdbool.h>
 # include "lexer.h"
 
 typedef enum e_node_type
@@ -22,6 +23,8 @@ typedef enum e_node_type
 	NODE_REDIRECTION,
 	NODE_AND,
 	NODE_OR,
+	NODE_LPAREN,
+	NODE_RPAREN,
 	NODE_TYPES_COUNT
 }							t_node_type;
 
@@ -64,12 +67,9 @@ typedef struct s_ast_stack
 
 t_ast_node					*ast_new(t_node_type type, t_token *token);
 int							get_operator_precedence(t_node_type type);
-void						push_ast_stack(t_ast_stack **stack,
-								t_ast_node *node);
+void						push_ast_stack(t_ast_stack **stack, t_ast_node *node);
 t_ast_node					*pop_ast_stack(t_ast_stack **stack);
-void						process_operator(t_ast_stack **op_stack,
-								t_ast_stack **operand_stack);
-t_ast_node					*construct_ast(t_token *tokens);
+bool						process_operator(t_ast_stack **op_stack, t_ast_stack **operand_stack);
 t_node_type					get_ast_node_type_from_token(t_token_type type);
 void						print_ast(t_ast_node *node, int level);
 

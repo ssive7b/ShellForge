@@ -2,33 +2,45 @@
 #include "lexer.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 // Create new AST nodes
 t_ast_node	*ast_new(t_node_type type, t_token *token)
 {
-	t_ast_node	*new;
+    t_ast_node	*new;
 
-	if (!token)
-	{
-		printf("Error: ast_new received NULL token\n");
-		return (NULL);
-	}
-	new = malloc(sizeof(t_ast_node));
-	if (!new)
-		return (NULL);
-	new->type = type;
-	new->cmd_pathname = NULL;
-	new->args = NULL;
-	new->pid = -1;
-	new->fd_in = -1;
-	new->fd_out = -1;
-	new->exit_status = 0;
-	new->redir = NULL;
-	new->left = NULL;
-	new->right = NULL;
-	if (type == NODE_COMMAND)
-		new->cmd_pathname = token->value;
-	return (new);
+    if (!token)
+    {
+        printf("Error: ast_new received NULL token\n");
+        return (NULL);
+    }
+    new = malloc(sizeof(t_ast_node));
+    if (!new)
+        return (NULL);
+    new->type = type;
+    new->cmd_pathname = NULL;
+    new->args = NULL;
+    new->pid = -1;
+    new->fd_in = -1;
+    new->fd_out = -1;
+    new->exit_status = 0;
+    new->redir = NULL;
+    new->left = NULL;
+    new->right = NULL;
+    if (type == NODE_COMMAND)
+    {
+        new->cmd_pathname = token->value;
+        new->args = malloc(2 * sizeof(char *)); // Space for command name + NULL terminator
+        if (!new->args)
+        {
+            free(new);
+            printf("Error: Memory allocation failed for args in ast_new\n");
+            return (NULL);
+        }
+        new->args[0] = token->value; // Command name
+        new->args[1] = NULL;         // Null-terminate the array
+    }
+    return (new);
 }
 
 int	get_operator_precedence(t_node_type type)
@@ -80,18 +92,24 @@ t_ast_node	*pop_ast_stack(t_ast_stack **stack)
 }
 
 // Process operators and build subtrees
-void	process_operator(t_ast_stack **op_stack, t_ast_stack **operand_stack)
+bool	process_operator(t_ast_stack **op_stack, t_ast_stack **operand_stack)
 {
-	t_ast_node	*op_node;
+    t_ast_node	*op_node;
 
-	if (!op_stack || !*op_stack)
-		return ;
-	op_node = pop_ast_stack(op_stack);
-	if (!op_node)
-		return ;
-	op_node->right = pop_ast_stack(operand_stack);
-	op_node->left = pop_ast_stack(operand_stack);
-	push_ast_stack(operand_stack, op_node);
+    if (!op_stack || !*op_stack)
+        return (false);
+    op_node = pop_ast_stack(op_stack);
+    if (!op_node)
+        return (false);
+    op_node->right = pop_ast_stack(operand_stack);
+    op_node->left = pop_ast_stack(operand_stack);
+    if (!op_node->right || !op_node->left)
+    {
+        perror("Error: Not enough operands for operator");
+        return (false);
+    }
+    push_ast_stack(operand_stack, op_node);
+    return (true);
 }
 
 // Build AST from tokens
