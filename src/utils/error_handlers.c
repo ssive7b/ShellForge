@@ -1,34 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   memory_utils.c                                     :+:      :+:    :+:   */
+/*   error_handlers.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sstoev <sstoev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/20 15:21:13 by sstoev            #+#    #+#             */
-/*   Updated: 2025/03/20 15:21:14 by sstoev           ###   ########.fr       */
+/*   Created: 2025/04/02 22:16:04 by sstoev            #+#    #+#             */
+/*   Updated: 2025/04/02 22:16:05 by sstoev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdlib.h>
-#include <unistd.h>
 #include "utils.h"
 
-void	safe_free(void **ptr)
+void	ft_error_msg(const char *message)
 {
-	if (ptr && *ptr)
-	{
-		free(*ptr);
-		*ptr = NULL;
-	}
-}
-
-char	*safe_strdup(const char *str)
-{
-	char	*dup;
-
-	dup = ft_strdup(str);
-	if (!dup)
-		ft_error_msg("Error: Memory allocation failed in strdup()");
-	return (dup);
+	ft_dprintf(STDERR_FILENO, "%s\n", message);
 }

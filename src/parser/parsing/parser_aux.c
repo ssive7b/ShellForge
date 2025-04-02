@@ -16,65 +16,42 @@
 #include "parser.h"
 #include "utils.h"
 
-void	advance_token(t_lexer *lexer)
+bool	advance_token(t_lexer *lexer)
 {
 	if (!lexer)
 	{
-		perror("Error: Lexer is NULL in advance_token\n");
-		return ;
+		ft_error_msg("Error: Lexer is NULL in advance_token");
+		return (false);
 	}
 	if (!lexer->tokens)
 	{
-		perror("Warning: no more tokens to advance\n");
-		return ;
+		ft_error_msg("Warning: no more tokens to advance");
+		return (false);
 	}
-	if (lexer->tokens)
-		lexer->tokens = lexer->tokens->next;
+	lexer->tokens = lexer->tokens->next;
+	return (true);
 }
 
 bool	add_argument_to_node(t_ast_node *node, const char *arg)
 {
 	char	**new_args;
 	int		arg_count;
-	int		i;
 
 	if (!node || !arg)
 		return (false);
-	arg_count = 0;
-	if (node->args)
-	{
-		while (node->args[arg_count])
-			arg_count++;
-	}
-	new_args = malloc((arg_count + 2) * sizeof(char *));
+	arg_count = count_args(node->args);
+	new_args = allocate_args_array(arg_count + 1);
 	if (!new_args)
-	{
-		perror("Error: Memory allocation failed in add_argument_to_node");
 		return (false);
-	}
-	i = -1;
-	while (++i < arg_count)
-		new_args[i] = node->args[i];
-	new_args[arg_count] = ft_strdup(arg);
+	if (arg_count > 0 && !copy_args(new_args, node->args, arg_count))
+		return (false);
+	new_args[arg_count] = safe_strdup(arg);
 	if (!new_args[arg_count])
 	{
-		perror("Error: Memory allocation failed in add_argument_to_node");
-		ft_free_2d_array(&new_args, -1);
+		ft_free_2d_array(&new_args, arg_count);
 		return (false);
 	}
-	new_args[arg_count + 1] = NULL;
 	ft_free_2d_array(&node->args, -1);
 	node->args = new_args;
 	return (true);
-}
-
-void	print_stack(t_ast_stack *stack, const char *name)
-{
-	printf("Stack %s:\n", name);
-	while (stack)
-	{
-		printf("  Node type: %d\n", stack->node->type);
-		printf("  Node pathname: %s\n", stack->node->cmd_pathname);
-		stack = stack->next;
-	}
 }

@@ -18,41 +18,37 @@
 
 t_ast_node	*parse_tokens(t_lexer *lexer)
 {
-	t_ast_node	*result;
-
-	result = parse_expression(lexer);
-	if ((result && lexer->tokens) || lexer->error)
-	{
-		perror("Error: Unexpected token after expression\n");
-		handle_parser_error(lexer, NULL, NULL, &result);
-		return (NULL);
-	}
-	return (result);
-}
-
-t_ast_node	*parse_expression(t_lexer *lexer)
-{
 	t_ast_stack	*operator_stack;
-	t_ast_stack	*operand_stack;
-	t_ast_node	*first_operand;
-	t_ast_node	*finalized_expression;
+	t_ast_stack *operand_stack;
+	t_ast_node	*result_expr;
 
 	operator_stack = NULL;
 	operand_stack = NULL;
-	first_operand = parse_command_with_redirects(lexer);
+	result_expr = parse_expression(lexer, &operator_stack, &operand_stack);
+	if (!result_expr || lexer->tokens || lexer->error)
+	{
+		ft_error_msg("Error: Failed while parsing tokens");
+		handle_parser_error(lexer, NULL, NULL, &result_expr);
+		return (NULL);
+	}
+	free_ast_stack(&operator_stack);
+	free_ast_stack(&operand_stack);
+	return (result_expr);
+}
+
+t_ast_node	*parse_expression(t_lexer *lexer, t_ast_stack **operator_stack, t_ast_stack **operand_stack)
+{
+	t_ast_node	*first_operand;
+	t_ast_node	*finalized_expression;
+
+	first_operand = parse_command_with_redirects(lexer, operator_stack, operand_stack);
 	if (!first_operand)
 		return (NULL);
-	if (!push_ast_stack(&operand_stack, first_operand))
-	{
-		handle_parser_error(lexer, NULL, NULL, &first_operand);
+	if (!push_ast_stack(operand_stack, first_operand))
 		return (NULL);
-	}
-	if (!parse_infix_operators(lexer, &operator_stack, &operand_stack))
-	{
-		handle_parser_error(lexer, NULL, NULL, NULL);
+	if (!parse_infix_operators(lexer, operator_stack, operand_stack))
 		return (NULL);
-	}
-	finalized_expression = finalize_expression(&operator_stack, &operand_stack, lexer);
+	finalized_expression = finalize_expression(operator_stack, operand_stack, lexer);
 	return (finalized_expression);
 }
 
@@ -64,7 +60,7 @@ bool	parse_infix_operators(t_lexer *lexer, t_ast_stack **operator_stack, t_ast_s
 	{
 		if (!handle_operator_precedence(lexer, operator_stack, operand_stack))
 			return (false);
-		next_operand = parse_command_with_redirects(lexer);
+		next_operand = parse_command_with_redirects(lexer, operator_stack, operand_stack);
 		if (!next_operand)
 			return (false);
 		if (!push_ast_stack(operand_stack, next_operand))
@@ -81,27 +77,27 @@ t_ast_node	*finalize_expression(t_ast_stack **operator_stack, t_ast_stack **oper
 	{
 		if (!process_operator(operator_stack, operand_stack))
 		{
-			perror("Error: Failed to process operator");
-			handle_parser_error(lexer, operator_stack, NULL, NULL);
+			ft_error_msg("Error: Failed to process operator");
+			handle_parser_error(lexer, NULL, NULL, NULL);
 			return (NULL);
 		}
 	}
 	result = pop_ast_stack(operand_stack);
 	if (*operand_stack)
 	{
-		perror("Syntax error: invalid expression");
-		handle_parser_error(lexer, NULL, operand_stack, NULL);
+		ft_error_msg("Syntax error: Invalid expression");
+		handle_parser_error(lexer, NULL, NULL, &result);
 		return (NULL);
 	}
 	return (result);
 }
 
-t_ast_node	*parse_command_with_redirects(t_lexer *lexer)
+t_ast_node	*parse_command_with_redirects(t_lexer *lexer, t_ast_stack **operator_stack, t_ast_stack **operand_stack)
 {
 	t_ast_node	*cmd;
 
 	if (lexer->tokens && lexer->tokens->type == TOKEN_LPAREN)
-		return (parse_parenthesized_expression(lexer));
+		return (parse_parenthesized_expression(lexer, operator_stack, operand_stack));
 	cmd = parse_command(lexer);
 	if (!cmd)
 		return (NULL);

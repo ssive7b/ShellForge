@@ -12,7 +12,7 @@ t_ast_node	*ast_new(t_node_type type, t_token *token)
 
     if (!token)
     {
-        printf("Error: ast_new received NULL token\n");
+		ft_error_msg("Error: ast_new received NULL token");
         return (NULL);
     }
     new = malloc(sizeof(t_ast_node));
@@ -30,15 +30,28 @@ t_ast_node	*ast_new(t_node_type type, t_token *token)
     new->right = NULL;
     if (type == NODE_COMMAND)
     {
-        new->cmd_pathname = token->value;
+		new->cmd_pathname = ft_strdup(token->value);
+		if (!new->cmd_pathname)
+		{
+			safe_free((void **)&new);
+			return (NULL);
+		}
         new->args = malloc(2 * sizeof(char *));
         if (!new->args)
         {
+			safe_free((void **)&new->cmd_pathname);
             safe_free((void **)&new);
-            printf("Error: Memory allocation failed for args in ast_new\n");
+			ft_error_msg("Error: Memory allocation failed for args in ast_new");
             return (NULL);
         }
-        new->args[0] = token->value;
+        new->args[0] = ft_strdup(token->value);
+		if (!new->args[0])
+		{
+			safe_free((void **)&new->args);
+			safe_free((void **)&new->cmd_pathname);
+            safe_free((void **)&new);
+			return (NULL);
+		}
         new->args[1] = NULL;
     }
     return (new);
@@ -87,19 +100,23 @@ t_ast_node	*pop_ast_stack(t_ast_stack **stack)
 bool	process_operator(t_ast_stack **operator_stack, t_ast_stack **operand_stack)
 {
     t_ast_node	*op_node;
+	t_ast_node	*right_operand;
+	t_ast_node	*left_operand;
 
-    if (!operator_stack || !*operator_stack)
-        return (false);
+    if (!operator_stack || !(*operator_stack) || !operand_stack)
+		return (false);
+	if (!*operand_stack || !(*operand_stack)->next)
+	{
+		ft_error_msg("Error: Not enough operands for operator");
+		return (false);
+	}
     op_node = pop_ast_stack(operator_stack);
     if (!op_node)
-        return (false);
-    op_node->right = pop_ast_stack(operand_stack);
-    op_node->left = pop_ast_stack(operand_stack);
-    if (!op_node->right || !op_node->left)
-    {
-        perror("Error: Not enough operands for operator");
-        return (false);
-    }
+		return (false);
+	right_operand = pop_ast_stack(operand_stack);
+	left_operand = pop_ast_stack(operand_stack);
+    op_node->right = right_operand;
+    op_node->left = left_operand;
     push_ast_stack(operand_stack, op_node);
     return (true);
 }
@@ -116,41 +133,4 @@ t_node_type	get_ast_node_type_from_token(t_token_type type)
 		|| type == TOKEN_REDIR_APPEND || type == TOKEN_REDIR_HEREDOC)
 		return (NODE_REDIRECTION);
 	return (NODE_COMMAND);
-}
-
-// Just for debugging
-void	print_ast(t_ast_node *node, int level)
-{
-	int	i;
-	int j;
-
-	if (!node)
-		return ;
-	i = 0;
-	while (i < level)
-	{
-		printf("  ");
-		i++;
-	}
-	if (node->type == NODE_COMMAND)
-	{
-		j = 0;
-		printf("CMD: ");
-		while (node->args[j])
-		{
-			printf("%s ", node->args[j]);
-			j++;
-		}
-		printf("\n");
-	}
-	else if (node->type == NODE_PIPE)
-		printf("PIPE\n");
-	else if (node->type == NODE_AND)
-		printf("AND\n");
-	else if (node->type == NODE_OR)
-		printf("OR\n");
-	else if (node->type == NODE_REDIRECTION)
-		printf("Redirection: %d\n", node->redir->type);
-	print_ast(node->left, level + 1);
-	print_ast(node->right, level + 1);
 }

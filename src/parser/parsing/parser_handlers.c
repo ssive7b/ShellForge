@@ -44,7 +44,7 @@ t_ast_node	*parse_command(t_lexer *lexer)
 
 	if (!lexer->tokens || !is_command_token(lexer->tokens->type))
 	{
-		perror("Syntax error: expected command");
+		ft_error_msg("Syntax error: Expected command");
 		handle_parser_error(lexer, NULL, NULL, NULL);
 		return (NULL);
 	}
@@ -63,12 +63,12 @@ t_ast_node	*parse_command(t_lexer *lexer)
 	return (node);
 }
 
-t_ast_node	*parse_parenthesized_expression(t_lexer *lexer)
+t_ast_node	*parse_parenthesized_expression(t_lexer *lexer, t_ast_stack **operator_stack, t_ast_stack **operand_stack)
 {
 	t_ast_node	*expr;
 
 	advance_token(lexer);
-	expr = parse_expression(lexer);
+	expr = parse_expression(lexer, operator_stack, operand_stack);
 	if (!expr)
 	{
 		handle_parser_error(lexer, NULL, NULL, NULL);
@@ -76,7 +76,7 @@ t_ast_node	*parse_parenthesized_expression(t_lexer *lexer)
 	}
 	if (!lexer->tokens || lexer->tokens->type != TOKEN_RPAREN)
 	{
-		perror("Error: Missing closing parenthesis\n");
+		ft_error_msg("Error: Missing closing parenthesis");
 		handle_parser_error(lexer, NULL, NULL, &expr);
 		return (NULL);
 	}

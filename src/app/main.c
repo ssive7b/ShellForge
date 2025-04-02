@@ -5,6 +5,7 @@
 #include "lexer.h"
 #include "minishell.h"
 #include "parser.h"
+#include "utils.h"
 #include <linux/limits.h>
 #include <readline/history.h>
 #include <readline/readline.h>

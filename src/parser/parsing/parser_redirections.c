@@ -26,13 +26,13 @@ bool	add_redirection_to_command(t_lexer *lexer, t_ast_node *cmd)
 	advance_token(lexer);
 	if (!lexer->tokens || !is_argument_token(lexer->tokens->type))
 	{
-		perror("Error: Expected word after redirection\n");
+		ft_error_msg("Error: Expected word after redirection");
 		lexer->error = 1;
 		return (false);
 	}
 	if (!set_redirection_target(lexer, redir))
 	{
-		perror("Error: Unable to set the redirection target\n");
+		ft_error_msg("Error: Unable to set the redirection target");
 		lexer->error = 1;
 		return (false);
 	}
@@ -49,7 +49,7 @@ t_redir	*create_redirection(t_lexer *lexer)
 	redir = malloc(sizeof(t_redir));
 	if (!redir)
 	{
-		perror("Error: Failed to allocate memory for redirection");
+		ft_error_msg("Error: Failed to allocate memory for redirection");
 		lexer->error = 1;
 		return (NULL);
 	}
@@ -76,7 +76,7 @@ bool	set_redirection_target(t_lexer *lexer, t_redir *redir)
 	value = ft_strdup(lexer->tokens->value);
 	if (!value)
 	{
-		perror("Error: Failed to duplicate redirection target");
+		ft_error_msg("Error: Failed to duplicate redirection target");
 		lexer->error = 1;
 		return (false);
 	}
