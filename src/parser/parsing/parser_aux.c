@@ -14,6 +14,7 @@
 #include "lexer.h"
 #include "minishell.h"
 #include "parser.h"
+#include "utils.h"
 
 void	advance_token(t_lexer *lexer)
 {
@@ -58,11 +59,11 @@ bool	add_argument_to_node(t_ast_node *node, const char *arg)
 	if (!new_args[arg_count])
 	{
 		perror("Error: Memory allocation failed in add_argument_to_node");
-		free(new_args);
+		ft_free_2d_array(&new_args, -1);
 		return (false);
 	}
 	new_args[arg_count + 1] = NULL;
-	free(node->args);
+	ft_free_2d_array(&node->args, -1);
 	node->args = new_args;
 	return (true);
 }

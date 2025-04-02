@@ -23,6 +23,7 @@ SRC						=	$(SRC_DIR)/app/main.c											\
 							$(SRC_DIR)/parser/parsing/parser_redirections.c					\
 							$(SRC_DIR)/parser/parsing/parser_aux.c							\
 							$(SRC_DIR)/parser/parsing/parser_utils.c						\
+							$(SRC_DIR)/parser/mem_cleaners.c								\
 							$(SRC_DIR)/executioner/init_execs.c								\
 							$(SRC_DIR)/executioner/execute.c								\
 							$(SRC_DIR)/executioner/exec_mode_handlers.c						\

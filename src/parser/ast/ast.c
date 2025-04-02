@@ -1,5 +1,6 @@
 #include "ast_mock.h"
 #include "lexer.h"
+#include "utils.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -33,7 +34,7 @@ t_ast_node	*ast_new(t_node_type type, t_token *token)
         new->args = malloc(2 * sizeof(char *));
         if (!new->args)
         {
-            free(new);
+            safe_free((void **)&new);
             printf("Error: Memory allocation failed for args in ast_new\n");
             return (NULL);
         }
@@ -79,7 +80,7 @@ t_ast_node	*pop_ast_stack(t_ast_stack **stack)
 		return (NULL);
 	node = current->node;
 	*stack = current->next;
-	free(current);
+	safe_free((void **)&current);
 	return (node);
 }
 

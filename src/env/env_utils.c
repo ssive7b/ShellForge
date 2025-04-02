@@ -93,9 +93,9 @@ char	*find_exec_pathname(t_tty *tty, t_list *env_list, char *cmd_name)
 		if (!full_path)
 			break ;
 		if (access(full_path, F_OK) == 0)
-			return (ft_free_2d_array(paths, -1), full_path);
+			return (ft_free_2d_array(&paths, -1), full_path);
 	}
-	return (ft_free_2d_array(paths, -1), NULL);
+	return (ft_free_2d_array(&paths, -1), NULL);
 }
 
 t_list	*create_new_env_node(char *key, char *value)

@@ -21,11 +21,10 @@ t_ast_node	*parse_tokens(t_lexer *lexer)
 	t_ast_node	*result;
 
 	result = parse_expression(lexer);
-	if (result && lexer->tokens)
+	if ((result && lexer->tokens) || lexer->error)
 	{
 		perror("Error: Unexpected token after expression\n");
-		free_ast_node(result);
-		lexer->error = 1;
+		handle_parser_error(lexer, NULL, NULL, &result);
 		return (NULL);
 	}
 	return (result);
@@ -44,11 +43,13 @@ t_ast_node	*parse_expression(t_lexer *lexer)
 	if (!first_operand)
 		return (NULL);
 	if (!push_ast_stack(&operand_stack, first_operand))
+	{
+		handle_parser_error(lexer, NULL, NULL, &first_operand);
 		return (NULL);
+	}
 	if (!parse_infix_operators(lexer, &operator_stack, &operand_stack))
 	{
-		free_ast_stack(&operator_stack);
-		free_ast_stack(&operand_stack);
+		handle_parser_error(lexer, NULL, NULL, NULL);
 		return (NULL);
 	}
 	finalized_expression = finalize_expression(&operator_stack, &operand_stack, lexer);
@@ -81,7 +82,7 @@ t_ast_node	*finalize_expression(t_ast_stack **operator_stack, t_ast_stack **oper
 		if (!process_operator(operator_stack, operand_stack))
 		{
 			perror("Error: Failed to process operator");
-			lexer->error = 1;
+			handle_parser_error(lexer, operator_stack, NULL, NULL);
 			return (NULL);
 		}
 	}
@@ -89,8 +90,7 @@ t_ast_node	*finalize_expression(t_ast_stack **operator_stack, t_ast_stack **oper
 	if (*operand_stack)
 	{
 		perror("Syntax error: invalid expression");
-		free_ast_node(result);
-		lexer->error = 1;
+		handle_parser_error(lexer, NULL, operand_stack, NULL);
 		return (NULL);
 	}
 	return (result);
@@ -109,7 +109,7 @@ t_ast_node	*parse_command_with_redirects(t_lexer *lexer)
 	{
 		if (!add_redirection_to_command(lexer, cmd))
 		{
-			free_ast_node(cmd);
+			handle_parser_error(lexer, NULL, NULL, &cmd);
 			return (NULL);
 		}
 	}

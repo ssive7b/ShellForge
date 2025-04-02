@@ -26,14 +26,14 @@ bool	add_redirection_to_command(t_lexer *lexer, t_ast_node *cmd)
 	advance_token(lexer);
 	if (!lexer->tokens || !is_argument_token(lexer->tokens->type))
 	{
-		free(redir);
 		perror("Error: Expected word after redirection\n");
 		lexer->error = 1;
 		return (false);
 	}
 	if (!set_redirection_target(lexer, redir))
 	{
-		free(redir);
+		perror("Error: Unable to set the redirection target\n");
+		lexer->error = 1;
 		return (false);
 	}
 	cmd->redir = redir;
