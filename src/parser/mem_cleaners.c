@@ -16,21 +16,45 @@
 #include "parser.h"
 #include "utils.h"
 
+static void	free_single_token(t_token *token);
+
+void	free_tokens(t_token *tokens)
+{
+	t_token	*current;
+	t_token	*next;
+
+	if (!tokens)
+		return ;
+	current = tokens;
+	while (current)
+	{
+		next = current->next;
+		free_single_token(current);
+		current = next;
+	}
+}
+
 void	free_ast_node(t_ast_node **node)
 {
 	size_t	i;
 
-	i = 0;
 	if (!node || !*node)
 		return ;
+	if ((*node)->left)
+		free_ast_node(&(*node)->left);
+	if ((*node)->right)
+		free_ast_node(&(*node)->right);
 	if ((*node)->type == NODE_COMMAND)
 	{
-		if ((*node)->cmd_pathname)
-			safe_free((void **)&(*node)->cmd_pathname);
+		safe_free((void **)&(*node)->cmd_pathname);
 		if ((*node)->args)
 		{
+			i = 0;
 			while((*node)->args[i])
+			{
 				safe_free((void **)&(*node)->args[i]);
+				i++;
+			}
 			safe_free((void **)&(*node)->args);
 		}
 	}
@@ -81,4 +105,12 @@ void	handle_parser_error(t_lexer *lexer, t_ast_stack **operator_stack, t_ast_sta
 		free_ast_stack(operand_stack);
 	if (node && *node)
 		free_ast_node(node);
+}
+
+static void	free_single_token(t_token *token)
+{
+	if (!token)
+		return ;
+	safe_free((void **)&token->value);
+	safe_free((void **)token);
 }

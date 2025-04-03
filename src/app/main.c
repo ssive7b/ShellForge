@@ -15,10 +15,11 @@
 
 int	main(int argc, char **argv, char **envp)
 {
-	t_tty		minish;
-	t_token		*tokens;
-	t_ast_node	*ast_root;
-	t_lexer		lexer;
+	t_tty				minish;
+	t_token				*tokens;
+	t_ast_node			*ast_root;
+	t_lexer				lexer;
+	t_expand_context	context;
 
 	(void)argc;
 	(void)argv;
@@ -36,19 +37,34 @@ int	main(int argc, char **argv, char **envp)
 			tokens = ft_lexer(minish.line);
 			if (!tokens)
 			{
-				printf("Lexer returned NULL\n");
+				ft_error_msg("Error: Lexer returned NULL");
 				return (1);
 			}
-			//ft_print_tokens(tokens); 
+			context.env_list = minish.env_list;
+			context.last_exit_status = minish.exit_status;
+			if (!expand_variables_in_tokens(&tokens, &context))
+			{
+				ft_error_msg("Error: Variable expansion failed");
+				free_tokens(tokens);
+				return (2);
+			}
+			// ft_print_tokens(tokens); 
 			lexer.tokens = tokens;
 			lexer.error = 0;
-			//expand_tokens(tokens, minish.envp, minish.exit_status);
-			//ft_print_tokens(tokens); // Debugging: Print tokens
 			ast_root = parse_tokens(&lexer);
-			print_ast(ast_root, 0); // Debugging: Print AST
+			if (!ast_root)
+			{
+				ft_error_msg("Parser returned NULL");
+				free_tokens(tokens);
+				return (3);
+			}
+			// print_ast(ast_root, 0); // Debugging: Print AST
 			add_history(minish.line);
+			exec_astree(&minish, ast_root);
+
+			free_ast_node(&ast_root);
+			free_tokens(tokens);
 		}
-		// exec_astree(&minish, ast_root);
 		free(minish.line);
 	}
 	return (0);

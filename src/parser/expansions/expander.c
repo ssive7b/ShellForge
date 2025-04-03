@@ -21,21 +21,84 @@
 #include <stdio.h>
 #include <string.h>
 
-char	*get_variable_name(const char *name, t_expand_context *context)
-{
-	char	*value;
+static bool	process_expansion_pass(char **result, const char *str, int *pos, t_expand_context *context);
+static char	*expand_variable_in_string(const char *str, t_expand_context *context);
 
-	if (!name || !context)
-		value = safe_strdup("");
-	else if (ft_strcmp(name, "?") == 0)
-		value = ft_itoa(context->last_exit_status);
-	else
+bool 	expand_variables_in_tokens(t_token **tokens, t_expand_context *context)
+{
+	t_token	*current;
+	char	*expanded;
+
+	if (!tokens || !*tokens || !context)
+		return (true);
+	current = *tokens;
+	while (current)
 	{
-		value = get_envp_value((char *)name, context->env_list);
-		if (!value)
-			value = safe_strdup("");
-		else
-			value = safe_strdup(value);
+		if (current->type == TOKEN_WORD_UNQUOTED || current->type == TOKEN_WORD_DQUOTED)
+		{
+			if (needs_expansion(current->value))
+			{
+				expanded = expand_variable_in_string(current->value, context);
+				if (!expanded)
+					return (false);
+				safe_free((void **)&current->value);
+				current->value = expanded;
+			}
+		}
+		current = current->next;
 	}
-	return (value);
+	return (true);
 }
+
+static char	*expand_variable_in_string(const char *str, t_expand_context *context)
+{
+	char	*result;
+	int		position;
+
+	position = 0;
+	if (!str)
+		return (NULL);
+	if (!needs_expansion(str))
+		return (ft_strdup(str));
+	result = ft_strdup("");
+	if (!result)
+		return (NULL);
+	while (str[position])
+	{
+		if (!process_expansion_pass(&result, str, &position, context))
+		{
+			safe_free((void **)&result);
+			return (NULL);
+		}
+		if (str[position] == '\0')
+			break ;
+	}
+	return (result);
+}
+
+static bool	process_expansion_pass(char **result, const char *str, int *pos, t_expand_context *context)
+{
+	int	i;
+	int	start;
+
+	i = *pos;
+	start = *pos;
+	while (str[i])
+	{
+		if (str[i] == '$' && str[i+1])
+		{
+			if (!append_chunk(result, str, start, i))
+				return (false);
+			if (!process_dollar_sign(result, str, &i, context))
+				return (false);
+			*pos = i;
+			return (true);
+		}
+		i++;
+	}
+	if (!append_chunk(result, str, start, i))
+		return (false);
+	*pos = i;
+	return (true);
+}
+

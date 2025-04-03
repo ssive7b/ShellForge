@@ -24,19 +24,11 @@ typedef struct s_expand_context
 }	t_expand_context;
 
 // expander.c
-char	*get_variable_name(const char *name, t_expand_context *context);
+bool 	expand_variables_in_tokens(t_token **tokens, t_expand_context *context);
 
-
-
-void	expand_tokens(t_token *tokens, char **envp, int last_exit_status);
-void	expand_tilde(char **token, char **envp);
-void	expand_variables(char **token, char **envp, int last_exit_status);
-void	replace_variable(char **line, int pos, char *var_start, char *var_value);
-void	expand_wildcards(char **token);
-char	*getenv_list(char **envp, const char *name);
-int		valid_var_chr(char c);
-char	*ft_strjoin_three(const char *s1, const char *s2, const char *s3);
-int		match_wildcard(const char *str, const char *pattern);
-char	*ft_strjoin_free(char *s1, const char *s2);
+// expander_utils.c
+bool	append_chunk(char **result, const char *src, int start, int end);
+bool 	process_dollar_sign(char **result, const char *str, int *i, t_expand_context *context);
+bool	needs_expansion(const char *str);
 
 #endif

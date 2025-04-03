@@ -62,8 +62,3 @@ int	ft_is_unquoted_char(const char c)
 		&& !ft_is_whitespace(c)
 		&& c != '\0');
 }
-
-int	ft_is_expansion(char c)
-{
-	return (c == '$' || c == '`');
-}
