@@ -12,6 +12,7 @@
 
 #include <stdbool.h>
 #include <stdio.h>
+#include "char_designation.h"
 #include "ast_mock.h"
 #include "minishell.h"
 #include "env_utils.h"
@@ -25,7 +26,7 @@ static bool	is_valid_var_name(const char *var)
 	i = 1;
 	while (var[i])
 	{
-		if (!ft_isalnum(var[i]) && var[i] != '_')
+		if (!is_valid_var_char(var[i]))
 			return (false);
 		i++;
 	}

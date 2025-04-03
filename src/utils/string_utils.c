@@ -14,6 +14,22 @@
 #include "utils.h"
 #include "char_designation.h"
 
+bool	safe_strjoin(char **dest, const char *source)
+{
+	char	*old_str;
+	char	*new_str;
+
+	if (!dest || !*dest || !source)
+		return (false);
+	old_str = *dest;
+	new_str = ft_strjoin(old_str, source);
+	if (!new_str)
+		return (false);
+	safe_free((void **)dest);
+	*dest = new_str;
+	return (true);
+}
+
 char	*ft_strjoin_multiple(char **str_list, size_t num_strings)
 {
 	char	*result;

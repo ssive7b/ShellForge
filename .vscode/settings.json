@@ -9,7 +9,8 @@
 		"utils.h": "c",
 		"executioner.h": "c",
 		"lexer.h": "c",
-		"parser.h": "c"
+		"parser.h": "c",
+		"env_utils.h": "c"
 	},
 	"makefile.configureOnOpen": false
 }

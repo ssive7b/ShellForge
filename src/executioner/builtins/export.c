@@ -12,6 +12,7 @@
 
 #include <stdbool.h>
 #include <stdio.h>
+#include "char_designation.h"
 #include "ast_mock.h"
 #include "minishell.h"
 #include "env_utils.h"
@@ -63,7 +64,7 @@ static bool	is_valid_export_expr(const char *str)
 	if (!str || (!ft_isalpha(str[0]) && str[0] != '_'))
 		return (false);
 	i = 1;
-	while (ft_isalnum(str[i]) || str[i] == '_')
+	while (is_valid_var_char(str[i]))
 		i++;
 	if (str[i] == '=' || str[i] == '\0')
 		return (true);
