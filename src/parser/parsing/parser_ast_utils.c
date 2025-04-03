@@ -1,61 +1,22 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parser_ast_utils.c                                 :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/03 01:21:51 by sstoev            #+#    #+#             */
+/*   Updated: 2025/04/03 01:55:04 by sstoev           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "ast_mock.h"
+#include "parser.h"
 #include "lexer.h"
 #include "utils.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-
-// Create new AST nodes
-t_ast_node	*ast_new(t_node_type type, t_token *token)
-{
-    t_ast_node	*new;
-
-    if (!token)
-    {
-		ft_error_msg("Error: ast_new received NULL token");
-        return (NULL);
-    }
-    new = malloc(sizeof(t_ast_node));
-    if (!new)
-        return (NULL);
-    new->type = type;
-    new->cmd_pathname = NULL;
-    new->args = NULL;
-    new->pid = -1;
-    new->fd_in = -1;
-    new->fd_out = -1;
-    new->exit_status = 0;
-    new->redir = NULL;
-    new->left = NULL;
-    new->right = NULL;
-    if (type == NODE_COMMAND)
-    {
-		new->cmd_pathname = ft_strdup(token->value);
-		if (!new->cmd_pathname)
-		{
-			safe_free((void **)&new);
-			return (NULL);
-		}
-        new->args = malloc(2 * sizeof(char *));
-        if (!new->args)
-        {
-			safe_free((void **)&new->cmd_pathname);
-            safe_free((void **)&new);
-			ft_error_msg("Error: Memory allocation failed for args in ast_new");
-            return (NULL);
-        }
-        new->args[0] = ft_strdup(token->value);
-		if (!new->args[0])
-		{
-			safe_free((void **)&new->args);
-			safe_free((void **)&new->cmd_pathname);
-            safe_free((void **)&new);
-			return (NULL);
-		}
-        new->args[1] = NULL;
-    }
-    return (new);
-}
 
 int	get_operator_precedence(t_node_type type)
 {

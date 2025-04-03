@@ -39,7 +39,7 @@ int	main(int argc, char **argv, char **envp)
 				printf("Lexer returned NULL\n");
 				return (1);
 			}
-			ft_print_tokens(tokens); 
+			//ft_print_tokens(tokens); 
 			lexer.tokens = tokens;
 			lexer.error = 0;
 			//expand_tokens(tokens, minish.envp, minish.exit_status);
@@ -48,7 +48,7 @@ int	main(int argc, char **argv, char **envp)
 			print_ast(ast_root, 0); // Debugging: Print AST
 			add_history(minish.line);
 		}
-		//exec_astree(&minish, ast_root);
+		// exec_astree(&minish, ast_root);
 		free(minish.line);
 	}
 	return (0);

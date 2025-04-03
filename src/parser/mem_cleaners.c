@@ -13,6 +13,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include "ast_mock.h"
+#include "parser.h"
 #include "utils.h"
 
 void	free_ast_node(t_ast_node **node)
@@ -24,7 +25,8 @@ void	free_ast_node(t_ast_node **node)
 		return ;
 	if ((*node)->type == NODE_COMMAND)
 	{
-		safe_free((void **)&(*node)->cmd_pathname);
+		if ((*node)->cmd_pathname)
+			safe_free((void **)&(*node)->cmd_pathname);
 		if ((*node)->args)
 		{
 			while((*node)->args[i])

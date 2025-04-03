@@ -45,16 +45,23 @@ t_ast_node	*parse_command(t_lexer *lexer)
 	if (!lexer->tokens || !is_command_token(lexer->tokens->type))
 	{
 		ft_error_msg("Syntax error: Expected command");
+		// printf("received: %d %s\n", lexer->tokens->type, lexer->tokens->value);
 		handle_parser_error(lexer, NULL, NULL, NULL);
 		return (NULL);
 	}
+	// printf("good- received: %d %s\n", lexer->tokens->type, lexer->tokens->value);
 	node = ast_new(NODE_COMMAND, lexer->tokens);
 	if (!node)
 	{
 		handle_parser_error(lexer, NULL, NULL, NULL);
 		return (NULL);
 	}
-	advance_token(lexer);
+	if (!advance_token(lexer))
+	{
+		handle_parser_error(lexer, NULL, NULL, NULL);
+		ft_error_msg("Syntax error: Couldn't advance tokens");
+		return (NULL);
+	}
 	if (!parse_command_arguments(lexer, node))
 	{
 		handle_parser_error(lexer, NULL, NULL, &node);
@@ -86,8 +93,8 @@ t_ast_node	*parse_parenthesized_expression(t_lexer *lexer, t_ast_stack **operato
 
 static bool	parse_command_arguments(t_lexer *lexer, t_ast_node *cmd)
 {
-	while (lexer->tokens && lexer->tokens->type == TOKEN_DELIMITER)
-		advance_token(lexer);
+	skip_delims(lexer);
+	// printf("cmd_args- received: %d %s\n", lexer->tokens->type, lexer->tokens->value);
 	while (lexer->tokens && is_argument_token(lexer->tokens->type))
 	{
 		if (!add_argument_to_node(cmd, lexer->tokens->value))
@@ -96,5 +103,6 @@ static bool	parse_command_arguments(t_lexer *lexer, t_ast_node *cmd)
 		while (lexer->tokens && lexer->tokens->type == TOKEN_DELIMITER)
 			advance_token(lexer);
 	}
+	// printf("cmd_args- received: %d %s\n", lexer->tokens->type, lexer->tokens->value);
 	return (true);
 }

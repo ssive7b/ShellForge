@@ -46,6 +46,10 @@ void	print_ast(t_ast_node *node, int level)
 			j++;
 		}
 		printf("\n");
+		if (node->redir)
+			printf("   Redirection: type: %d file: %s\n",
+			node->redir->type,
+			node->redir->file_name ? node->redir->file_name : node->redir->delimiter_heredoc);
 	}
 	else if (node->type == NODE_PIPE)
 		printf("PIPE\n");

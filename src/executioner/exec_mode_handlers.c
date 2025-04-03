@@ -15,6 +15,7 @@
 #include "minishell.h"
 #include "ast_mock.h"
 #include "env_utils.h"
+#include "utils.h"
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -51,7 +52,7 @@ void	*execute_pipe(t_tty *sh, t_ast_node *node)
 		return (NULL);
 	if (pipe(pipefd) == -1)
 	{
-		perror("pipe");
+		ft_error_msg("Execution error: pipe");
 		return (NULL);
 	}
 	node->left->fd_out = pipefd[1];
@@ -75,7 +76,7 @@ void	*execute_redirection(t_tty *sh, t_ast_node *node) // to-do: allow for HERED
 		fd = open_redirection_flle(node->redir->file_name, node->redir->type);
 	if (fd == -1)
 	{
-		perror("redirection error");
+		ft_error_msg("Execution error: redirection");
 		return (NULL);
 	}
 	if (node->redir->type == REDIR_INPUT || node->redir->type == REDIR_HEREDOC)

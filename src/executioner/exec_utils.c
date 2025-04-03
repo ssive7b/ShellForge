@@ -15,6 +15,7 @@
 #include "minishell.h"
 #include "ast_mock.h"
 #include "env_utils.h"
+#include "utils.h"
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -45,14 +46,14 @@ pid_t	fork_and_execute_child(t_tty *sh, t_ast_node *node)
 	cpid = fork();
 	if (cpid == -1)
 	{
-		perror("fork");
+		ft_error_msg("Execution error: fork");
 		return (-1);
 	}
 	if (cpid == 0)
 	{
 		setup_redirections(node);
 		execve(node->cmd_pathname, node->args, sh->envp);
-		perror("execve");
+		ft_error_msg("Execution error: execve");
 		exit(127);
 	}
 	return (cpid);
@@ -64,7 +65,7 @@ void	wait_for_child(pid_t cpid, int *exit_status) // add some more robust handli
 
 	if (waitpid(cpid, &status, 0) == -1)
 	{
-		perror("waitpid");
+		ft_error_msg("Execution error: waitpid");
 		return ;
 	}
 	if (WIFEXITED(status))

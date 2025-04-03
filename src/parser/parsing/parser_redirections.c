@@ -24,6 +24,7 @@ bool	add_redirection_to_command(t_lexer *lexer, t_ast_node *cmd)
 	if (!redir)
 		return (false);
 	advance_token(lexer);
+	skip_delims(lexer);
 	if (!lexer->tokens || !is_argument_token(lexer->tokens->type))
 	{
 		ft_error_msg("Error: Expected word after redirection");

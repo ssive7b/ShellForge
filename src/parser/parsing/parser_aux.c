@@ -32,6 +32,16 @@ bool	advance_token(t_lexer *lexer)
 	return (true);
 }
 
+bool	skip_delims(t_lexer *lexer)
+{
+	while (lexer->tokens && lexer->tokens->type == TOKEN_DELIMITER)
+	{
+		if (!advance_token(lexer))
+			return (false);
+	}
+	return (true);
+}
+
 bool	add_argument_to_node(t_ast_node *node, const char *arg)
 {
 	char	**new_args;
