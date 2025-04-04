@@ -13,6 +13,9 @@ typedef struct	s_env
 
 // env_init.c
 void	init_env(char **envp);
+t_list	*create_env_list(char **envp);
+void	free_env_content(void *content);
+void	free_env_list(t_list *env_list);
 t_list	**get_env(void);
 
 // env_aux.c

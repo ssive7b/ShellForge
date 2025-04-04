@@ -17,8 +17,6 @@ void	ft_init_lex(t_lexer *lx, char *input)
 {
 	lx->input = input;
 	lx->idx = 0;
-	lx->line_number = 1;
-	lx->column_number = 1;
 	lx->tokens = NULL;
 	lx->error = 0;
 }

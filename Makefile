@@ -12,6 +12,7 @@ SRC_DIR					=	src
 #	files
 SRC						=	$(SRC_DIR)/app/main.c											\
 							$(SRC_DIR)/app/inits.c											\
+							$(SRC_DIR)/app/cleanup_central.c								\
 							$(SRC_DIR)/env/env_init.c										\
 							$(SRC_DIR)/env/env_aux.c										\
 							$(SRC_DIR)/env/env_utils.c										\

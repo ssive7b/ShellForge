@@ -24,6 +24,32 @@
 #include "parser.h"
 #include "utils.h"
 
+static int	process_cmd_iteration(t_shell *shell);
+
+static int	process_cmd_iteration(t_shell *shell)	// prototyping
+{
+	if (!shell->input || !*(shell->input))
+		return (0);
+	if (*(shell->input))
+		add_history(shell->input);
+	shell->tokens = ft_lexer(shell->input);
+	if (!shell->tokens)
+		return (1);
+	if (!expand_variables_in_tokens(shell))
+	{
+		cleanup_iteration(shell);
+		return (1);
+	}
+	shell->ast_root = parse_tokens(shell);
+	if (!shell->ast_root)
+	{
+		cleanup_iteration(shell);
+		return (1);
+	}
+	exec_astree(shell);
+	cleanup_iteration(shell);
+}
+
 int	main(int argc, char **argv, char **envp)
 {
 	t_shell				minish;
@@ -34,7 +60,6 @@ int	main(int argc, char **argv, char **envp)
 
 	if (argc != 1 || argv[1])
 		return (1);
-	init_env(envp);
 	init_minishell(&minish, envp);
 	while (1)
 	{

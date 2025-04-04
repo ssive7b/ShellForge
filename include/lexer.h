@@ -26,9 +26,7 @@ typedef struct	s_token
 typedef struct	s_lexer
 {
 	char			*input;
-	size_t			idx;
-	int				line_number;	// for error reporting
-	int				column_number;	// for error reporting			
+	size_t			idx;	
 	t_token			*tokens;
 	int				error;			// error state
 }	t_lexer;
