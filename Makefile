@@ -19,6 +19,7 @@ SRC						=	$(SRC_DIR)/app/main.c											\
 							$(SRC_DIR)/parser/ast/ast.c										\
 							$(SRC_DIR)/parser/expansions/expander.c							\
 							$(SRC_DIR)/parser/parsing/parser.c								\
+							$(SRC_DIR)/parser/signals/signals.c							\
 							$(SRC_DIR)/executioner/init_execs.c								\
 							$(SRC_DIR)/executioner/execute.c								\
 							$(SRC_DIR)/executioner/exec_mode_handlers.c						\
@@ -106,6 +107,7 @@ $(OBJ_DIR)				:
 							@mkdir -p $(OBJ_DIR)/parser/expansions
 							@mkdir -p $(OBJ_DIR)/parser/lexer
 							@mkdir -p $(OBJ_DIR)/parser/parsing
+							@mkdir -p $(OBJ_DIR)/parser/signals
 							@mkdir -p $(OBJ_DIR)/executioner
 							@mkdir -p $(OBJ_DIR)/executioner/builtins
 							@mkdir -p $(OBJ_DIR)/utils

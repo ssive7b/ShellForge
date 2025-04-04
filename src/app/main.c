@@ -7,9 +7,7 @@
 #include <linux/limits.h>
 #include <readline/history.h>
 #include <readline/readline.h>
-#include <signal.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include "signals.h"
 
 int	main(int argc, char **argv, char **envp)
 {
@@ -20,14 +18,12 @@ int	main(int argc, char **argv, char **envp)
 	(void)argc;
 	(void)argv;
 	init_minishell(&minish, envp);
+	setup_interactive_signals();
 	while (1)
 	{
 		minish.line = readline(minish.prompt);
 		if (!minish.line)
-		{
-			printf("breaking\n");
-			break ;
-		}
+			exit_on_eof(&minish);
 		if (*minish.line)
 		{
 			tokens = ft_lexer(minish.line);
@@ -42,7 +38,7 @@ int	main(int argc, char **argv, char **envp)
 			print_ast(ast_root, 0); // Debugging: Print AST
 			add_history(minish.line);
 		}
-		exec_astree(&minish, ast_root);
+		// exec_astree(&minish, ast_root);
 		free(minish.line);
 	}
 	return (0);

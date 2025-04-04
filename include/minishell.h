@@ -3,6 +3,9 @@
 
 # include <linux/limits.h>
 # include "../libft/include/libft.h"
+# include <signal.h>
+# include <stdio.h>
+# include <stdlib.h>
 
 typedef struct	s_tty
 {
