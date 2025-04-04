@@ -6,6 +6,8 @@
 # include "../libft/include/libft.h"
 # include "termios.h"
 
+# define SHELL_PROMPT "minishell$> "
+
 typedef struct	s_shell
 {
 	char			*input;

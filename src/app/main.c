@@ -26,6 +26,27 @@
 
 static int	process_cmd_iteration(t_shell *shell);
 
+int	main(int argc, char **argv, char **envp)
+{
+	t_shell	*shell;
+
+	if (argc != 1 || argv[1])
+		return (1);
+	shell = init_minishell(envp);
+	while (1)
+	{
+		shell->input = readline(SHELL_PROMPT);
+		if (process_cmd_iteration(shell))
+		{
+			display_error(shell);
+			cleanup_shell(shell);
+			return (shell->last_exit_code);
+		}
+	}
+	cleanup_shell(shell);
+	return (0);
+}
+
 static int	process_cmd_iteration(t_shell *shell)	// prototyping
 {
 	if (!shell->input || !*(shell->input))
@@ -40,69 +61,15 @@ static int	process_cmd_iteration(t_shell *shell)	// prototyping
 		cleanup_iteration(shell);
 		return (1);
 	}
+	ft_print_tokens(shell->tokens); // Debugging: Print Tokens
 	shell->ast_root = parse_tokens(shell);
 	if (!shell->ast_root)
 	{
 		cleanup_iteration(shell);
 		return (1);
 	}
+	print_ast(shell->ast_root, 0); // Debugging: Print AST
 	exec_astree(shell);
 	cleanup_iteration(shell);
 }
 
-int	main(int argc, char **argv, char **envp)
-{
-	t_shell				minish;
-	t_token				*tokens;
-	t_ast_node			*ast_root;
-	t_lexer				lexer;
-	t_expand_context	context;
-
-	if (argc != 1 || argv[1])
-		return (1);
-	init_minishell(&minish, envp);
-	while (1)
-	{
-		minish.line = readline(minish.prompt);
-		if (!minish.line)
-		{
-			ft_error_msg("Error: Unable to read the line");
-			break ;
-		}
-		if (*minish.line)
-		{
-			tokens = ft_lexer(minish.line);
-			if (!tokens)
-			{
-				ft_error_msg("Error: Lexer returned NULL");
-				return (2);
-			}
-			context.env_list = minish.env_list;
-			context.last_exit_status = minish.exit_status;
-			if (!expand_variables_in_tokens(&tokens, &context))
-			{
-				ft_error_msg("Error: Variable expansion failed");
-				free_tokens(tokens);
-				return (3);
-			}
-			ft_print_tokens(tokens); // Debugging: Print Tokens
-			lexer.tokens = tokens;
-			lexer.error = 0;
-			ast_root = parse_tokens(&lexer);
-			if (!ast_root)
-			{
-				ft_error_msg("Parser returned NULL");
-				free_tokens(tokens);
-				return (4);
-			}
-			print_ast(ast_root, 0); // Debugging: Print AST
-			add_history(minish.line);
-			exec_astree(&minish, ast_root);
-
-			free_ast_node(&ast_root);
-			free_tokens(tokens);
-		}
-		free(minish.line);
-	}
-	return (0);
-}
