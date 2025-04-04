@@ -1,8 +1,6 @@
 #ifndef UTILS_H
 # define UTILS_H
 
-# include <stdio.h>
-# include <unistd.h>
 # include <stdbool.h>
 # include "types.h"
 # include "../libft/include/libft.h"

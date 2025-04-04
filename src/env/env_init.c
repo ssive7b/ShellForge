@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "../libft/include/libft.h"
 #include "env_utils.h"
 
 t_list	**get_env(void)

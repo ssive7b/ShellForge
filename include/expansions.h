@@ -15,8 +15,6 @@
 
 # include "../libft/include/libft.h"
 
-typedef struct s_tty	t_tty;
-
 typedef struct s_expand_context
 {
 	t_list	*env_list;

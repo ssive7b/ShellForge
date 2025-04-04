@@ -15,6 +15,7 @@
 
 # include <stdbool.h>
 # include "types.h"
+# include "../libft/include/libft.h"
 
 typedef struct s_redirection
 {

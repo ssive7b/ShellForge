@@ -13,9 +13,9 @@
 #ifndef PARSER_H
 # define PARSER_H
 
-# include "lexer.h"
+# include "types.h"
 # include "ast_mock.h"
-# include "utils.h"
+# include "lexer.h"
 
 // parser.c
 t_ast_node	*parse_tokens(t_lexer *lexer);

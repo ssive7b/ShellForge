@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <stdio.h>
 #include "lexer.h"
 
 void	ft_init_lex(t_lexer *lx, char *input)

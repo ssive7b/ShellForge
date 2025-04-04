@@ -14,7 +14,7 @@
 # define EXECUTIONER_H
 
 # include <sys/types.h>
-# include <minishell.h>
+# include "types.h"
 # include "../libft/include/libft.h"
 
 // function pointer for exec mode
