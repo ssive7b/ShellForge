@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "char_designation.h"
-#include "../libft/include/libft.h"
 
 int	ft_is_whitespace(char c)
 {

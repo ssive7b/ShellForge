@@ -2,9 +2,8 @@
 # define ENV_UTILS_H
 
 # include <stdbool.h>
+# include "types.h"
 # include "../libft/include/libft.h"
-
-typedef struct s_tty	t_tty;
 
 typedef struct	s_env
 {
@@ -19,7 +18,7 @@ t_list	**get_env(void);
 // env_aux.c
 t_list	*to_env_node(char *env_string);
 char	*get_envp_value(char *key, t_list *env_list);
-char	*find_exec_pathname(t_tty *tty, t_list *env_list, char *cmd_name);
+char	*find_exec_pathname(t_shell *tty, t_list *env_list, char *cmd_name);
 t_env	*get_env_entry(char *key, t_list *env_list);
 t_list	*create_new_env_node(char *key, char *value);
 

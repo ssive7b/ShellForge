@@ -3,9 +3,10 @@
 
 # include <stdio.h>
 # include <unistd.h>
+# include <stdbool.h>
+# include "types.h"
 # include "../libft/include/libft.h"
 # include "../libft/include/ft_printf.h"
-# include "ast_mock.h"
 
 // string_utils.c
 bool	safe_strjoin(char **dest, const char *source);

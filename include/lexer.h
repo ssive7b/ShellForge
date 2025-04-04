@@ -13,29 +13,9 @@
 #ifndef LEXER_H
 # define LEXER_H
 
-# include "../libft/include/libft.h"
 # include <stdio.h>
-
-typedef enum e_token_type 
-{
-	TOKEN_UNKNOWN,
-	TOKEN_PIPE, // |
-	TOKEN_REDIR_OUT, // >
-	TOKEN_REDIR_IN, // <
-	TOKEN_REDIR_APPEND, // >>
-	TOKEN_REDIR_HEREDOC, // <<
-	TOKEN_OR, // || ADDED THIS
-	TOKEN_AND, // && ADDED THIS
-	TOKEN_AMPERSAND, // &
-	TOKEN_SEMICOLON, // ;
-	TOKEN_WORD_UNQUOTED, 
-	TOKEN_WORD_DQUOTED,
-	TOKEN_WORD_SQUOTED,
-	TOKEN_LPAREN,
-	TOKEN_RPAREN,
-	TOKEN_DELIMITER,
-	TOKEN_END
-}	t_token_type;
+# include "../libft/include/libft.h"
+# include "types.h"
 
 typedef struct	s_token
 {

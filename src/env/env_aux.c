@@ -76,7 +76,7 @@ t_env	*get_env_entry(char *key, t_list *env_list)
 	return (NULL);
 }
 
-char	*find_exec_pathname(t_tty *tty, t_list *env_list, char *cmd_name)
+char	*find_exec_pathname(t_shell *tty, t_list *env_list, char *cmd_name)
 {
 	char	**paths;
 	char	*full_path;

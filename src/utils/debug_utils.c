@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "utils.h"
+#include "ast_mock.h"
 
 void	print_stack(t_ast_stack *stack, const char *name)
 {

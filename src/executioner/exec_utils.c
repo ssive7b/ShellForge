@@ -39,7 +39,7 @@ void	setup_redirections(t_ast_node *node)
 	}
 }
 
-pid_t	fork_and_execute_child(t_tty *sh, t_ast_node *node)
+pid_t	fork_and_execute_child(t_shell *sh, t_ast_node *node)
 {
 	pid_t	cpid;
 

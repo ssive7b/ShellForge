@@ -20,7 +20,7 @@
 #include <sys/wait.h>
 #include <error.h>
 
-void	exec_astree(t_tty *sh, t_ast_node *cmd_node)
+void	exec_astree(t_shell *sh, t_ast_node *cmd_node)
 {
 	t_exec_table exec_table;
 

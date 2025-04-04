@@ -2,10 +2,8 @@
 # define CHAR_DESIGNATION_H
 
 # include <stdbool.h>
-
-# define DOUBLE_QUOTE '"'
-# define SINGLE_QUOTE '\''
-# define PIPE '|'
+# include "types.h"
+# include "../libft/include/libft.h"
 
 int		ft_is_whitespace(char c);
 int		ft_is_operator(char c);

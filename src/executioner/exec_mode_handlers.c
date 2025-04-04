@@ -22,7 +22,7 @@
 #include <sys/wait.h>
 #include <error.h>
 
-void	*execute_command(t_tty *sh, t_ast_node *node)
+void	*execute_command(t_shell *sh, t_ast_node *node)
 {
 	pid_t	cpid;
 
@@ -44,7 +44,7 @@ void	*execute_command(t_tty *sh, t_ast_node *node)
 	return (NULL);
 }
 
-void	*execute_pipe(t_tty *sh, t_ast_node *node)
+void	*execute_pipe(t_shell *sh, t_ast_node *node)
 {
 	int pipefd[2];
 
@@ -64,7 +64,7 @@ void	*execute_pipe(t_tty *sh, t_ast_node *node)
 	return (NULL);
 }
 
-void	*execute_redirection(t_tty *sh, t_ast_node *node) // to-do: allow for HEREDOC in the below implementation
+void	*execute_redirection(t_shell *sh, t_ast_node *node) // to-do: allow for HEREDOC in the below implementation
 {
 	int	fd;
 
@@ -88,7 +88,7 @@ void	*execute_redirection(t_tty *sh, t_ast_node *node) // to-do: allow for HERED
 	return (NULL);
 }
 
-void	*execute_and(t_tty *sh, t_ast_node *node)
+void	*execute_and(t_shell *sh, t_ast_node *node)
 {
 	if (!node)
 		return (NULL);
@@ -98,7 +98,7 @@ void	*execute_and(t_tty *sh, t_ast_node *node)
 	return (NULL);
 }
 
-void	*execute_or(t_tty *sh, t_ast_node *node)
+void	*execute_or(t_shell *sh, t_ast_node *node)
 {
 	if (!node)
 		return (NULL);

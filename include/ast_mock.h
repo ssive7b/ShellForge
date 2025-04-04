@@ -14,27 +14,7 @@
 # define AST_MOCK_H
 
 # include <stdbool.h>
-# include "lexer.h"
-
-typedef enum e_node_type
-{
-	NODE_COMMAND,
-	NODE_PIPE,
-	NODE_REDIRECTION,
-	NODE_AND,
-	NODE_OR,
-	NODE_LPAREN,
-	NODE_RPAREN,
-	NODE_TYPES_COUNT
-}							t_node_type;
-
-typedef enum e_redir_type
-{
-	REDIR_INPUT,
-	REDIR_OUTPUT,
-	REDIR_APPEND,
-	REDIR_HEREDOC
-}							t_redir_type;
+# include "types.h"
 
 typedef struct s_redirection
 {
@@ -54,7 +34,7 @@ typedef struct s_ast_node
 	int						fd_in;
 	int						fd_out;
 	int						exit_status;
-	struct s_redirection	*redir;
+	t_redir					*redir;
 	struct s_ast_node		*left;
 	struct s_ast_node		*right;
 }							t_ast_node;
