@@ -76,13 +76,12 @@ t_env	*get_env_entry(char *key, t_list *env_list)
 	return (NULL);
 }
 
-char	*find_exec_pathname(t_shell *tty, t_list *env_list, char *cmd_name)
+char	*find_exec_pathname(t_list *env_list, char *cmd_name)
 {
 	char	**paths;
 	char	*full_path;
 	int		i;
 
-	(void)tty;
 	paths = ft_split(get_envp_value("PATH", env_list), ':');
 	if (!paths || !(*paths))
 		return (NULL);			// do we need to throw an error here or look in cwd?

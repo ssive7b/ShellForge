@@ -13,13 +13,14 @@
 #include "ast_mock.h"
 #include "parser.h"
 #include "lexer.h"
+#include "env_utils.h"
 #include "utils.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
 
 static void	initialize_ast_node(t_ast_node *node, t_node_type type);
-static bool	setup_command_node(t_ast_node *node, const char *value);
+static bool	setup_command_node(t_ast_node *node, char *value);
 
 t_ast_node	*ast_new(t_node_type type, t_token *token)
 {
@@ -62,9 +63,9 @@ static void	initialize_ast_node(t_ast_node *node, t_node_type type)
     node->right = NULL;
 }
 
-static bool	setup_command_node(t_ast_node *node, const char *value)
+static bool	setup_command_node(t_ast_node *node, char *value)
 {
-	node->cmd_pathname = ft_strdup(value);
+	node->cmd_pathname = find_exec_pathname(*get_env(), value); // decide if you want to allow static functions
 	if (!node->cmd_pathname)
 		return (false);
     node->args = malloc(2 * sizeof(char *));

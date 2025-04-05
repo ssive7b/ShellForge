@@ -22,20 +22,22 @@ static t_lexer_state	word_state(t_lexer *lx);
 static t_lexer_state	operator_state(t_lexer *lx);
 static t_lexer_state	delimiter_state(t_lexer *lx);
 
-t_token	*ft_lexer(char *input)
+t_lexer	*run_tokenizer(const char *input)
 {
-	t_lexer			lx;
+	t_lexer			*lx;
 	t_lexer_state	next_state;
 
 	next_state = (t_lexer_state) word_state;
-	ft_init_lex(&lx, input);
-	lx.idx = ft_skip_whitespaces(input);
-	while (next_state && input[lx.idx])
+	lx = init_tokenizer(input);
+	if (!lx)
+		return (NULL);
+	lx->idx = ft_skip_whitespaces(input);
+	while (next_state && input[lx->idx])
 	{
-		next_state = (t_lexer_state) next_state(&lx);
-		lx.idx++;
+		next_state = (t_lexer_state) next_state(lx);
+		lx->idx++;
 	}
-	return (lx.tokens);
+	return (lx);
 }
 
 static t_lexer_state	word_state(t_lexer *lx)

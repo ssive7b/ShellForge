@@ -13,6 +13,7 @@
 #ifndef LEXER_H
 # define LEXER_H
 
+# include <stdbool.h>
 # include "../libft/include/libft.h"
 # include "types.h"
 
@@ -35,12 +36,16 @@ typedef struct	s_lexer
 typedef void	*(*t_lexer_state)(t_lexer *lexer);
 
 // lexer.c
-t_token	*ft_lexer(char *input);
+t_lexer	*run_tokenizer(const char *input);
 
 // lexer_utils.c
-void	ft_init_lex(t_lexer *lx, char *input);
+t_lexer	*init_tokenizer(const char *input);
 t_token	*ft_create_token(t_token token_data);
 void	ft_append_token(t_token **tokens_queue, t_token *new_token);
 void	ft_print_tokens(t_token *tokens);
+
+// lexer_cleaners.c
+void		cleanup_lexer(t_lexer **lexer);
+void		free_tokens(t_token *tokens);
 
 #endif

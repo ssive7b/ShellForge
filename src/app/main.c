@@ -24,7 +24,7 @@
 #include "parser.h"
 #include "utils.h"
 
-static int	process_cmd_iteration(t_shell *shell);
+static bool	process_cmd_iteration(t_shell *shell);
 
 int	main(int argc, char **argv, char **envp)
 {
@@ -36,7 +36,7 @@ int	main(int argc, char **argv, char **envp)
 	while (1)
 	{
 		shell->input = readline(SHELL_PROMPT);
-		if (process_cmd_iteration(shell))
+		if (!process_cmd_iteration(shell))
 		{
 			display_error(shell);
 			cleanup_shell(shell);
@@ -47,29 +47,25 @@ int	main(int argc, char **argv, char **envp)
 	return (0);
 }
 
-static int	process_cmd_iteration(t_shell *shell)	// prototyping
+static bool	process_cmd_iteration(t_shell *shell)	// prototyping
 {
 	if (!shell->input || !*(shell->input))
-		return (0);
+	{
+		set_error(shell, 1, "Error: Unable to read input");
+		return (false);
+	}
 	if (*(shell->input))
 		add_history(shell->input);
-	shell->tokens = ft_lexer(shell->input);
-	if (!shell->tokens)
-		return (1);
-	if (!expand_variables_in_tokens(shell))
-	{
-		cleanup_iteration(shell);
-		return (1);
-	}
-	ft_print_tokens(shell->tokens); // Debugging: Print Tokens
-	shell->ast_root = parse_tokens(shell);
+	shell->ast_root = get_ast_root(shell->input, shell->env_list, shell->last_exit_code);
 	if (!shell->ast_root)
 	{
+		set_error(shell, 1, "Error: Failed while setting up the AST");
 		cleanup_iteration(shell);
-		return (1);
+		return (false);
 	}
 	print_ast(shell->ast_root, 0); // Debugging: Print AST
-	exec_astree(shell);
+	exec_astree(shell, shell->ast_root);
 	cleanup_iteration(shell);
+	return (true);
 }
 

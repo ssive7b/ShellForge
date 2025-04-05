@@ -21,30 +21,6 @@ t_list	**get_env(void)
 	return (&env);
 }
 
-void	init_env(char **envp)
-{
-	t_list	*env_list;
-	t_list	*env_node;
-	size_t	i;
-
-	if (!envp)
-		return ;
-	env_list = NULL;
-	i = 0;
-	while (envp[i])
-	{
-		env_node = to_env_node(envp[i]);
-		if (!env_node)
-		{
-			ft_lstclear(&env_list, free_env_content);
-			return (NULL);
-		}
-		ft_lstadd_back(&env_list, env_node);
-		i++;
-	}
-	*get_env() = env_list;
-}
-
 t_list	*create_env_list(char **envp)
 {
 	t_list	*env_list;
@@ -52,7 +28,7 @@ t_list	*create_env_list(char **envp)
 	size_t	i;
 
 	if (!envp)
-		return ;
+		return (NULL);
 	env_list = NULL;
 	i = 0;
 	while (envp[i])

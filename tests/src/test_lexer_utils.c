@@ -37,7 +37,8 @@ t_token	*ft_check_lexer_output(char *const input, char *const expected_res)
 {
 	size_t	idx = 0;
 	size_t	len = 0;
-	t_token	*head = ft_lexer(input);
+	t_lexer	*lexer = run_tokenizer(input);
+	t_token	*head = lexer->tokens;
 	t_token *current_token;
 	char	*token_alias;
 	int		cmp_res;

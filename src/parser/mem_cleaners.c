@@ -16,24 +16,6 @@
 #include "parser.h"
 #include "utils.h"
 
-static void	free_single_token(t_token *token);
-
-void	free_tokens(t_token *tokens)
-{
-	t_token	*current;
-	t_token	*next;
-
-	if (!tokens)
-		return ;
-	current = tokens;
-	while (current)
-	{
-		next = current->next;
-		free_single_token(current);
-		current = next;
-	}
-}
-
 void	free_ast_node(t_ast_node **node)
 {
 	size_t	i;
@@ -105,12 +87,4 @@ void	handle_parser_error(t_lexer *lexer, t_ast_stack **operator_stack, t_ast_sta
 		free_ast_stack(operand_stack);
 	if (node && *node)
 		free_ast_node(node);
-}
-
-static void	free_single_token(t_token *token)
-{
-	if (!token)
-		return ;
-	safe_free((void **)&token->value);
-	safe_free((void **)token);
 }

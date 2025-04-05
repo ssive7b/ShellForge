@@ -61,6 +61,8 @@ void		free_ast_node(t_ast_node **node);
 void		free_ast_stack(t_ast_stack **stack);
 void		cleanup_parser_state(t_ast_stack **operator_stack, t_ast_stack **operand_stack, t_ast_node **node);
 void		handle_parser_error(t_lexer *lexer, t_ast_stack **operator_stack, t_ast_stack **operand_stack, t_ast_node **node);
-void		free_tokens(t_token *tokens);
+
+// get_ast_root.c
+t_ast_node	*get_ast_root(const char *input, t_list	*env_list, int last_exit_code);
 
 #endif

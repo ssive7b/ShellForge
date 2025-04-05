@@ -18,6 +18,7 @@ SRC						=	$(SRC_DIR)/app/main.c											\
 							$(SRC_DIR)/env/env_utils.c										\
 							$(SRC_DIR)/parser/lexer/lexer.c									\
 							$(SRC_DIR)/parser/lexer/lexer_utils.c							\
+							$(SRC_DIR)/parser/lexer/lexer_cleaners.c						\
 							$(SRC_DIR)/parser/expansions/expander.c							\
 							$(SRC_DIR)/parser/expansions/expander_utils.c					\
 							$(SRC_DIR)/parser/parsing/parser.c								\
@@ -27,6 +28,7 @@ SRC						=	$(SRC_DIR)/app/main.c											\
 							$(SRC_DIR)/parser/parsing/parser_redirections.c					\
 							$(SRC_DIR)/parser/parsing/parser_aux.c							\
 							$(SRC_DIR)/parser/parsing/parser_utils.c						\
+							$(SRC_DIR)/parser/get_ast_root.c								\
 							$(SRC_DIR)/parser/mem_cleaners.c								\
 							$(SRC_DIR)/executioner/init_execs.c								\
 							$(SRC_DIR)/executioner/execute.c								\

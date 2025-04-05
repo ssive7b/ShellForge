@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "../libft/include/ft_printf.h"
+#include "ast_mock.h"
 #include "minishell.h"
 #include "parser.h"
 #include "lexer.h"
@@ -22,14 +23,9 @@ void	cleanup_iteration(t_shell *shell)	// cleanup after iteration
 	if (!shell)
 		return ;
 	safe_free((void **)&shell->input);
-	if (shell->tokens)
-	{
-		free_tokens(shell->tokens);
-		shell->tokens = NULL;
-	}
 	if (shell->ast_root)
 	{
-		free_ast_node(shell->ast_root);
+		free_ast_node(&shell->ast_root);
 		shell->ast_root = NULL;
 	}
 	safe_free((void **)&shell->err_msg);

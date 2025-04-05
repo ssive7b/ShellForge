@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <criterion/criterion.h>
 #include <criterion/logging.h>
 #include <fcntl.h>

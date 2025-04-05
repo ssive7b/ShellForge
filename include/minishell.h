@@ -11,10 +11,9 @@
 typedef struct	s_shell
 {
 	char			*input;
-	t_token			*tokens;
 	t_ast_node		*ast_root;
 	char			**envp;				// raw env array for execve
-	t_env			*env_list;			// linked list for easy manipulation
+	t_list			*env_list;			// linked list for easy manipulation
 	char			*cwd;
 	int				last_exit_code;
 	int				is_running;			// control variable for the main loop
