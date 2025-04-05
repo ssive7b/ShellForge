@@ -76,27 +76,6 @@ t_env	*get_env_entry(char *key, t_list *env_list)
 	return (NULL);
 }
 
-char	*find_exec_pathname(t_list *env_list, char *cmd_name)
-{
-	char	**paths;
-	char	*full_path;
-	int		i;
-
-	paths = ft_split(get_envp_value("PATH", env_list), ':');
-	if (!paths || !(*paths))
-		return (NULL);			// do we need to throw an error here or look in cwd?
-	i = -1;
-	while (paths[++i])
-	{
-		full_path = ft_strjoin_multiple((char *[]){paths[i], "/", cmd_name}, 3); // check if dir can be accessed before that too?
-		if (!full_path)
-			break ;
-		if (access(full_path, F_OK) == 0)
-			return (ft_free_2d_array(&paths, -1), full_path);
-	}
-	return (ft_free_2d_array(&paths, -1), NULL);
-}
-
 t_list	*create_new_env_node(char *key, char *value)
 {
 	t_list	*env_node;

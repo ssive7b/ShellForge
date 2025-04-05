@@ -67,7 +67,12 @@ void	display_error(t_shell *shell)
 {
 	if (!shell || !shell->err_msg)
 		return ;
-	ft_dprintf(STDERR_FILENO, "minishell: %s\n", shell->err_msg);
+	ft_dprintf(STDERR_FILENO, "minishell: ");
+	if (shell->current_cmd)
+		ft_dprintf(STDERR_FILENO, "%s: ", shell->current_cmd);
+	ft_dprintf(STDERR_FILENO, "%s", shell->err_msg);
+	ft_dprintf(STDERR_FILENO, "\n");
+	safe_free((void **)&shell->err_msg);
 }
 
 void	set_error(t_shell *shell, int code, const char *msg)

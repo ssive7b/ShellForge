@@ -15,6 +15,7 @@ typedef struct	s_shell
 	char			**envp;				// raw env array for execve
 	t_list			*env_list;			// linked list for easy manipulation
 	char			*cwd;
+	char			*current_cmd;
 	int				last_exit_code;
 	int				is_running;			// control variable for the main loop
 	int				is_interactive;

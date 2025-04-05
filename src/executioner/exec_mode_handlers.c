@@ -10,37 +10,40 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/wait.h>
+#include <error.h>
 #include "executioner.h"
 #include "lexer.h"
 #include "minishell.h"
 #include "ast_mock.h"
 #include "env_utils.h"
 #include "utils.h"
-#include <unistd.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/wait.h>
-#include <error.h>
 
 void	*execute_command(t_shell *sh, t_ast_node *node)
 {
 	pid_t	cpid;
 
-	if (!node)
+	if (!node || !node->args || !node->args[0])
 		return (NULL);
 	if (is_builtin(node->args[0]))
 	{
 		exec_builtin(node);
 		return (NULL);
 	}
-	else
+	if (!resolve_command_path(sh, node))
+		return (NULL);
+	cpid = fork_and_execute_child(sh, node);
+	if (cpid == -1)
 	{
-		cpid = fork_and_execute_child(sh, node);
-		if (cpid == -1)
-			return (NULL);
-		node->pid = cpid;
-		wait_for_child(cpid, &node->exit_status);
+		set_error(sh, 1, "fork error");
+		display_error(sh);
+		return (NULL);
 	}
+	node->pid = cpid;
+	wait_for_child(cpid, &node->exit_status);
 	return (NULL);
 }
 
@@ -73,10 +76,10 @@ void	*execute_redirection(t_shell *sh, t_ast_node *node) // to-do: allow for HER
 	if (node->redir->type == REDIR_HEREDOC)
 		fd = get_heredoc_fd(node->redir);
 	else
-		fd = open_redirection_flle(node->redir->file_name, node->redir->type);
+		fd = open_redirection_flle(sh, node->redir->file_name, node->redir->type);
 	if (fd == -1)
 	{
-		ft_error_msg("Execution error: redirection");
+		node->exit_status = 1;
 		return (NULL);
 	}
 	if (node->redir->type == REDIR_INPUT || node->redir->type == REDIR_HEREDOC)

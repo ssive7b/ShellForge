@@ -14,6 +14,7 @@
 # define EXECUTIONER_H
 
 # include <sys/types.h>
+# include <stdbool.h>
 # include "types.h"
 # include "../libft/include/libft.h"
 
@@ -37,11 +38,15 @@ void	*execute_or(t_shell *sh, t_ast_node *node);
 // init_execs.c
 void	init_exec_table(t_exec_table *exec_table);
 
+// cmd_path_resolution.c
+char	*find_exec_pathname(t_shell *sh, t_list *env_list, char *cmd_name);
+
 // exec_utils.c
+bool	resolve_command_path(t_shell *sh, t_ast_node *node);
 void	setup_redirections(t_ast_node *node);
 pid_t	fork_and_execute_child(t_shell *sh, t_ast_node *node);
 void	wait_for_child(pid_t cpid, int *exit_status);
-int		open_redirection_flle(const char *file_name, t_redir_type redir_type);
+int		open_redirection_flle(t_shell *sh, const char *file_name, t_redir_type redir_type);
 
 // execute.c
 void	exec_astree(t_shell *sh, t_ast_node *node);

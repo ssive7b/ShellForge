@@ -65,9 +65,7 @@ static void	initialize_ast_node(t_ast_node *node, t_node_type type)
 
 static bool	setup_command_node(t_ast_node *node, char *value)
 {
-	node->cmd_pathname = find_exec_pathname(*get_env(), value); // decide if you want to allow static functions
-	if (!node->cmd_pathname)
-		return (false);
+	node->cmd_pathname = NULL;
     node->args = malloc(2 * sizeof(char *));
     if (!node->args)
     {

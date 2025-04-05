@@ -10,18 +10,42 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <sys/wait.h>
+#include <error.h>
+#include <fcntl.h>
 #include "executioner.h"
 #include "lexer.h"
 #include "minishell.h"
 #include "ast_mock.h"
 #include "env_utils.h"
 #include "utils.h"
-#include <unistd.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/wait.h>
-#include <error.h>
-#include <fcntl.h>
+
+static bool	validate_redir_file(t_shell *sh, const char *file_name, t_redir_type e_redir_type);
+
+bool	resolve_command_path(t_shell *sh, t_ast_node *node)
+{
+	if (!node->cmd_pathname && !is_builtin(node->args[0]))
+	{
+		sh->current_cmd = node->args[0];
+		node->cmd_pathname = find_exec_pathname(sh, sh->env_list, node->args[0]);
+		if (!node->cmd_pathname)
+		{
+			if (!sh->err_msg)
+				set_error(sh, 127, "command not found");
+			display_error(sh);
+			node->exit_status = sh->error_code;
+			sh->current_cmd = NULL;
+			return (false);
+		}
+		sh->current_cmd = NULL;
+	}
+	return (true);
+}
 
 void	setup_redirections(t_ast_node *node)
 {
@@ -30,8 +54,6 @@ void	setup_redirections(t_ast_node *node)
 		dup2(node->fd_in, STDIN_FILENO);
 		close(node->fd_in);
 	}
-	else
-		close(node->fd_in);
 	if (node->fd_out != STDOUT_FILENO)
 	{
 		dup2(node->fd_out, STDOUT_FILENO);
@@ -74,27 +96,55 @@ void	wait_for_child(pid_t cpid, int *exit_status) // add some more robust handli
     	*exit_status = 1;
 }
 
-int	open_redirection_flle(const char *file_name, t_redir_type redir_type) // add some better handling of fds, i.e. proper handling of errors on opening/access, etc.
+int	open_redirection_flle(t_shell *sh, const char *file_name, t_redir_type redir_type) // add some better handling of fds, i.e. proper handling of errors on opening/access, etc.
 {
 	int	fd;
+	int	flags;
 
+	if (!validate_redir_file(sh, file_name, redir_type))
+		return (-1);
+	if (redir_type == REDIR_INPUT)	// populate the open_flags variable in the redir struct later
+		flags = O_RDONLY;
+	else if (redir_type == REDIR_OUTPUT)
+		flags = O_WRONLY | O_CREAT | O_TRUNC;
+	else if (redir_type == REDIR_APPEND)
+		flags = O_WRONLY | O_CREAT | O_APPEND;
+	else
+		return (-1);
+	fd = open(file_name, flags, 0644);
+	if (fd == -1)
+	{
+		sh->current_cmd = (char *)file_name;
+		set_error(sh, 1, strerror(errno));
+		display_error(sh);
+		sh->current_cmd = NULL;
+	}
+	return (fd);
+}
+
+static bool	validate_redir_file(t_shell *sh, const char *file_name, t_redir_type e_redir_type)
+{
 	if (!file_name)
 	{
-		ft_putstr_fd("Error: No filename provided for rediraction\n", STDERR_FILENO);
-		return (-1);
+		set_error(sh, 1, "No filename provided for redirection");
+		return (false);
 	}
-	if (access(file_name, F_OK) == -1 && (redir_type == REDIR_INPUT))
+	if (e_redir_type == REDIR_INPUT && access(file_name, F_OK) == -1)
 	{
-		ft_putstr_fd("Error: File not found.\n", STDERR_FILENO);
-		return (-1);
+		sh->current_cmd = (char *)file_name;
+		set_error(sh, 1, "No such file or directory");
+		display_error(sh);
+		sh->current_cmd = NULL;
+		return (false);
 	}
-	if (redir_type == REDIR_INPUT)	// populate the open_flags variable in the redir struct later
-		fd = open(file_name, O_RDONLY);
-	else if (redir_type == REDIR_OUTPUT)
-		fd = open(file_name, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	else if (redir_type == REDIR_APPEND)
-		fd = open(file_name, O_WRONLY | O_CREAT | O_APPEND, 0644);
-	else
-		fd = -1;
-	return (fd);
+	if ((e_redir_type == REDIR_OUTPUT || e_redir_type == REDIR_APPEND)
+		&& access(file_name, F_OK) == 0 && access(file_name, W_OK) == -1)
+	{
+		sh->current_cmd = (char *)file_name;
+		set_error(sh, 1, "Permission denied");
+		display_error(sh);
+		sh->current_cmd = NULL;
+		return (false);
+	}
+	return (true);
 }
