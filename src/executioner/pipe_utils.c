@@ -70,9 +70,15 @@ pid_t	fork_and_execute_child(t_shell *sh, t_ast_node *node)
 	}
 	if (cpid == 0)
 	{
+		printf("node->type: %d\n", node->type);
+		printf("node->cmd_pathname: %s\n", node->cmd_pathname);
+		printf("node->args[0]: %s\n", node->args[0]);
+		printf("node->envp[0]: %s\n", sh->envp[0]);
 		setup_redirections(node);
+		// exec_astree(sh, node); // Added for debugging
 		execve(node->cmd_pathname, node->args, sh->envp);
 		set_error(sh, 127, strerror(errno));
+		display_error(sh);
 		exit(127);
 	}
 	return (cpid);

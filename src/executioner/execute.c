@@ -25,6 +25,7 @@ void	exec_astree(t_shell *sh, t_ast_node *cmd_node)
 	t_exec_table exec_table;
 
 	init_exec_table(&exec_table);
+	printf("node->type: %d\n", cmd_node->type);
 	if (cmd_node->type < NODE_TYPES_COUNT)
 		exec_table.exec_modes[cmd_node->type](sh, cmd_node);
 }
