@@ -1,0 +1,10 @@
+include
+libft
+Makefile
+minishell
+obj
+README.md
+src
+tes
+tests
+text.txt

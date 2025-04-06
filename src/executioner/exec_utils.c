@@ -27,6 +27,28 @@
 
 static bool	validate_redir_file(t_shell *sh, const char *file_name, t_redir_type e_redir_type);
 
+pid_t	fork_external_command(t_shell *sh, t_ast_node *node)
+{
+	pid_t	cpid;
+
+	cpid = fork();
+	if (cpid == -1)
+	{
+		set_error(sh, 1, "fork error");
+		display_error(sh);
+		return (-1);
+	}
+	if (cpid == 0)
+	{
+		setup_redirections(node);
+		execve(node->cmd_pathname, node->args, sh->envp);
+		set_error(sh, 127, strerror(errno));
+		display_error(sh);
+		exit(127);
+	}
+	return (cpid);
+}
+
 bool	resolve_command_path(t_shell *sh, t_ast_node *node)
 {
 	if (!node->cmd_pathname && !is_builtin(node->args[0]))

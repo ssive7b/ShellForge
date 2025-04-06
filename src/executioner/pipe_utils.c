@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <signal.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -37,52 +38,79 @@ bool	create_pipe(t_shell *sh, t_ast_node *node, int pipefd[2])
 	return (true);
 }
 
-pid_t	execute_left_command(t_shell *sh, t_ast_node *left_node)
+bool	prepare_pipe_commands(t_shell *sh, t_ast_node *node)
+{
+	if (node->left->type == NODE_COMMAND && !resolve_command_path(sh, node->left))
+		return (false);
+	if (node->right->type == NODE_COMMAND && !resolve_command_path(sh, node->right))
+		return (false);
+	return (true);
+}
+
+pid_t	fork_pipe_process(t_shell *sh, t_ast_node *cmd_node, int pipefd[2], int is_writer)
 {
 	pid_t	pid;
 
-	pid = fork_and_execute_child(sh, left_node);
+	pid = fork();
 	if (pid == -1)
-		set_error(sh, 1, "for error for left command");
-	return (pid);
-}
-
-pid_t	execute_right_command(t_shell *sh, t_ast_node *right_node)
-{
-	pid_t	pid;
-
-	pid = fork_and_execute_child(sh, right_node);
-	if (pid == -1)
-		set_error(sh, 1, "fork error for right command");
-	return (pid);
-}
-
-pid_t	fork_and_execute_child(t_shell *sh, t_ast_node *node)
-{
-	pid_t	cpid;
-
-	cpid = fork();
-	if (cpid == -1)
 	{
 		set_error(sh, 1, "fork error");
 		display_error(sh);
 		return (-1);
 	}
-	if (cpid == 0)
-	{
-		printf("node->type: %d\n", node->type);
-		printf("node->cmd_pathname: %s\n", node->cmd_pathname);
-		printf("node->args[0]: %s\n", node->args[0]);
-		printf("node->envp[0]: %s\n", sh->envp[0]);
-		setup_redirections(node);
-		// exec_astree(sh, node); // Added for debugging
-		execve(node->cmd_pathname, node->args, sh->envp);
-		set_error(sh, 127, strerror(errno));
-		display_error(sh);
-		exit(127);
-	}
-	return (cpid);
+	if (pid == 0)
+		execute_pipe_child(sh, cmd_node, pipefd, is_writer);
+	return (pid);
 }
+
+void	execute_pipe_child(t_shell *sh, t_ast_node *cmd_node, int pipefd[2], int is_writer)
+{
+	if (is_writer)
+	{
+		close(pipefd[0]);
+		setup_redirections(cmd_node);
+	}
+	else
+	{
+		close(pipefd[1]);
+		setup_redirections(cmd_node);
+	}
+	if (cmd_node->type == NODE_COMMAND && cmd_node->cmd_pathname)
+		execve(cmd_node->cmd_pathname, cmd_node->args, sh->envp);
+	else
+		exec_astree(sh, cmd_node);
+	if (cmd_node->exit_status)
+		exit(cmd_node->exit_status);
+	else
+		exit(127);
+}
+
+void	handle_fork_error(pid_t left_pid, int pipefd[2])
+{
+	close(pipefd[0]);
+	close(pipefd[1]);
+	if (left_pid > 0)
+	{
+		kill(left_pid, SIGTERM);
+		waitpid(left_pid, NULL, 0);
+	}
+}
+
+void	wait_for_pipeline(t_shell *sh, pid_t left_pid, pid_t right_pid, int *exit_status)
+{
+	int	status;
+
+	wait_for_child(sh, left_pid, &status);
+	wait_for_child(sh, right_pid, exit_status);
+	sh->last_exit_code = *exit_status;
+}
+
+void	close_pipe(int	pipefd[2])
+{
+	close(pipefd[0]);
+	close(pipefd[1]);
+}
+
 
 void	wait_for_child(t_shell *sh, pid_t cpid, int *exit_status) // add some more robust handling later, e.g. WIFSIGNALED, WIFSTOPPED, WIFCONTINUED, etc.
 {

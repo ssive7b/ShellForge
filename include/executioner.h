@@ -42,6 +42,7 @@ void	init_exec_table(t_exec_table *exec_table);
 char	*find_exec_pathname(t_shell *sh, t_list *env_list, char *cmd_name);
 
 // exec_utils.c
+pid_t	fork_external_command(t_shell *sh, t_ast_node *node);
 bool	resolve_command_path(t_shell *sh, t_ast_node *node);
 void	setup_redirections(t_ast_node *node);
 int		open_redirection_flle(t_shell *sh, const char *file_name, t_redir_type redir_type);
@@ -50,11 +51,14 @@ int		open_redirection_flle(t_shell *sh, const char *file_name, t_redir_type redi
 void	exec_astree(t_shell *sh, t_ast_node *node);
 
 // pipe_utils.c
-pid_t	fork_and_execute_child(t_shell *sh, t_ast_node *node);
+bool	prepare_pipe_commands(t_shell *sh, t_ast_node *node);
+pid_t	fork_pipe_process(t_shell *sh, t_ast_node *cmd_node, int pipefd[2], int is_writer);
+void	execute_pipe_child(t_shell *sh, t_ast_node *cmd_node, int pipefd[2], int is_writer);
+void	handle_fork_error(pid_t left_pid, int pipefd[2]);
+void	wait_for_pipeline(t_shell *sh, pid_t left_pid, pid_t right_pid, int *exit_status);
+void	close_pipe(int	pipefd[2]);
 void	wait_for_child(t_shell *sh, pid_t cpid, int *exit_status);
 bool	create_pipe(t_shell *sh, t_ast_node *node, int pipefd[2]);
-pid_t	execute_left_command(t_shell *sh, t_ast_node *left_node);
-pid_t	execute_right_command(t_shell *sh, t_ast_node *right_node);
 
 // heredoc.c
 int		get_heredoc_fd(t_redir *redir);

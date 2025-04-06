@@ -35,13 +35,9 @@ void	*execute_command(t_shell *sh, t_ast_node *node)
 	}
 	if (!resolve_command_path(sh, node))
 		return (NULL);
-	cpid = fork_and_execute_child(sh, node);
+	cpid = fork_external_command(sh, node);
 	if (cpid == -1)
-	{
-		set_error(sh, 1, "fork error");
-		display_error(sh);
 		return (NULL);
-	}
 	node->pid = cpid;
 	wait_for_child(sh, cpid, &node->exit_status);
 	sh->last_exit_code = node->exit_status;
@@ -53,32 +49,28 @@ void	*execute_pipe(t_shell *sh, t_ast_node *node)
 	int		pipefd[2];
 	pid_t	left_pid;
 	pid_t	right_pid;
-	int		status;
 
-	if (!node)
+	if (!node || !create_pipe(sh, node, pipefd))
 		return (NULL);
-	if (!create_pipe(sh, node, pipefd))
+	if (!prepare_pipe_commands(sh, node))
+	{
+		close_pipe(pipefd);
 		return (NULL);
-	left_pid = execute_left_command(sh, node->left);
+	}
+	left_pid = fork_pipe_process(sh, node->left, pipefd, 1);
 	if (left_pid == -1)
 	{
-		close(pipefd[0]);
-		close(pipefd[1]);
+		close_pipe(pipefd);
 		return (NULL);
 	}
-	right_pid = execute_right_command(sh, node->right);
+	right_pid = fork_pipe_process(sh, node->right, pipefd, 0);
 	if (right_pid == -1)
 	{
-		close(pipefd[0]);
-		close(pipefd[1]);
-		waitpid(left_pid, NULL, 0);
+		handle_fork_error(left_pid, pipefd);
 		return (NULL);
 	}
-	close(pipefd[0]);
-	close(pipefd[1]);
-	wait_for_child(sh, left_pid, &status);
-	wait_for_child(sh, right_pid, &node->exit_status);
-	sh->last_exit_code = node->exit_status;
+	close_pipe(pipefd);
+	wait_for_pipeline(sh, left_pid, right_pid, &node->exit_status);
 	return (NULL);
 }
 
