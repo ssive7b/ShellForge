@@ -11,7 +11,8 @@
 		"lexer.h": "c",
 		"parser.h": "c",
 		"env_utils.h": "c",
-		"expansions.h": "c"
+		"expansions.h": "c",
+		"unistd.h": "c"
 	},
 	"makefile.configureOnOpen": false
 }

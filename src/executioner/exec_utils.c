@@ -61,41 +61,6 @@ void	setup_redirections(t_ast_node *node)
 	}
 }
 
-pid_t	fork_and_execute_child(t_shell *sh, t_ast_node *node)
-{
-	pid_t	cpid;
-
-	cpid = fork();
-	if (cpid == -1)
-	{
-		ft_error_msg("Execution error: fork");
-		return (-1);
-	}
-	if (cpid == 0)
-	{
-		setup_redirections(node);
-		execve(node->cmd_pathname, node->args, sh->envp);
-		ft_error_msg("Execution error: execve");
-		exit(127);
-	}
-	return (cpid);
-}
-
-void	wait_for_child(pid_t cpid, int *exit_status) // add some more robust handling later, e.g. WIFSIGNALED, WIFSTOPPED, WIFCONTINUED, etc.
-{
-	int	status;
-
-	if (waitpid(cpid, &status, 0) == -1)
-	{
-		ft_error_msg("Execution error: waitpid");
-		return ;
-	}
-	if (WIFEXITED(status))
-    	*exit_status = WEXITSTATUS(status);
- 	else
-    	*exit_status = 1;
-}
-
 int	open_redirection_flle(t_shell *sh, const char *file_name, t_redir_type redir_type) // add some better handling of fds, i.e. proper handling of errors on opening/access, etc.
 {
 	int	fd;

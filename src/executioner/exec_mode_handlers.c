@@ -43,27 +43,42 @@ void	*execute_command(t_shell *sh, t_ast_node *node)
 		return (NULL);
 	}
 	node->pid = cpid;
-	wait_for_child(cpid, &node->exit_status);
+	wait_for_child(sh, cpid, &node->exit_status);
+	sh->last_exit_code = node->exit_status;
 	return (NULL);
 }
 
 void	*execute_pipe(t_shell *sh, t_ast_node *node)
 {
-	int pipefd[2];
+	int		pipefd[2];
+	pid_t	left_pid;
+	pid_t	right_pid;
+	int		status;
 
 	if (!node)
 		return (NULL);
-	if (pipe(pipefd) == -1)
+	if (!create_pipe(sh, node, pipefd))
+		return (NULL);
+	left_pid = execute_left_command(sh, node->left);
+	if (left_pid == -1)
 	{
-		ft_error_msg("Execution error: pipe");
+		close(pipefd[0]);
+		close(pipefd[1]);
 		return (NULL);
 	}
-	node->left->fd_out = pipefd[1];
-	node->right->fd_in = pipefd[0];
-	exec_astree(sh, node->left);
-	close(pipefd[1]);
-	exec_astree(sh, node->right);
+	right_pid = execute_right_command(sh, node->right);
+	if (right_pid == -1)
+	{
+		close(pipefd[0]);
+		close(pipefd[1]);
+		waitpid(left_pid, NULL, 0);
+		return (NULL);
+	}
 	close(pipefd[0]);
+	close(pipefd[1]);
+	wait_for_child(sh, left_pid, &status);
+	wait_for_child(sh, right_pid, &node->exit_status);
+	sh->last_exit_code = node->exit_status;
 	return (NULL);
 }
 
@@ -97,7 +112,13 @@ void	*execute_and(t_shell *sh, t_ast_node *node)
 		return (NULL);
 	exec_astree(sh, node->left);
 	if (node->left->exit_status == 0)
+	{
 		exec_astree(sh, node->right);
+		node->exit_status = node->right->exit_status;
+	}
+	else
+		node->exit_status = node->left->exit_status;
+	sh->last_exit_code = node->exit_status;
 	return (NULL);
 }
 
@@ -107,6 +128,12 @@ void	*execute_or(t_shell *sh, t_ast_node *node)
 		return (NULL);
 	exec_astree(sh, node->left);
 	if (node->left->exit_status != 0)
+	{
 		exec_astree(sh, node->right);
+		node->exit_status = node->right->exit_status;
+	}
+	else
+		node->exit_status = node->left->exit_status;
+	sh->last_exit_code = node->exit_status;
 	return (NULL);
 }

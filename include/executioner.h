@@ -44,12 +44,17 @@ char	*find_exec_pathname(t_shell *sh, t_list *env_list, char *cmd_name);
 // exec_utils.c
 bool	resolve_command_path(t_shell *sh, t_ast_node *node);
 void	setup_redirections(t_ast_node *node);
-pid_t	fork_and_execute_child(t_shell *sh, t_ast_node *node);
-void	wait_for_child(pid_t cpid, int *exit_status);
 int		open_redirection_flle(t_shell *sh, const char *file_name, t_redir_type redir_type);
 
 // execute.c
 void	exec_astree(t_shell *sh, t_ast_node *node);
+
+// pipe_utils.c
+pid_t	fork_and_execute_child(t_shell *sh, t_ast_node *node);
+void	wait_for_child(t_shell *sh, pid_t cpid, int *exit_status);
+bool	create_pipe(t_shell *sh, t_ast_node *node, int pipefd[2]);
+pid_t	execute_left_command(t_shell *sh, t_ast_node *left_node);
+pid_t	execute_right_command(t_shell *sh, t_ast_node *right_node);
 
 // heredoc.c
 int		get_heredoc_fd(t_redir *redir);
