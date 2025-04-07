@@ -71,23 +71,15 @@ bool	resolve_command_path(t_shell *sh, t_ast_node *node)
 
 void	setup_redirections(t_ast_node *node)
 {
-	t_list	*redir_list;
-	t_redir	*redir;
-
-	redir_list = node->redirections;
-	while (redir_list)
+	if (node->fd_in != STDIN_FILENO)
 	{
-		redir = (t_redir *)redir_list->content;
-		if (node->fd_in != STDIN_FILENO)
-		{
-			dup2(node->fd_in, STDIN_FILENO);
-			close(node->fd_in);
-		}
-		if (node->fd_out != STDOUT_FILENO)
-		{
-			dup2(node->fd_out, STDOUT_FILENO);
-			close(node->fd_out);
-		}
+		dup2(node->fd_in, STDIN_FILENO);
+		close(node->fd_in);
+	}
+	if (node->fd_out != STDOUT_FILENO)
+	{
+		dup2(node->fd_out, STDOUT_FILENO);
+		close(node->fd_out);
 	}
 }
 

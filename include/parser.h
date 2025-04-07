@@ -56,13 +56,30 @@ bool		is_argument_token(t_token_type type);
 bool 		is_command_separator(t_token_type type);
 bool 		is_redirection_token(t_token_type type);
 
-// mem_cleaners.c
+// validation
+// parser_validation.c
+bool	validate_input(t_lexer *lexer, const char *input);
+bool	validate_quotes(const char *input);
+bool	validate_parentheses(t_lexer *lexer);
+
+// parser_validation_redirs.c
+bool	validate_redirections(t_lexer *lexer);
+
+// parser_validation_operators.c
+bool	validate_operators(t_lexer *lexer);
+bool 	validate_pipes(t_lexer *lexer);
+
+// parser_mem_cleaners.c
 void		free_ast_node(t_ast_node **node);
 void		free_ast_stack(t_ast_stack **stack);
 void		cleanup_parser_state(t_ast_stack **operator_stack, t_ast_stack **operand_stack, t_ast_node **node);
-void		handle_parser_error(t_lexer *lexer, t_ast_stack **operator_stack, t_ast_stack **operand_stack, t_ast_node **node);
 void		clear_redirections(t_list **redirections);
 void		free_redirection(t_redir **redir);
+
+// parser_error_handling.c
+void		handle_parser_error(t_lexer *lexer, t_ast_stack **operator_stack, t_ast_stack **operand_stack, t_ast_node **node);
+void		print_syntax_error(char *token);
+void		print_missing_token_error(char *expected);
 
 // get_ast_root.c
 t_ast_node	*get_ast_root(const char *input, t_list	*env_list, int last_exit_code);

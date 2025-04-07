@@ -23,6 +23,7 @@
 #include "minishell.h"
 #include "parser.h"
 #include "utils.h"
+#include "signals.h"
 
 static bool	process_cmd_iteration(t_shell *shell);
 
@@ -33,6 +34,7 @@ int	main(int argc, char **argv, char **envp)
 	if (argc != 1 || argv[1])
 		return (1);
 	shell = init_minishell(envp);
+	setup_interactive_signals();
 	while (1)
 	{
 		shell->input = readline(SHELL_PROMPT);
@@ -63,7 +65,7 @@ static bool	process_cmd_iteration(t_shell *shell)	// prototyping
 		cleanup_iteration(shell);
 		return (false);
 	}
-	print_ast(shell->ast_root, 0); // Debugging: Print AST
+	// print_ast(shell->ast_root, 0); // Debugging: Print AST
 	exec_astree(shell, shell->ast_root);
 	cleanup_iteration(shell);
 	return (true);

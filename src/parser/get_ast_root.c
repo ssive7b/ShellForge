@@ -33,6 +33,11 @@ t_ast_node	*get_ast_root(const char *input, t_list	*env_list, int last_exit_code
 		cleanup_lexer(&lexer);
 		return (NULL);
 	}
+	if (!validate_input(lexer, input))
+	{
+		cleanup_lexer(&lexer);
+		return (NULL);
+	}
 	context.env_list = env_list;
 	context.last_exit_status = last_exit_code;
 	if (!expand_variables_in_tokens(&lexer->tokens, &context))

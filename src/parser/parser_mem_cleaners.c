@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   mem_cleaners.c                                     :+:      :+:    :+:   */
+/*   parser_mem_cleaners.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sstoev <sstoev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 14:32:56 by sstoev            #+#    #+#             */
-/*   Updated: 2025/04/02 14:32:58 by sstoev           ###   ########.fr       */
+/*   Updated: 2025/04/07 21:56:00 by sstoev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,18 +65,6 @@ void	free_ast_stack(t_ast_stack **stack)
 
 void	cleanup_parser_state(t_ast_stack **operator_stack, t_ast_stack **operand_stack, t_ast_node **node)
 {
-	if (operand_stack)
-		free_ast_stack(operator_stack);
-	if (operand_stack)
-		free_ast_stack(operand_stack);
-	if (node && *node)
-		free_ast_node(node);
-}
-
-void	handle_parser_error(t_lexer *lexer, t_ast_stack **operator_stack, t_ast_stack **operand_stack, t_ast_node **node)
-{
-	if (lexer)
-		lexer->error = 1;
 	if (operand_stack)
 		free_ast_stack(operator_stack);
 	if (operand_stack)

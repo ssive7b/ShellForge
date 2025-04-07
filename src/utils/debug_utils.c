@@ -27,6 +27,8 @@ void	print_stack(t_ast_stack *stack, const char *name)
 
 void	print_ast(t_ast_node *node, int level)
 {
+	t_list	*redirections;
+	t_redir	*redir;
 	int	i;
 	int j;
 
@@ -38,6 +40,7 @@ void	print_ast(t_ast_node *node, int level)
 		printf("  ");
 		i++;
 	}
+	redirections = node->redirections;
 	if (node->type == NODE_COMMAND)
 	{
 		j = 0;
@@ -48,10 +51,17 @@ void	print_ast(t_ast_node *node, int level)
 			j++;
 		}
 		printf("\n");
-		if (node->redir)
-			printf("   Redirection: type: %d file: %s\n",
-			node->redir->type,
-			node->redir->file_name ? node->redir->file_name : node->redir->delimiter_heredoc);
+		if (redirections)
+		{
+			while(redirections)
+			{
+				redir = redirections->content;
+				printf("   Redirection: type: %d file: %s\n",
+				redir->type,
+				redir->file_name ? redir->file_name : redir->delimiter_heredoc);
+				redirections = redirections->next;
+			}
+		}
 	}
 	else if (node->type == NODE_PIPE)
 		printf("PIPE\n");
@@ -60,7 +70,10 @@ void	print_ast(t_ast_node *node, int level)
 	else if (node->type == NODE_OR)
 		printf("OR\n");
 	else if (node->type == NODE_REDIRECTION)
-		printf("Redirection: %d\n", node->redir->type);
+	{
+		redir = redirections->content;
+		printf("Redirection: %d\n", redir->type);
+	}
 	print_ast(node->left, level + 1);
 	print_ast(node->right, level + 1);
 }

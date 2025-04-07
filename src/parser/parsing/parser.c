@@ -113,6 +113,7 @@ t_ast_node	*parse_command_with_redirects(t_lexer *lexer, t_ast_stack **operator_
 			handle_parser_error(lexer, NULL, NULL, &cmd);
 			return (NULL);
 		}
+		advance_token(lexer);
 	}
 	// printf("cmd_wredir- received: %d %s\n", lexer->tokens->type, lexer->tokens->value);
 	return (cmd);

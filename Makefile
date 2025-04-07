@@ -28,8 +28,12 @@ SRC						=	$(SRC_DIR)/app/main.c											\
 							$(SRC_DIR)/parser/parsing/parser_redirections.c					\
 							$(SRC_DIR)/parser/parsing/parser_aux.c							\
 							$(SRC_DIR)/parser/parsing/parser_utils.c						\
+							$(SRC_DIR)/parser/validation/parser_validation.c				\
+							$(SRC_DIR)/parser/validation/parser_validation_operators.c		\
+							$(SRC_DIR)/parser/validation/parser_validation_redirs.c			\
 							$(SRC_DIR)/parser/get_ast_root.c								\
-							$(SRC_DIR)/parser/mem_cleaners.c								\
+							$(SRC_DIR)/parser/parser_error_handling.c						\
+							$(SRC_DIR)/parser/parser_mem_cleaners.c							\
 							$(SRC_DIR)/executioner/init_execs.c								\
 							$(SRC_DIR)/executioner/execute.c								\
 							$(SRC_DIR)/executioner/exec_mode_handlers.c						\
@@ -46,6 +50,7 @@ SRC						=	$(SRC_DIR)/app/main.c											\
 							$(SRC_DIR)/executioner/builtins/export_utils.c					\
 							$(SRC_DIR)/executioner/builtins/pwd.c							\
 							$(SRC_DIR)/executioner/builtins/unset.c							\
+							$(SRC_DIR)/signals/signals.c									\
 							$(SRC_DIR)/utils/string_utils.c									\
 							$(SRC_DIR)/utils/array_utils.c									\
 							$(SRC_DIR)/utils/memory_utils.c									\
@@ -122,8 +127,10 @@ $(OBJ_DIR)				:
 							@mkdir -p $(OBJ_DIR)/parser/expansions
 							@mkdir -p $(OBJ_DIR)/parser/lexer
 							@mkdir -p $(OBJ_DIR)/parser/parsing
+							@mkdir -p $(OBJ_DIR)/parser/validation
 							@mkdir -p $(OBJ_DIR)/executioner
 							@mkdir -p $(OBJ_DIR)/executioner/builtins
+							@mkdir -p $(OBJ_DIR)/signals
 							@mkdir -p $(OBJ_DIR)/utils
 
 #	test
