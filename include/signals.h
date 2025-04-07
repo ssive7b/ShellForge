@@ -14,20 +14,11 @@
 # define SIGNALS_H
 
 #include "minishell.h"
-<<<<<<< HEAD
-#include <readline/readline.h>
-#include <signal.h>
-=======
->>>>>>> svet_features_post_merge
 
 void    sigint_prompt_handler(int signum);
 void    setup_interactive_signals(void);
 void    handle_heredoc_interrupt(int signum);
 void    restore_default_signals(void);
-<<<<<<< HEAD
-void    exit_on_eof(t_tty *minish);
-=======
 void    exit_on_eof(t_shell *minish);
->>>>>>> svet_features_post_merge
 
 #endif

@@ -22,9 +22,6 @@ SRC						=	$(SRC_DIR)/app/main.c											\
 							$(SRC_DIR)/parser/expansions/expander.c							\
 							$(SRC_DIR)/parser/expansions/expander_utils.c					\
 							$(SRC_DIR)/parser/parsing/parser.c								\
-<<<<<<< HEAD
-							$(SRC_DIR)/parser/signals/signals.c							\
-=======
 							$(SRC_DIR)/parser/parsing/parser_ast_init.c						\
 							$(SRC_DIR)/parser/parsing/parser_ast_utils.c					\
 							$(SRC_DIR)/parser/parsing/parser_handlers.c						\
@@ -37,7 +34,6 @@ SRC						=	$(SRC_DIR)/app/main.c											\
 							$(SRC_DIR)/parser/get_ast_root.c								\
 							$(SRC_DIR)/parser/parser_error_handling.c						\
 							$(SRC_DIR)/parser/parser_mem_cleaners.c							\
->>>>>>> svet_features_post_merge
 							$(SRC_DIR)/executioner/init_execs.c								\
 							$(SRC_DIR)/executioner/execute.c								\
 							$(SRC_DIR)/executioner/exec_mode_handlers.c						\
@@ -131,11 +127,7 @@ $(OBJ_DIR)				:
 							@mkdir -p $(OBJ_DIR)/parser/expansions
 							@mkdir -p $(OBJ_DIR)/parser/lexer
 							@mkdir -p $(OBJ_DIR)/parser/parsing
-<<<<<<< HEAD
-							@mkdir -p $(OBJ_DIR)/parser/signals
-=======
 							@mkdir -p $(OBJ_DIR)/parser/validation
->>>>>>> svet_features_post_merge
 							@mkdir -p $(OBJ_DIR)/executioner
 							@mkdir -p $(OBJ_DIR)/executioner/builtins
 							@mkdir -p $(OBJ_DIR)/signals

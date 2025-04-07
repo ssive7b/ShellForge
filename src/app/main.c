@@ -21,50 +21,16 @@
 #include "expansions.h"
 #include "lexer.h"
 #include "minishell.h"
-<<<<<<< HEAD
-#include <linux/limits.h>
-#include <readline/history.h>
-#include <readline/readline.h>
-#include "signals.h"
-=======
 #include "parser.h"
 #include "utils.h"
 #include "signals.h"
 
 static bool	process_cmd_iteration(t_shell *shell);
->>>>>>> svet_features_post_merge
 
 int	main(int argc, char **argv, char **envp)
 {
 	t_shell	*shell;
 
-<<<<<<< HEAD
-	(void)argc;
-	(void)argv;
-	init_minishell(&minish, envp);
-	setup_interactive_signals();
-	while (1)
-	{
-		minish.line = readline(minish.prompt);
-		if (!minish.line)
-			exit_on_eof(&minish);
-		if (*minish.line)
-		{
-			tokens = ft_lexer(minish.line);
-			if (!tokens)
-			{
-				printf("Lexer returned NULL\n");
-				return (1);
-			}
-			expand_tokens(tokens, minish.envp, minish.exit_status);
-			ft_print_tokens(tokens); // Debugging: Print tokens
-			ast_root = construct_ast(tokens);
-			print_ast(ast_root, 0); // Debugging: Print AST
-			add_history(minish.line);
-		}
-		// exec_astree(&minish, ast_root);
-		free(minish.line);
-=======
 	if (argc != 1 || argv[1])
 		return (1);
 	shell = init_minishell(envp);
@@ -78,7 +44,6 @@ int	main(int argc, char **argv, char **envp)
 			cleanup_shell(shell);
 			return (shell->last_exit_code);
 		}
->>>>>>> svet_features_post_merge
 	}
 	cleanup_shell(shell);
 	return (0);
