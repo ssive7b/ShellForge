@@ -35,7 +35,7 @@ typedef struct s_ast_node
 	int						fd_in;
 	int						fd_out;
 	int						exit_status;
-	t_redir					*redir;
+	t_list					*redirections;
 	struct s_ast_node		*left;
 	struct s_ast_node		*right;
 }							t_ast_node;

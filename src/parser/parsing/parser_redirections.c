@@ -29,15 +29,21 @@ bool	add_redirection_to_command(t_lexer *lexer, t_ast_node *cmd)
 	{
 		ft_error_msg("Error: Expected word after redirection");
 		lexer->error = 1;
+		safe_free((void **)&redir);
+		clear_redirections(&(cmd->redirections));
 		return (false);
 	}
 	if (!set_redirection_target(lexer, redir))
 	{
 		ft_error_msg("Error: Unable to set the redirection target");
 		lexer->error = 1;
+		safe_free((void **)&redir);
+		clear_redirections(&(cmd->redirections));
 		return (false);
 	}
-	cmd->redir = redir;
+	if (!cmd->redirections)
+		cmd->redirections = NULL;
+	ft_lstadd_back(&cmd->redirections, ft_lstnew(redir));
 	advance_token(lexer);
 	return (true);
 }

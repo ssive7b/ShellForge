@@ -40,12 +40,8 @@ void	free_ast_node(t_ast_node **node)
 			safe_free((void **)&(*node)->args);
 		}
 	}
-	if ((*node)->redir)
-	{
-		safe_free((void **)&(*node)->redir->file_name);
-		safe_free((void **)&(*node)->redir->delimiter_heredoc);
-		safe_free((void **)&(*node)->redir);
-	}
+	if ((*node)->redirections)
+		clear_redirections(&(*node)->redirections);
 	safe_free((void **)node);
 }
 
@@ -87,4 +83,31 @@ void	handle_parser_error(t_lexer *lexer, t_ast_stack **operator_stack, t_ast_sta
 		free_ast_stack(operand_stack);
 	if (node && *node)
 		free_ast_node(node);
+}
+
+void	clear_redirections(t_list **redirections)
+{
+	t_list	*current;
+	t_list	*next;
+
+	if (!redirections || !(*redirections))
+		return ;
+	current = *redirections;
+	while (current)
+	{
+		next = current->next;
+		free_redirection((t_redir **)&current->content);
+		safe_free((void **)&current);
+		current = next;
+	}
+	*redirections = NULL;
+}
+
+void	free_redirection(t_redir **redir)
+{
+	if (!redir || !(*redir))
+		return ;
+	if ((*redir)->file_name)
+		safe_free((void **)&((*redir)->file_name));
+	safe_free((void **)redir);
 }
