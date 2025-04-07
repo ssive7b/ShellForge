@@ -13,8 +13,9 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include "executioner.h"
+#include "ast_mock.h"
 
-int	get_heredoc_fd(t_redirection *redir)
+int	get_heredoc_fd(t_redir *redir)
 {
 	int		pipefd[2];
 	char	*line;

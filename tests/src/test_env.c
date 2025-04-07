@@ -17,9 +17,8 @@ Test(environment_suite, init_env_should_populate_list)
         NULL
     };
 
-    init_env(envp);  // Initialize environment variables
+	t_list	*env_list = create_env_list(envp);
 
-    t_list *env_list = *get_env();
     cr_assert_not_null(env_list, "Environment list should not be NULL");
 
     t_env *env_entry = env_list->content;
@@ -33,14 +32,13 @@ Test(environment_suite, init_env_should_populate_list)
 Test(environment_suite, find_exec_pathname_should_find_correct_path)
 {
     char *envp[] = {"PATH=/bin:/usr/bin", NULL};
-    init_env(envp);
-    t_list *env_list = *get_env();
+    t_list	*env_list = create_env_list(envp);
 
-    char *path = find_exec_pathname(NULL, env_list, "ls");
+    char *path = find_exec_pathname(env_list, "ls");
     cr_assert_not_null(path, "Executable path should not be NULL");
     cr_assert(access(path, F_OK) == 0, "Path should be a valid executable");
     free(path);
-    char *invalid_path = find_exec_pathname(NULL, env_list, "nonexistent_command");
+    char *invalid_path = find_exec_pathname(env_list, "nonexistent_command");
     cr_assert_null(invalid_path, "Nonexistent command should return NULL");
 }
 
@@ -64,8 +62,7 @@ Test(environment_suite, get_envp_value_should_return_correct_value)
         NULL
     };
 
-    init_env(envp);
-    t_list *env_list = *get_env();
+    t_list	*env_list = create_env_list(envp);
 
     cr_assert_str_eq(get_envp_value("USER", env_list), "student", "USER should return 'student'");
     cr_assert_str_eq(get_envp_value("SHELL", env_list), "/bin/bash", "SHELL should return '/bin/bash'");

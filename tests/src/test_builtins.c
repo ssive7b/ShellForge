@@ -15,8 +15,9 @@ TestSuite(builtins_suite);
 Test(builtins_suite, test_export_args)
 {
 	char **env = __environ;
-	init_env(env);
+	t_list	*env_list = create_env_list(env);
 
+	(void)env_list;
 	int fd_out = open("test_export.txt", O_RDWR | O_CREAT | O_TRUNC, 0644);
 	t_ast_node cmd_node = {
 		.type = NODE_COMMAND,
@@ -38,8 +39,9 @@ Test(builtins_suite, test_export_args)
 Test(builtins_suite, test_export_change_existing)
 {
 	char **env = __environ;
-	init_env(env);
+	t_list	*env_list = create_env_list(env);
 
+	(void)env_list;
 	int fd_out = open("test_export.txt", O_RDWR | O_CREAT | O_TRUNC, 0644);
 	t_ast_node cmd_node = {
 		.type = NODE_COMMAND,
@@ -65,8 +67,9 @@ Test(builtins_suite, test_export_change_existing)
 Test(builtins_suite, test_cd)
 {
 	char **env = __environ;
-	init_env(env);
+	t_list	*env_list = create_env_list(env);
 
+	(void)env_list;
 	t_ast_node cmd_node = {
 		.type = NODE_COMMAND,
 		.cmd_pathname = NULL,

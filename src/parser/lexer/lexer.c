@@ -16,69 +16,59 @@
 #include "lexer.h"
 #include "char_designation.h"
 #include "utils.h"
-#include "parser.h"
-#include "utils.h"
-
-// Not sure what to do with a single & ??
-// Return NULL or return it as a word or as an operator?
 
 static t_token_type		get_op_token_type(const char *input);
 static t_lexer_state	word_state(t_lexer *lx);
 static t_lexer_state	operator_state(t_lexer *lx);
-static t_lexer_state	handle_redirection(t_lexer *lx);
 static t_lexer_state	delimiter_state(t_lexer *lx);
 
-t_token	*ft_lexer(char *input)
+t_lexer	*run_tokenizer(const char *input)
 {
-	t_lexer			lx;
+	t_lexer			*lx;
 	t_lexer_state	next_state;
 
-	next_state = (t_lexer_state)word_state;
-	ft_init_lex(&lx, input);
-	lx.idx = ft_skip_whitespaces(input);
-	while (next_state && input[lx.idx])
+	next_state = (t_lexer_state) word_state;
+	lx = init_tokenizer(input);
+	if (!lx)
+		return (NULL);
+	lx->idx = ft_skip_whitespaces(input);
+	while (next_state && input[lx->idx])
 	{
-		next_state = (t_lexer_state)next_state(&lx);
-		lx.idx++;
+		next_state = (t_lexer_state) next_state(lx);
+		lx->idx++;
 	}
-	return (lx.tokens);
+	return (lx);
 }
 
 static t_lexer_state	word_state(t_lexer *lx)
 {
 	t_token	token;
 	size_t	start_idx;
-	char	*quoted_str;
 
 	start_idx = lx->idx;
 	if (lx->input[lx->idx] == DOUBLE_QUOTE)
 	{
 		token.type = TOKEN_WORD_DQUOTED;
-		quoted_str = handle_quotes(lx, DOUBLE_QUOTE);
+		lx->idx += ft_find_char_qadjusted(&lx->input[lx->idx + 1], DOUBLE_QUOTE) + 1;
 	}
 	else if (lx->input[lx->idx] == SINGLE_QUOTE)
 	{
 		token.type = TOKEN_WORD_SQUOTED;
-		quoted_str = handle_quotes(lx, SINGLE_QUOTE);
+		lx->idx += ft_find_char_qadjusted(&lx->input[lx->idx + 1], SINGLE_QUOTE) + 1;
 	}
 	else
 	{
 		token.type = TOKEN_WORD_UNQUOTED;
-		while (ft_is_unquoted_char(lx->input[lx->idx])
-			|| ft_is_escaped(lx->input, lx->idx))
+		while (ft_is_unquoted_char(lx->input[lx->idx]) || ft_is_escaped(lx->input, lx->idx))
 			lx->idx++;
 		lx->idx--;
-		quoted_str = ft_substr(lx->input, start_idx, lx->idx - start_idx + 1);
 	}
-	token.value = quoted_str;
-	if (token.value && ft_strlen(token.value) > 0)
-		ft_append_token(&lx->tokens, ft_create_token(token));
-	if (lx->input[lx->idx + 1] == '\0')
+	token.value = ft_substr(lx->input, start_idx, lx->idx - start_idx + 1);
+	if (!token.value)
 		return (NULL);
-	// Check if the next character is an operator or meta-character
-	if (ft_is_operator(lx->input[lx->idx + 1]))
-		return ((t_lexer_state)operator_state);
-	return ((t_lexer_state)delimiter_state);
+	if (ft_strlen(token.value) > 0)
+		ft_append_token(&lx->tokens, ft_create_token(token));
+	return ((t_lexer_state) delimiter_state);
 }
 
 t_lexer_state	operator_state(t_lexer *lx)
@@ -86,92 +76,53 @@ t_lexer_state	operator_state(t_lexer *lx)
 	size_t	len;
 	t_token	token;
 
-	// Check if the current character is an operator
-	if (!ft_is_operator(lx->input[lx->idx]))
-		return (NULL);
-	// Check if the next character forms a multi-character operator
-	if (ft_check_form_op(lx->input[lx->idx], lx->input[lx->idx + 1]))
+	token.type = get_op_token_type(&lx->input[lx->idx]);
+	if (token.type == TOKEN_PIPE
+		|| token.type == TOKEN_REDIR_OUT
+		|| token.type == TOKEN_REDIR_IN
+		|| token.type == TOKEN_AMPERSAND
+		|| token.type == TOKEN_SEMICOLON
+		|| token.type == TOKEN_LPAREN
+		|| token.type == TOKEN_RPAREN)
+		len = 1;
+	else if (token.type == TOKEN_REDIR_APPEND
+		|| token.type == TOKEN_REDIR_HEREDOC
+		|| token.type == TOKEN_AND
+		|| token.type == TOKEN_OR)
 		len = 2;
 	else
-		len = 1;
-	// Get the operator type
-	token.type = get_op_token_type(&lx->input[lx->idx]);
-	// If the operator type is invalid, skip it
-	if (token.type == TOKEN_UNKNOWN)
 		return (NULL);
 	token.value = ft_substr(lx->input, lx->idx, len);
-	// rethink if we need it? can just put it as NULL and deduce from the type
-	if (!token.value || ft_strlen(token.value) == 0) // Prevent NULL values
-		token.value = strdup("UNKNOWN_OP");
-	// Use a placeholder instead of NULL
-	// Append the token to the token list
-	ft_append_token(&lx->tokens, ft_create_token(token));
-	// Move index past the operator
-	lx->idx += len;
-	return ((t_lexer_state)word_state);
-}
-
-static t_lexer_state	handle_redirection(t_lexer *lx)
-{
-	t_token	token;
-	char	cur_char;
-
-	cur_char = lx->input[lx->idx];
-	if (cur_char == '<')
-	{
-		token.value = "<";
-		token.type = TOKEN_REDIR_IN;
-	}
-	else
-	{
-		token.value = ">";
-		token.type = TOKEN_REDIR_OUT;
-	}
-	ft_append_token(&lx->tokens, ft_create_token(token));
-	lx->idx++; // Move past '<' or '>'
-	// Check for "<<" or ">>"
-	if (lx->input[lx->idx] == cur_char)
-	{
-		if (cur_char == '<')
-		{
-			token.value = "<<";
-			token.type = TOKEN_REDIR_HEREDOC;
-		}
-		else
-		{
-			token.value = ">>";
-			token.type = TOKEN_REDIR_APPEND;
-		}
+	if (!token.value)
+		return (NULL);
+	lx->idx = lx->idx + len - 1;
+	if (ft_strlen(token.value) > 0)
 		ft_append_token(&lx->tokens, ft_create_token(token));
-		lx->idx++; // Move past the second '<' or '>'
-	}
-	return ((t_lexer_state)delimiter_state);
+	return ((t_lexer_state) delimiter_state);
 }
 
 static t_lexer_state	delimiter_state(t_lexer *lx)
 {
 	t_token	token;
 	size_t	count_skipped_spaces;
+	char	next_non_whitespace_char;
 
-	// Skip whitespaces and get the next meaningful char
 	count_skipped_spaces = ft_skip_whitespaces(&lx->input[lx->idx]);
-	lx->idx += count_skipped_spaces - 1;
-	// If we reached the end, append a TOKEN_END
-	if (lx->idx == '\0')
-	{
-		token.value = NULL;
-		token.type = TOKEN_END;
-		ft_append_token(&lx->tokens, ft_create_token(token));
+	next_non_whitespace_char = lx->input[lx->idx + count_skipped_spaces];
+	if (next_non_whitespace_char == '\0')
 		return (NULL);
+	if (count_skipped_spaces)
+	{
+		lx->idx += count_skipped_spaces - 1;
+		token.value = NULL;
+		token.type = TOKEN_DELIMITER;
+		ft_append_token(&lx->tokens, ft_create_token(token));
 	}
-	// Handle '<' and '>' as individual tokens
-	if (lx->idx == '<' || lx->idx == '>')
-		return (handle_redirection(lx));
-	// If it's an operator, transition to operator state
-	if (ft_is_meta_char(lx->idx))
-		return ((t_lexer_state)operator_state);
-	// Otherwise, transition to word state
-	return ((t_lexer_state)word_state);
+	else
+		lx->idx += -1;
+	if (ft_is_meta_char(next_non_whitespace_char))
+		return ((t_lexer_state) operator_state);
+	return ((t_lexer_state) word_state);
 }
 
 static t_token_type	get_op_token_type(const char *input)
@@ -194,7 +145,7 @@ static t_token_type	get_op_token_type(const char *input)
 	{
 		if (input[1] == '&')
 			return (TOKEN_AND);
-		return (TOKEN_UNKNOWN);
+		return (TOKEN_AMPERSAND);
 	}
 	if (input[0] == '|')
 	{
@@ -202,5 +153,11 @@ static t_token_type	get_op_token_type(const char *input)
 			return (TOKEN_OR);
 		return (TOKEN_PIPE);
 	}
+	if (input[0] == ';')
+		return (TOKEN_SEMICOLON);
+	if (input[0] == '(')
+		return (TOKEN_LPAREN);
+	if (input[0] == ')')
+		return (TOKEN_RPAREN);
 	return (TOKEN_UNKNOWN);
 }

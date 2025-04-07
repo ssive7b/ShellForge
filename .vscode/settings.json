@@ -7,6 +7,13 @@
 		"minishell.h": "c",
 		"stdbool.h": "c",
 		"utils.h": "c",
-		"executioner.h": "c"
-	}
+		"executioner.h": "c",
+		"lexer.h": "c",
+		"parser.h": "c",
+		"env_utils.h": "c",
+		"expansions.h": "c",
+		"unistd.h": "c",
+		"signal.h": "c"
+	},
+	"makefile.configureOnOpen": false
 }

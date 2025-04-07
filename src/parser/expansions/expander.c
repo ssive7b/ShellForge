@@ -1,212 +1,104 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   expander.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/28 23:15:48 by cschnath          #+#    #+#             */
+/*   Updated: 2025/04/03 14:54:15 by sstoev           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "ast_mock.h"
 #include "expansions.h"
 #include "lexer.h"
 #include "minishell.h"
+#include "env_utils.h"
+#include "utils.h"
 #include <ctype.h>
 #include <dirent.h>
 #include <stdio.h>
 #include <string.h>
 
-void expand_tokens(t_token *tokens, char **envp, int last_exit_status)
-{
-	while (tokens)
-	{
-		if (tokens->value[0] == '\0') // Skip empty tokens
-		{
-			tokens = tokens->next;
-			continue;
-		}
-		if (ft_strncmp(tokens->value, "<<", 2) == 0)
-		{
-			if (tokens->next)
-				tokens = tokens->next->next;
-			else
-				tokens = tokens->next;
-			continue;
-		}
-		expand_tilde(&tokens->value, envp);
-		expand_variables(&tokens->value, envp, last_exit_status);
-		expand_wildcards(&tokens->value);
-		tokens = tokens->next;
-	}
-}
+static bool	process_expansion_pass(char **result, const char *str, int *pos, t_expand_context *context);
+static char	*expand_variable_in_string(const char *str, t_expand_context *context);
 
-// Replaces Tilde with the HOME environment variable
-void	expand_tilde(char **token, char **envp)
+bool 	expand_variables_in_tokens(t_token **tokens, t_expand_context *context)
 {
-	char	*home;
+	t_token	*current;
 	char	*expanded;
 
-	if (!(*token) || **token != '~')
-		return ;
-	home = getenv_list(envp, "HOME");
-	if (!home)
-		return ;
-	if ((*token)[1] == '\0') // "~" alleine
-		expanded = ft_strdup(home);
-	else
-		expanded = ft_strjoin(home, (*token) + 1);
-	free(*token);
-	*token = expanded;
-}
-
-// Expands $VAR and $?
-void	expand_variables(char **token, char **envp, int last_exit_status)
-{
-	int		i;
-	char	*var_start;
-	char	*expanded;
-	char	*var_value;
-
-	if (!token || !*token)
-		return ;
-	i = 0;
-	expanded = ft_strdup(*token);
-	if (!expanded)
-		return ;
-	while (expanded[i])
+	if (!tokens || !*tokens || !context)
+		return (true);
+	current = *tokens;
+	while (current)
 	{
-		if (expanded[i] == '$' && valid_var_chr(expanded[i + 1]))
+		if (current->type == TOKEN_WORD_UNQUOTED || current->type == TOKEN_WORD_DQUOTED)
 		{
-			var_start = &expanded[i + 1];
-			if (*var_start == '?')
-				var_value = ft_itoa(last_exit_status);
-			else
-				var_value = getenv_list(envp, var_start);
-			replace_variable(&expanded, i, var_start, var_value);
-			if (var_value && *var_start == '?')
-				free(var_value);
+			if (needs_expansion(current->value))
+			{
+				expanded = expand_variable_in_string(current->value, context);
+				if (!expanded)
+					return (false);
+				safe_free((void **)&current->value);
+				current->value = expanded;
+			}
 		}
-		i++;
+		current = current->next;
 	}
-	free(*token);
-	*token = expanded;
+	return (true);
 }
 
-void	replace_variable(char **line, int pos, char *var_start, char *var_value)
+static char	*expand_variable_in_string(const char *str, t_expand_context *context)
 {
-	char	*before;
-	char	*after;
-	char	*new_line;
-	int		var_len;
-
-	var_len = 0;
-	while (valid_var_chr(var_start[var_len]))
-		var_len++;
-	before = ft_substr(*line, 0, pos);
-	after = ft_strdup(&var_start[var_len]);
-	if (var_value)
-		new_line = ft_strjoin_three(before, var_value, after);
-	else
-		new_line = ft_strjoin_three(before, "", after);
-	free(*line);
-	*line = new_line;
-	free(before);
-	free(after);
-}
-
-void	expand_wildcards(char **token)
-{
-	DIR				*dir;
-	struct dirent	*entry;
-	char			*expanded;
-
-	expanded = NULL;
-	if (!ft_strchr(*token, '*'))
-		return ;
-	dir = opendir(".");
-	if (!dir)
-		return ;
-	while ((entry = readdir(dir)) != NULL)
-	{
-		if (entry->d_name[0] == '.' && (*token)[0] != '.')
-			continue ;
-		if (match_wildcard(entry->d_name, *token))
-		{
-			if (expanded)
-				expanded = ft_strjoin_free(expanded, " ");
-			expanded = ft_strjoin_free(expanded, entry->d_name);
-		}
-	}
-	closedir(dir);
-	if (expanded && *expanded)
-	{
-		free(*token);
-		*token = expanded;
-	}
-	else
-		free(expanded);
-}
-
-char	*getenv_list(char **envp, const char *name)
-{
-	int		i;
-	size_t	name_len;
-
-	if (!envp || !name)
-		return (NULL);
-	name_len = ft_strlen(name);
-	i = 0;
-	while (envp[i])
-	{
-		if (ft_strncmp(envp[i], name, name_len) == 0 && envp[i][name_len] == '=')
-			return (envp[i] + name_len + 1);
-		i++;
-	}
-	return (NULL);
-}
-
-
-int	valid_var_chr(char c)
-{
-	return (ft_isalpha(c) || c == '_' || c == '?');
-}
-
-char	*ft_strjoin_three(const char *s1, const char *s2, const char *s3)
-{
-	char	*temp;
 	char	*result;
+	int		position;
 
-	if (!s1 || !s2 || !s3)
+	position = 0;
+	if (!str)
 		return (NULL);
-	temp = ft_strjoin(s1, s2);
-	if (!temp)
+	if (!needs_expansion(str))
+		return (ft_strdup(str));
+	result = ft_strdup("");
+	if (!result)
 		return (NULL);
-	result = ft_strjoin(temp, s3);
-	free(temp);
+	while (str[position])
+	{
+		if (!process_expansion_pass(&result, str, &position, context))
+		{
+			safe_free((void **)&result);
+			return (NULL);
+		}
+		if (str[position] == '\0')
+			break ;
+	}
 	return (result);
 }
 
-int	match_wildcard(const char *str, const char *pattern)
+static bool	process_expansion_pass(char **result, const char *str, int *pos, t_expand_context *context)
 {
-	if (!*pattern)
-		return (!*str);
-	if (*pattern == '*')
+	int	i;
+	int	start;
+
+	i = *pos;
+	start = *pos;
+	while (str[i])
 	{
-		while (*str)
+		if (str[i] == '$' && str[i+1])
 		{
-			if (match_wildcard(str, pattern + 1))
-				return (1);
-			str++;
+			if (!append_chunk(result, str, start, i))
+				return (false);
+			if (!process_dollar_sign(result, str, &i, context))
+				return (false);
+			*pos = i;
+			return (true);
 		}
-		return (match_wildcard(str, pattern + 1));
+		i++;
 	}
-	if (*pattern == *str || *pattern == '?')
-		return (match_wildcard(str + 1, pattern + 1));
-	return (0);
+	if (!append_chunk(result, str, start, i))
+		return (false);
+	*pos = i;
+	return (true);
 }
 
-char	*ft_strjoin_free(char *s1, const char *s2)
-{
-	char	*result;
-
-	if (!s1 && !s2)
-		return (NULL);
-	if (!s1)
-		return (ft_strdup(s2));
-	if (!s2)
-		return (s1);
-	result = ft_strjoin(s1, s2);
-	free(s1);
-	return (result);
-}

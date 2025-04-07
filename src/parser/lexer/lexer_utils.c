@@ -10,16 +10,26 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <stdio.h>
 #include "lexer.h"
+#include "utils.h"
 
-void	ft_init_lex(t_lexer *lx, char *input)
+t_lexer	*init_tokenizer(const char *input)
 {
-	lx->input = input;
+	t_lexer	*lx;
+
+	if (!input)
+		return (NULL);
+	lx = malloc(sizeof(t_lexer));
+	if (!lx)
+		return (NULL);
+	lx->input = ft_strdup(input);
+	if (!lx->input)
+		return (NULL);
 	lx->idx = 0;
-	lx->line_number = 1;
-	lx->column_number = 1;
 	lx->tokens = NULL;
 	lx->error = 0;
+	return (lx);
 }
 
 t_token	*ft_create_token(t_token token_data)

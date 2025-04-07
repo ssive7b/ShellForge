@@ -100,6 +100,5 @@ static void handle_cd_error(t_ast_node *node, char *path)
 {
 	ft_putstr_fd("minishell: cd: ", STDERR_FILENO);
 	ft_putstr_fd(path, STDERR_FILENO);
-	perror("cd: chdir");
 	node->exit_status = 1;
 }

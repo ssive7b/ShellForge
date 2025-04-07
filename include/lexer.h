@@ -13,24 +13,9 @@
 #ifndef LEXER_H
 # define LEXER_H
 
+# include <stdbool.h>
 # include "../libft/include/libft.h"
-# include <stdio.h>
-
-typedef enum e_token_type 
-{
-	TOKEN_UNKNOWN,
-	TOKEN_PIPE, // |
-	TOKEN_REDIR_OUT, // >
-	TOKEN_REDIR_IN, // <
-	TOKEN_REDIR_APPEND, // >>
-	TOKEN_REDIR_HEREDOC, // <<
-	TOKEN_OR, // || ADDED THIS
-	TOKEN_AND, // && ADDED THIS
-	TOKEN_WORD_UNQUOTED, 
-	TOKEN_WORD_DQUOTED,
-	TOKEN_WORD_SQUOTED,
-	TOKEN_END, // end of input, replaced TOKEN_DELIMITER after every word
-}	t_token_type;
+# include "types.h"
 
 typedef struct	s_token
 {
@@ -42,9 +27,7 @@ typedef struct	s_token
 typedef struct	s_lexer
 {
 	char			*input;
-	size_t			idx;
-	int				line_number;	// for error reporting
-	int				column_number;	// for error reporting			
+	size_t			idx;	
 	t_token			*tokens;
 	int				error;			// error state
 }	t_lexer;
@@ -53,12 +36,16 @@ typedef struct	s_lexer
 typedef void	*(*t_lexer_state)(t_lexer *lexer);
 
 // lexer.c
-t_token	*ft_lexer(char *input);
+t_lexer	*run_tokenizer(const char *input);
 
 // lexer_utils.c
-void	ft_init_lex(t_lexer *lx, char *input);
+t_lexer	*init_tokenizer(const char *input);
 t_token	*ft_create_token(t_token token_data);
 void	ft_append_token(t_token **tokens_queue, t_token *new_token);
 void	ft_print_tokens(t_token *tokens);
+
+// lexer_cleaners.c
+void		cleanup_lexer(t_lexer **lexer);
+void		free_tokens(t_token *tokens);
 
 #endif

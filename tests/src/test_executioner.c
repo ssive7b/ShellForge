@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <criterion/criterion.h>
 #include <criterion/logging.h>
 #include <fcntl.h>
@@ -11,7 +12,7 @@
 TestSuite(execution_suite);
 
 // Mock function to simulate execution
-static void	mock_exec_astree(t_tty *sh, t_ast_node *node)
+static void	mock_exec_astree(t_shell *sh, t_ast_node *node)
 {
     if (node->type == NODE_COMMAND)
         execute_command(sh, node);
@@ -27,7 +28,7 @@ static void	mock_exec_astree(t_tty *sh, t_ast_node *node)
 
 Test(execution_suite, test_command_execution)
 {
-	t_tty *sh = malloc(sizeof(t_tty));
+	t_shell *sh = malloc(sizeof(t_shell));
 	sh->envp = NULL;
 
 	t_ast_node cmd_node = {
@@ -64,7 +65,7 @@ Test(execution_suite, test_command_execution)
 
 Test(execution_suite, test_pipe_execution)
 {
-	t_tty *sh = malloc(sizeof(t_tty));
+	t_shell *sh = malloc(sizeof(t_shell));
 	sh->envp = NULL;
 
 	t_ast_node cmd1 = {
@@ -115,7 +116,7 @@ Test(execution_suite, test_pipe_execution)
 
 Test(execution_suite, test_redirection_output)
 {
-	t_tty *sh = malloc(sizeof(t_tty));
+	t_shell *sh = malloc(sizeof(t_shell));
 	sh->envp = NULL;
 	
     t_ast_node cmd_node = {
@@ -126,7 +127,7 @@ Test(execution_suite, test_redirection_output)
 		.fd_out = STDOUT_FILENO
 	};
 
-    t_redirection redir = {
+    t_redir redir = {
 		.type = REDIR_OUTPUT,
 		.file_name = "output.txt"
 	};
@@ -151,7 +152,7 @@ Test(execution_suite, test_redirection_output)
 
 Test(execution_suite, test_redirection_input)
 {
-	t_tty *sh = malloc(sizeof(t_tty));
+	t_shell *sh = malloc(sizeof(t_shell));
 	sh->envp = NULL;
 
     FILE *fp = fopen("input.txt", "w");
@@ -166,7 +167,7 @@ Test(execution_suite, test_redirection_input)
 		.fd_out = STDOUT_FILENO
 	};
 
-    t_redirection redir = {
+    t_redir redir = {
 		.type = REDIR_INPUT,
 		.file_name = "input.txt"
 	};
@@ -198,7 +199,7 @@ Test(execution_suite, test_redirection_input)
 
 Test(execution_suite, test_redirection_append)
 {
-	t_tty *sh = malloc(sizeof(t_tty));
+	t_shell *sh = malloc(sizeof(t_shell));
 	sh->envp = NULL;
 
     FILE *fp = fopen("output_append.txt", "w");
@@ -212,7 +213,7 @@ Test(execution_suite, test_redirection_append)
 		.fd_out = STDOUT_FILENO
 	};
 
-    t_redirection redir = {
+    t_redir redir = {
 		.type = REDIR_APPEND,
 		.file_name = "output_append.txt"
 	};
@@ -237,7 +238,7 @@ Test(execution_suite, test_redirection_append)
 
 Test(execution_suite, test_and_execution)
 {
-	t_tty *sh = malloc(sizeof(t_tty));
+	t_shell *sh = malloc(sizeof(t_shell));
 	sh->envp = NULL;
 
     t_ast_node cmd_fail = {
@@ -283,7 +284,7 @@ Test(execution_suite, test_and_execution)
 
 Test(execution_suite, test_or_execution)
 {
-	t_tty *sh = malloc(sizeof(t_tty));
+	t_shell *sh = malloc(sizeof(t_shell));
 	sh->envp = NULL;
 
     t_ast_node cmd_fail = {
@@ -329,7 +330,7 @@ Test(execution_suite, test_or_execution)
 
 Test(execution_suite, test_heredoc)
 {
-    t_tty *sh = malloc(sizeof(t_tty));
+    t_shell *sh = malloc(sizeof(t_shell));
     sh->envp = NULL;
 
     int stdin_backup = dup(STDIN_FILENO);
@@ -348,7 +349,7 @@ Test(execution_suite, test_heredoc)
         .fd_out = STDOUT_FILENO
     };
 
-    t_redirection redir = {
+    t_redir redir = {
         .type = REDIR_HEREDOC,
         .delimiter_heredoc = "EOF"
     };
