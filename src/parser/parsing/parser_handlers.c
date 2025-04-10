@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser_handlers.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sstoev <sstoev@student.42.fr>              +#+  +:+       +#+        */
+/*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 00:26:08 by sstoev            #+#    #+#             */
-/*   Updated: 2025/04/02 00:26:09 by sstoev           ###   ########.fr       */
+/*   Updated: 2025/04/10 21:58:10 by cschnath         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,12 @@ bool	handle_operator_precedence(t_lexer *lexer, t_ast_stack **operator_stack, t_
 	return (true);
 }
 
+void	*parse_cmd2(t_lexer *lexer)
+{
+	handle_parser_error(lexer, NULL, NULL, NULL);
+	return (NULL);
+}
+
 t_ast_node	*parse_command(t_lexer *lexer)
 {
 	t_ast_node	*node;
@@ -46,16 +52,12 @@ t_ast_node	*parse_command(t_lexer *lexer)
 	{
 		ft_error_msg("Syntax error: Expected command");
 		// printf("received: %d %s\n", lexer->tokens->type, lexer->tokens->value);
-		handle_parser_error(lexer, NULL, NULL, NULL);
-		return (NULL);
+		parse_cmd2(lexer);
 	}
 	// printf("good- received: %d %s\n", lexer->tokens->type, lexer->tokens->value);
 	node = ast_new(NODE_COMMAND, lexer->tokens);
 	if (!node)
-	{
-		handle_parser_error(lexer, NULL, NULL, NULL);
-		return (NULL);
-	}
+		parse_cmd2(lexer);
 	if (!advance_token(lexer))
 	{
 		handle_parser_error(lexer, NULL, NULL, NULL);

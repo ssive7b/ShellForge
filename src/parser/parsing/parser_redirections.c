@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser_redirections.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sstoev <sstoev@student.42.fr>              +#+  +:+       +#+        */
+/*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 00:18:47 by sstoev            #+#    #+#             */
-/*   Updated: 2025/04/02 00:18:49 by sstoev           ###   ########.fr       */
+/*   Updated: 2025/04/10 21:52:26 by cschnath         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,13 @@
 #include "minishell.h"
 #include "parser.h"
 #include "utils.h"
+
+void	redir_to_cmd2(t_lexer *l, t_redir *r, t_ast_node *c)
+{
+	l->error = 1;
+	safe_free((void **)&r);
+	clear_redirections(&(c->redirections));
+}
 
 bool	add_redirection_to_command(t_lexer *lexer, t_ast_node *cmd)
 {
@@ -28,17 +35,13 @@ bool	add_redirection_to_command(t_lexer *lexer, t_ast_node *cmd)
 	if (!lexer->tokens || !is_argument_token(lexer->tokens->type))
 	{
 		ft_error_msg("Error: Expected word after redirection");
-		lexer->error = 1;
-		safe_free((void **)&redir);
-		clear_redirections(&(cmd->redirections));
+		redir_to_cmd2(lexer, redir, cmd);
 		return (false);
 	}
 	if (!set_redirection_target(lexer, redir))
 	{
 		ft_error_msg("Error: Unable to set the redirection target");
-		lexer->error = 1;
-		safe_free((void **)&redir);
-		clear_redirections(&(cmd->redirections));
+		redir_to_cmd2(lexer, redir, cmd);
 		return (false);
 	}
 	if (!cmd->redirections)

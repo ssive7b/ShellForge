@@ -6,7 +6,7 @@
 /*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/28 23:15:48 by cschnath          #+#    #+#             */
-/*   Updated: 2025/04/10 19:27:51 by cschnath         ###   ########.fr       */
+/*   Updated: 2025/04/10 21:58:42 by cschnath         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,10 +36,12 @@ t_node_type	get_ast_node_type_from_token(t_token_type type);
 
 // parser_handlers.c
 bool		handle_operator_precedence(t_lexer *lexer, t_ast_stack **operator_stack, t_ast_stack **operand_stack);
+void	    *parse_cmd2(t_lexer *lexer);
 t_ast_node	*parse_command(t_lexer *lexer);
 t_ast_node	*parse_parenthesized_expression(t_lexer *lexer, t_ast_stack **operator_stack, t_ast_stack **operand_stack);
 
 // parser_redirections.c
+void	    redir_to_cmd2(t_lexer *l, t_redir *r, t_ast_node *c);
 bool		add_redirection_to_command(t_lexer *lexer, t_ast_node *cmd);
 t_redir		*create_redirection(t_lexer *lexer);
 bool 		set_redirection_target(t_lexer *lexer, t_redir *redir);
@@ -66,6 +68,7 @@ bool	validate_parentheses(t_lexer *lexer);
 bool	validate_redirections(t_lexer *lexer);
 
 // parser_validation_operators.c
+bool	v_ops2(t_lexer *l, t_token *c);
 bool	validate_operators(t_lexer *lexer);
 bool 	validate_pipes(t_lexer *lexer);
 
