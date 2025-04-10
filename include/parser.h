@@ -6,7 +6,7 @@
 /*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/28 23:15:48 by cschnath          #+#    #+#             */
-/*   Updated: 2025/03/28 23:19:08 by cschnath         ###   ########.fr       */
+/*   Updated: 2025/04/10 19:27:51 by cschnath         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,7 @@ void		print_syntax_error(char *token);
 void		print_missing_token_error(char *expected);
 
 // get_ast_root.c
+int	        get_ast_root2(t_lexer *lexer);
 t_ast_node	*get_ast_root(const char *input, t_list	*env_list, int last_exit_code);
 
 #endif

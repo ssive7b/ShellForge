@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser_validation.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sstoev <sstoev@student.42.fr>              +#+  +:+       +#+        */
+/*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 22:04:44 by sstoev            #+#    #+#             */
-/*   Updated: 2025/04/07 22:04:46 by sstoev           ###   ########.fr       */
+/*   Updated: 2025/04/10 19:36:40 by cschnath         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ bool	validate_quotes(const char *input)
 
 	in_single_quotes = false;
 	in_double_quotes = false;
-	while(*input)
+	while (*input)
 	{
 		if (*input == SINGLE_QUOTE && !in_double_quotes)
 			in_single_quotes = !in_single_quotes;
@@ -59,6 +59,13 @@ bool	validate_quotes(const char *input)
 	return (true);
 }
 
+void	vp2(t_lexer *lexer, char *str)
+{
+	lexer->error = 1;
+	ft_dprintf(STDERR_FILENO, "minishell: syntax error:");
+	ft_dprintf(STDERR_FILENO, "%s\n", str);
+}
+
 bool	validate_parentheses(t_lexer *lexer)
 {
 	int		parentheses_count;
@@ -74,16 +81,14 @@ bool	validate_parentheses(t_lexer *lexer)
 			parentheses_count--;
 		if (parentheses_count < 0)
 		{
-			lexer->error = 1;
-			ft_error_msg("minishell: syntax error: unexpected ')', unmatched parentheses");
+			vp2(lexer, " unexpected ')', unmatched parentheses");
 			return (false);
 		}
 		current = current->next;
 	}
 	if (parentheses_count > 0)
 	{
-		lexer->error = 1;
-		ft_error_msg("minishell: syntax error: unexpected EOF, unmatched parentheses");
+		vp2(lexer, " unexpected EOF, unmatched parentheses");
 		return (false);
 	}
 	return (true);
