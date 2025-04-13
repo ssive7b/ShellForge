@@ -6,7 +6,7 @@
 /*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/05 13:30:51 by sstoev            #+#    #+#             */
-/*   Updated: 2025/04/12 23:16:46 by cschnath         ###   ########.fr       */
+/*   Updated: 2025/04/13 20:05:09 by cschnath         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,9 @@ static char	*try_current_directory(const char *cmd, t_shell *sh);
 static char	*search_in_path(const char *cmd, const char *path_value,
 				t_shell *sh);
 
+// if (is_builtin(cmd_name))	
+// in case we want to run builtins in child process too
+//	return (ft_strdup(cmd_name));
 char	*find_exec_pathname(t_shell *sh, t_list *env_list, char *cmd_name)
 {
 	char	*direct_path;
@@ -36,8 +39,6 @@ char	*find_exec_pathname(t_shell *sh, t_list *env_list, char *cmd_name)
 
 	if (!cmd_name || !*cmd_name)
 		return (NULL);
-	// if (is_builtin(cmd_name))	// in case we want to run builtins in child process too
-	//	return (ft_strdup(cmd_name));
 	direct_path = try_direct_execution(cmd_name, sh);
 	if (direct_path)
 		return (direct_path);
@@ -112,10 +113,7 @@ static char	*search_in_path(const char *cmd, const char *path_value,
 		full_path = ft_strjoin_multiple((char *[]){paths[i], "/", (char *)cmd},
 				3);
 		if (!full_path)
-		{
-			ft_free_2d_array(&paths, -1);
-			return (NULL);
-		}
+			return (ft_free_2d_array(&paths, -1), NULL);
 		if (access(full_path, F_OK | X_OK) == 0)
 		{
 			ft_free_2d_array(&paths, -1);

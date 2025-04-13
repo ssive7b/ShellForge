@@ -6,7 +6,7 @@
 /*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 15:20:27 by sstoev            #+#    #+#             */
-/*   Updated: 2025/04/12 23:45:10 by cschnath         ###   ########.fr       */
+/*   Updated: 2025/04/13 19:48:30 by cschnath         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,8 @@ int	main(int argc, char **argv, char **envp)
 	return (0);
 }
 
+// Don't print error when ctrl + D is pressed
+// print_ast(shell->ast_root, 0); // Debugging: Print AST
 static bool	process_cmd_iteration(t_shell *shell)
 {
 	if (!shell->input || !*(shell->input))
@@ -66,7 +68,6 @@ static bool	process_cmd_iteration(t_shell *shell)
 		cleanup_iteration(shell);
 		return (false);
 	}
-	// print_ast(shell->ast_root, 0); // Debugging: Print AST
 	exec_astree(shell, shell->ast_root);
 	cleanup_iteration(shell);
 	return (true);

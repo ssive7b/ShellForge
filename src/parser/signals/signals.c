@@ -6,10 +6,12 @@
 /*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 15:52:39 by cschnath          #+#    #+#             */
-/*   Updated: 2025/04/04 16:11:25 by cschnath         ###   ########.fr       */
+/*   Updated: 2025/04/10 21:59:38 by cschnath         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <readline/readline.h>
+#include <signal.h>
 #include "signals.h"
 
 sig_atomic_t	g_received_signal;
@@ -61,11 +63,11 @@ void	restore_default_signals(void)
 
 // Handles EOF (Ctrl-D) in interactive mode
 // Frees memory and exits with current status
-void	exit_on_eof(t_tty *minish)
+void	exit_on_eof(t_shell *minish)
 {
 	int	status;
 
-	status = minish->exit_status;
+	status = minish->last_exit_code;
 	if (isatty(STDIN_FILENO))
 		printf("exit\n");
 	exit(WEXITSTATUS(status));

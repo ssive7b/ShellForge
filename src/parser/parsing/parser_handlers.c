@@ -6,7 +6,7 @@
 /*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 00:26:08 by sstoev            #+#    #+#             */
-/*   Updated: 2025/04/10 21:58:10 by cschnath         ###   ########.fr       */
+/*   Updated: 2025/04/13 20:30:37 by cschnath         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,21 +18,23 @@
 
 static bool	parse_command_arguments(t_lexer *lexer, t_ast_node *cmd);
 
-bool	handle_operator_precedence(t_lexer *lexer, t_ast_stack **operator_stack, t_ast_stack **operand_stack)
+bool	handle_operator_precedence(t_lexer *lexer, t_ast_stack **op,
+		t_ast_stack **operand)
 {
 	t_node_type	current_op_type;
 	t_ast_node	*op_node;
 
 	current_op_type = get_ast_node_type_from_token(lexer->tokens->type);
-	while (*operator_stack && get_operator_precedence((*operator_stack)->node->type) >= get_operator_precedence(current_op_type))
+	while (*op
+		&& op_precedence((*op)->node->type) >= op_precedence(current_op_type))
 	{
-		if (!process_operator(operator_stack, operand_stack))
+		if (!process_operator(op, operand))
 			return (false);
 	}
 	op_node = ast_new(current_op_type, lexer->tokens);
 	if (!op_node)
 		return (false);
-	if (!push_ast_stack(operator_stack, op_node))
+	if (!push_ast_stack(op, op_node))
 		return (false);
 	advance_token(lexer);
 	return (true);
@@ -44,6 +46,8 @@ void	*parse_cmd2(t_lexer *lexer)
 	return (NULL);
 }
 
+// printf("received: %d %s\n", lexer->tokens->type, lexer->tokens->value);
+// printf("good- received: %d %s\n", lexer->tokens->type, lexer->tokens->value);
 t_ast_node	*parse_command(t_lexer *lexer)
 {
 	t_ast_node	*node;
@@ -51,10 +55,8 @@ t_ast_node	*parse_command(t_lexer *lexer)
 	if (!lexer->tokens || !is_command_token(lexer->tokens->type))
 	{
 		ft_error_msg("Syntax error: Expected command");
-		// printf("received: %d %s\n", lexer->tokens->type, lexer->tokens->value);
 		parse_cmd2(lexer);
 	}
-	// printf("good- received: %d %s\n", lexer->tokens->type, lexer->tokens->value);
 	node = ast_new(NODE_COMMAND, lexer->tokens);
 	if (!node)
 		parse_cmd2(lexer);
@@ -72,7 +74,8 @@ t_ast_node	*parse_command(t_lexer *lexer)
 	return (node);
 }
 
-t_ast_node	*parse_parenthesized_expression(t_lexer *lexer, t_ast_stack **operator_stack, t_ast_stack **operand_stack)
+t_ast_node	*parse_parenthesized_expression(t_lexer *lexer,
+		t_ast_stack **operator_stack, t_ast_stack **operand_stack)
 {
 	t_ast_node	*expr;
 
@@ -93,10 +96,13 @@ t_ast_node	*parse_parenthesized_expression(t_lexer *lexer, t_ast_stack **operato
 	return (expr);
 }
 
+// printf("cmd_args- received: %d %s\n", lexer->tokens->type,
+//	lexer->tokens->value);
+// printf("cmd_args- received: %d %s\n", lexer->tokens->type,
+//	lexer->tokens->value);
 static bool	parse_command_arguments(t_lexer *lexer, t_ast_node *cmd)
 {
 	skip_delims(lexer);
-	// printf("cmd_args- received: %d %s\n", lexer->tokens->type, lexer->tokens->value);
 	while (lexer->tokens && is_argument_token(lexer->tokens->type))
 	{
 		if (!add_argument_to_node(cmd, lexer->tokens->value))
@@ -105,6 +111,5 @@ static bool	parse_command_arguments(t_lexer *lexer, t_ast_node *cmd)
 		while (lexer->tokens && lexer->tokens->type == TOKEN_DELIMITER)
 			advance_token(lexer);
 	}
-	// printf("cmd_args- received: %d %s\n", lexer->tokens->type, lexer->tokens->value);
 	return (true);
 }

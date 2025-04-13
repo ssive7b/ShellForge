@@ -6,7 +6,7 @@
 /*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 01:21:51 by sstoev            #+#    #+#             */
-/*   Updated: 2025/04/12 23:12:28 by cschnath         ###   ########.fr       */
+/*   Updated: 2025/04/13 20:29:50 by cschnath         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int	get_operator_precedence(t_node_type type)
+int	op_precedence(t_node_type type)
 {
 	if (type == NODE_LPAREN || type == NODE_RPAREN)
 		return (3);

@@ -6,7 +6,7 @@
 /*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 00:25:50 by sstoev            #+#    #+#             */
-/*   Updated: 2025/04/12 23:41:01 by cschnath         ###   ########.fr       */
+/*   Updated: 2025/04/13 20:04:17 by cschnath         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 t_ast_node	*parse_tokens(t_lexer *lexer)
 {
 	t_ast_stack	*operator_stack;
-	t_ast_stack *operand_stack;
+	t_ast_stack	*operand_stack;
 	t_ast_node	*result_expr;
 
 	operator_stack = NULL;
@@ -36,35 +36,43 @@ t_ast_node	*parse_tokens(t_lexer *lexer)
 	return (result_expr);
 }
 
-t_ast_node	*parse_expression(t_lexer *lexer, t_ast_stack **operator_stack, t_ast_stack **operand_stack)
+// printf("parse_expr- received: %d %s\n", lexer->tokens->type,
+//	lexer->tokens->value);
+t_ast_node	*parse_expression(t_lexer *lexer, t_ast_stack **operator_stack,
+		t_ast_stack **operand_stack)
 {
 	t_ast_node	*first_operand;
 	t_ast_node	*finalized_expression;
 
-	first_operand = parse_command_with_redirects(lexer, operator_stack, operand_stack);
+	first_operand = parse_command_with_redirects(lexer, operator_stack,
+			operand_stack);
 	if (!first_operand)
 		return (NULL);
 	if (!push_ast_stack(operand_stack, first_operand))
 		return (NULL);
-	// printf("parse_expr- received: %d %s\n", lexer->tokens->type, lexer->tokens->value);
 	if (!parse_infix_operators(lexer, operator_stack, operand_stack))
 		return (NULL);
-	finalized_expression = finalize_expression(operator_stack, operand_stack, lexer);
+	finalized_expression = finalize_expression(operator_stack, operand_stack,
+			lexer);
 	return (finalized_expression);
 }
 
-bool	parse_infix_operators(t_lexer *lexer, t_ast_stack **operator_stack, t_ast_stack **operand_stack)
+// printf("parse_infix- received: %d %s\n", lexer->tokens->type,
+//	lexer->tokens->value);
+// printf("[inside loop] parse_infix- received: %d %s\n",
+//	lexer->tokens->type, lexer->tokens->value);
+bool	parse_infix_operators(t_lexer *lexer, t_ast_stack **operator_stack,
+		t_ast_stack **operand_stack)
 {
 	t_ast_node	*next_operand;
 
 	skip_delims(lexer);
-	// printf("parse_infix- received: %d %s\n", lexer->tokens->type, lexer->tokens->value);
 	while (lexer->tokens && is_operator_token(lexer->tokens->type))
 	{
-		// printf("[inside loop] parse_infix- received: %d %s\n", lexer->tokens->type, lexer->tokens->value);
 		if (!handle_operator_precedence(lexer, operator_stack, operand_stack))
 			return (false);
-		next_operand = parse_command_with_redirects(lexer, operator_stack, operand_stack);
+		next_operand = parse_command_with_redirects(lexer, operator_stack,
+				operand_stack);
 		if (!next_operand)
 			return (false);
 		if (!push_ast_stack(operand_stack, next_operand))
@@ -73,7 +81,8 @@ bool	parse_infix_operators(t_lexer *lexer, t_ast_stack **operator_stack, t_ast_s
 	return (true);
 }
 
-t_ast_node	*finalize_expression(t_ast_stack **operator_stack, t_ast_stack **operand_stack, t_lexer *lexer)
+t_ast_node	*finalize_expression(t_ast_stack **operator_stack,
+		t_ast_stack **operand_stack, t_lexer *lexer)
 {
 	t_ast_node	*result;
 
@@ -96,13 +105,17 @@ t_ast_node	*finalize_expression(t_ast_stack **operator_stack, t_ast_stack **oper
 	return (result);
 }
 
-t_ast_node	*parse_command_with_redirects(t_lexer *lexer, t_ast_stack **operator_stack, t_ast_stack **operand_stack)
+// printf("cmd_wredir- received: %d %s\n", lexer->tokens->type,
+//	lexer->tokens->value);
+t_ast_node	*parse_command_with_redirects(t_lexer *lexer,
+		t_ast_stack **operator_stack, t_ast_stack **operand_stack)
 {
 	t_ast_node	*cmd;
 
 	skip_delims(lexer);
 	if (lexer->tokens && lexer->tokens->type == TOKEN_LPAREN)
-		return (parse_parenthesized_expression(lexer, operator_stack, operand_stack));
+		return (parse_parenthesized_expression(lexer, operator_stack,
+				operand_stack));
 	cmd = parse_command(lexer);
 	if (!cmd)
 		return (NULL);
@@ -115,6 +128,5 @@ t_ast_node	*parse_command_with_redirects(t_lexer *lexer, t_ast_stack **operator_
 		}
 		advance_token(lexer);
 	}
-	// printf("cmd_wredir- received: %d %s\n", lexer->tokens->type, lexer->tokens->value);
 	return (cmd);
 }

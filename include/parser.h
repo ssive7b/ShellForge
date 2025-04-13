@@ -6,7 +6,7 @@
 /*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/28 23:15:48 by cschnath          #+#    #+#             */
-/*   Updated: 2025/04/13 16:40:37 by cschnath         ###   ########.fr       */
+/*   Updated: 2025/04/13 20:29:50 by cschnath         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ t_ast_node	*parse_command_with_redirects(t_lexer *lexer,
 t_ast_node	*ast_new(t_node_type type, t_token *token);
 
 // parser_ast_utils.c
-int			get_operator_precedence(t_node_type type);
+int			op_precedence(t_node_type type);
 int			push_ast_stack(t_ast_stack **stack, t_ast_node *node);
 t_ast_node	*pop_ast_stack(t_ast_stack **stack);
 bool		process_operator(t_ast_stack **operator_stack,

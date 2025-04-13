@@ -6,7 +6,7 @@
 /*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 12:39:08 by sstoev            #+#    #+#             */
-/*   Updated: 2025/04/12 23:15:13 by cschnath         ###   ########.fr       */
+/*   Updated: 2025/04/13 19:41:06 by cschnath         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,8 @@ void	exec_exit(t_ast_node *node)
 		if (node->args[2])
 		{
 			node->exit_status = 1;
-			ft_putstr_fd("minishell: exit: too many arguments\n", STDERR_FILENO);
+			ft_putstr_fd("minishell: exit: ", STDERR_FILENO);
+			ft_putstr_fd("too many arguments\n", STDERR_FILENO);
 			return ;
 		}
 		node->exit_status = ft_atoi(node->args[1]) % 256;

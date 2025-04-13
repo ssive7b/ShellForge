@@ -6,26 +6,27 @@
 /*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/22 19:43:22 by sstoev            #+#    #+#             */
-/*   Updated: 2025/04/12 23:17:34 by cschnath         ###   ########.fr       */
+/*   Updated: 2025/04/13 19:52:52 by cschnath         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <unistd.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <errno.h>
-#include <sys/wait.h>
-#include <error.h>
-#include <fcntl.h>
+#include "ast_mock.h"
+#include "env_utils.h"
 #include "executioner.h"
 #include "lexer.h"
 #include "minishell.h"
-#include "ast_mock.h"
-#include "env_utils.h"
 #include "utils.h"
+#include <errno.h>
+#include <error.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/wait.h>
+#include <unistd.h>
 
-static bool	validate_redir_file(t_shell *sh, const char *file_name, t_redir_type e_redir_type);
+static bool	validate_redir_file(t_shell *sh, const char *file_name,
+				t_redir_type e_redir_type);
 
 pid_t	fork_external_command(t_shell *sh, t_ast_node *node)
 {
@@ -54,7 +55,8 @@ bool	resolve_command_path(t_shell *sh, t_ast_node *node)
 	if (!node->cmd_pathname && !is_builtin(node->args[0]))
 	{
 		sh->current_cmd = node->args[0];
-		node->cmd_pathname = find_exec_pathname(sh, sh->env_list, node->args[0]);
+		node->cmd_pathname = find_exec_pathname(sh, sh->env_list,
+				node->args[0]);
 		if (!node->cmd_pathname)
 		{
 			if (!sh->err_msg)
@@ -83,14 +85,18 @@ void	setup_redirections(t_ast_node *node)
 	}
 }
 
-int	open_redirection_flle(t_shell *sh, const char *file_name, t_redir_type redir_type) // add some better handling of fds, i.e. proper handling of errors on opening/access, etc.
+// add some better handling of fds,
+// i.e. proper handling of errors on opening/access, etc.
+// populate the open_flags variable in the redir struct later
+int	open_redirection_flle(t_shell *sh, const char *file_name,
+		t_redir_type redir_type)
 {
 	int	fd;
 	int	flags;
 
 	if (!validate_redir_file(sh, file_name, redir_type))
 		return (-1);
-	if (redir_type == REDIR_INPUT)	// populate the open_flags variable in the redir struct later
+	if (redir_type == REDIR_INPUT)
 		flags = O_RDONLY;
 	else if (redir_type == REDIR_OUTPUT)
 		flags = O_WRONLY | O_CREAT | O_TRUNC;
@@ -109,7 +115,8 @@ int	open_redirection_flle(t_shell *sh, const char *file_name, t_redir_type redir
 	return (fd);
 }
 
-static bool	validate_redir_file(t_shell *sh, const char *file_name, t_redir_type e_redir_type)
+static bool	validate_redir_file(t_shell *sh, const char *file_name,
+		t_redir_type e_redir_type)
 {
 	if (!file_name)
 	{

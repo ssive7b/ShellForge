@@ -6,7 +6,7 @@
 /*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 21:03:50 by sstoev            #+#    #+#             */
-/*   Updated: 2025/04/12 23:46:12 by cschnath         ###   ########.fr       */
+/*   Updated: 2025/04/13 20:12:03 by cschnath         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,16 @@ void	add_new_env_entry(char *key, char *value, t_list *env_list)
 	ft_lstadd_back(&env_list, new_node);
 }
 
+void	get_env_array2(t_env *env_entry, char **sorted_env_array, size_t i)
+{
+	if (*env_entry->value == '\0')
+		sorted_env_array[i] = ft_strjoin_multiple((char *[]){env_entry->key,
+				"=", "\"\""}, 3);
+	else
+		sorted_env_array[i] = ft_strjoin_multiple((char *[]){env_entry->key,
+				"=", env_entry->value}, 3);
+}
+
 char	**get_sorted_env_array(t_list *env_list)
 {
 	t_list	*env_node;
@@ -50,14 +60,7 @@ char	**get_sorted_env_array(t_list *env_list)
 	{
 		env_entry = env_node->content;
 		if (env_entry->value)
-		{
-			if (*env_entry->value == '\0')
-				sorted_env_array[i] = ft_strjoin_multiple((char *[]){env_entry->key,
-						"=", "\"\""}, 3);
-			else
-				sorted_env_array[i] = ft_strjoin_multiple((char *[]){env_entry->key,
-						"=", env_entry->value}, 3);
-		}
+			get_env_array2(env_entry, sorted_env_array, i);
 		else
 			sorted_env_array[i] = ft_strdup(env_entry->key);
 		env_node = env_node->next;

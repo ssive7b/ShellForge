@@ -6,7 +6,7 @@
 /*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/22 13:24:34 by sstoev            #+#    #+#             */
-/*   Updated: 2025/04/12 23:53:35 by cschnath         ###   ########.fr       */
+/*   Updated: 2025/04/13 20:28:12 by cschnath         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,16 +56,10 @@ void	*execute_pipe(t_shell *sh, t_ast_node *node)
 	if (!node || !create_pipe(sh, node, pipefd))
 		return (NULL);
 	if (!prepare_pipe_commands(sh, node))
-	{
-		close_pipe(pipefd);
-		return (NULL);
-	}
+		return (close_pipe(pipefd), NULL);
 	left_pid = fork_pipe_process(sh, node->left, pipefd, 1);
 	if (left_pid == -1)
-	{
-		close_pipe(pipefd);
-		return (NULL);
-	}
+		return (close_pipe(pipefd), NULL);
 	right_pid = fork_pipe_process(sh, node->right, pipefd, 0);
 	if (right_pid == -1)
 	{
@@ -78,11 +72,36 @@ void	*execute_pipe(t_shell *sh, t_ast_node *node)
 }
 
 // to-do: allow for HEREDOC in the below implementation
+// exec_astree(sh, node);
+// Handles a single redirection
+static int	process_single_redirection(t_shell *sh, t_ast_node *node,
+		t_redir *redir)
+{
+	int	fd;
+
+	printf("Processing redirection: type=%d, file=%s\n", redir->type,
+		redir->file_name);
+	if (redir->type == REDIR_HEREDOC)
+		fd = get_heredoc_fd(redir);
+	else
+		fd = open_redirection_flle(sh, redir->file_name, redir->type);
+	if (fd == -1)
+	{
+		node->exit_status = 1;
+		return (-1);
+	}
+	if (redir->type == REDIR_INPUT || redir->type == REDIR_HEREDOC)
+		node->fd_in = fd;
+	else
+		node->fd_out = fd;
+	return (0);
+}
+
+// Iterates through the list of redirections
 void	*execute_redirection(t_shell *sh, t_ast_node *node)
 {
-	t_list *redir_list;
-	t_redir *redir;
-	int fd;
+	t_list	*redir_list;
+	t_redir	*redir;
 
 	if (!node || !node->redirections)
 		return (NULL);
@@ -90,57 +109,13 @@ void	*execute_redirection(t_shell *sh, t_ast_node *node)
 	while (redir_list)
 	{
 		redir = (t_redir *)redir_list->content;
-		printf("Processing redirection: type=%d, file=%s\n", redir->type,
-			redir->file_name);
-		if (redir->type == REDIR_HEREDOC)
-			fd = get_heredoc_fd(redir);
-		else
-			fd = open_redirection_flle(sh, redir->file_name, redir->type);
-		if (fd == -1)
+		if (process_single_redirection(sh, node, redir) == -1)
 		{
-			node->exit_status = 1;
 			clear_redirections(&redir_list);
 			return (NULL);
 		}
-		if (redir->type == REDIR_INPUT || redir->type == REDIR_HEREDOC)
-			node->fd_in = fd;
-		else
-			node->fd_out = fd;
 		redir_list = redir_list->next;
 	}
-	// exec_astree(sh, node);
 	clear_redirections(&redir_list);
-	return (NULL);
-}
-
-void	*execute_and(t_shell *sh, t_ast_node *node)
-{
-	if (!node)
-		return (NULL);
-	exec_astree(sh, node->left);
-	if (node->left->exit_status == 0)
-	{
-		exec_astree(sh, node->right);
-		node->exit_status = node->right->exit_status;
-	}
-	else
-		node->exit_status = node->left->exit_status;
-	sh->last_exit_code = node->exit_status;
-	return (NULL);
-}
-
-void	*execute_or(t_shell *sh, t_ast_node *node)
-{
-	if (!node)
-		return (NULL);
-	exec_astree(sh, node->left);
-	if (node->left->exit_status != 0)
-	{
-		exec_astree(sh, node->right);
-		node->exit_status = node->right->exit_status;
-	}
-	else
-		node->exit_status = node->left->exit_status;
-	sh->last_exit_code = node->exit_status;
 	return (NULL);
 }

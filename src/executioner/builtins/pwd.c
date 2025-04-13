@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pwd.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sstoev <sstoev@student.42.fr>              +#+  +:+       +#+        */
+/*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 12:24:39 by sstoev            #+#    #+#             */
-/*   Updated: 2025/03/20 12:24:41 by sstoev           ###   ########.fr       */
+/*   Updated: 2025/04/13 19:39:59 by cschnath         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ char	**get_cwd(void)
 	return (&cwd);
 }
 
+// free buffer at the end???
 void	exec_pwd(t_ast_node *node)
 {
 	char	*buffer;
@@ -34,5 +35,4 @@ void	exec_pwd(t_ast_node *node)
 	getcwd(buffer, size_buffer);
 	printf("%s\n", buffer);
 	*get_cwd() = buffer;
-	// free buffer???
 }

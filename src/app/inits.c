@@ -6,16 +6,16 @@
 /*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/22 14:02:25 by sstoev            #+#    #+#             */
-/*   Updated: 2025/04/12 23:14:33 by cschnath         ###   ########.fr       */
+/*   Updated: 2025/04/13 20:04:40 by cschnath         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <fcntl.h>
-#include "types.h"
-#include "minishell.h"
 #include "env_utils.h"
 #include "executioner.h"
+#include "minishell.h"
+#include "types.h"
 #include "utils.h"
+#include <fcntl.h>
 
 static int	setup_environment(t_shell *shell, char **envp);
 static void	setup_terminal_and_io(t_shell *shell);
@@ -67,14 +67,17 @@ static int	setup_environment(t_shell *shell, char **envp)
 static void	setup_terminal_and_io(t_shell *shell)
 {
 	shell->terminal_fd = get_terminal_fd();
-	shell->is_interactive = (shell->terminal_fd != -1); // checks if stdin is connected to a terminal
+	shell->is_interactive = (shell->terminal_fd != -1);
 	if (shell->is_interactive)
-		tcgetattr(STDIN_FILENO, &shell->original_term); // preserve original terminal settings so that we can restore on exit
+		tcgetattr(STDIN_FILENO, &shell->original_term);
 	shell->std_in = dup(STDIN_FILENO);
 	shell->std_out = dup(STDOUT_FILENO);
 	shell->std_err = dup(STDERR_FILENO);
 }
 
+// PLACEHOLDER FOR SIGNAL SETUP
+// E.g. setup_signals(void);
+// PLACEHOLDER FOR SIGNAL SETUP
 static int	setup_shell_context(t_shell *shell)
 {
 	char	cwd_buffer[PATH_MAX];
@@ -90,8 +93,5 @@ static int	setup_shell_context(t_shell *shell)
 	shell->error_code = 0;
 	shell->is_running = 1;
 	shell->last_exit_code = 0;
-	// PLACEHOLDER FOR SIGNAL SETUP
-	// E.g. setup_signals(void);
-	// PLACEHOLDER FOR SIGNAL SETUP
 	return (1);
 }

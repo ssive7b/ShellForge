@@ -6,7 +6,7 @@
 /*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 11:28:58 by sstoev            #+#    #+#             */
-/*   Updated: 2025/04/12 23:45:58 by cschnath         ###   ########.fr       */
+/*   Updated: 2025/04/13 19:46:47 by cschnath         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,8 @@
 
 void	exec_env(t_ast_node *node, t_list *env_list)
 {
-	t_list *env_node_current;
-	t_env *env_entry;
+	t_list	*env_node_current;
+	t_env	*env_entry;
 
 	env_node_current = env_list;
 	while (env_node_current)

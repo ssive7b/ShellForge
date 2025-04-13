@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sstoev <sstoev@student.42.fr>              +#+  +:+       +#+        */
+/*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 00:58:06 by sstoev            #+#    #+#             */
-/*   Updated: 2025/03/14 00:58:07 by sstoev           ###   ########.fr       */
+/*   Updated: 2025/04/13 20:19:30 by cschnath         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdio.h>
+#include "char_designation.h"
 #include "lexer.h"
 #include "utils.h"
 

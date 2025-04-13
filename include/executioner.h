@@ -6,7 +6,7 @@
 /*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/22 12:55:10 by sstoev            #+#    #+#             */
-/*   Updated: 2025/04/13 16:42:06 by cschnath         ###   ########.fr       */
+/*   Updated: 2025/04/13 20:09:26 by cschnath         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,8 @@ void			export_var2(char *var, t_list *env_list);
 void			exec_export(t_ast_node *node);
 void			update_existing_env_entry(t_env *existing_entry, char *value);
 void			add_new_env_entry(char *key, char *value, t_list *env_list);
+void			get_env_array2(t_env *env_entry, char **sorted_env_array,
+					size_t i);
 char			**get_sorted_env_array(t_list *env_list);
 void			print_sorted_env_list(t_ast_node *node,
 					char **sorted_env_array);
