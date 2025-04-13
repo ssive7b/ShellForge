@@ -6,15 +6,15 @@
 /*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 22:05:08 by sstoev            #+#    #+#             */
-/*   Updated: 2025/04/10 19:18:47 by cschnath         ###   ########.fr       */
+/*   Updated: 2025/04/12 23:40:08 by cschnath         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdlib.h>
-#include <unistd.h>
 #include "ast_mock.h"
 #include "parser.h"
 #include "utils.h"
+#include <stdlib.h>
+#include <unistd.h>
 
 bool	validate_redirections(t_lexer *lexer)
 {
@@ -32,7 +32,7 @@ bool	validate_redirections(t_lexer *lexer)
 			if (!next || !is_argument_token(next->type))
 			{
 				lexer->error = 1;
-				ft_error_msg("minishell: syntax error: redirection without target");
+				ft_error_msg("minishell: syntax error: redir without target");
 				return (false);
 			}
 		}

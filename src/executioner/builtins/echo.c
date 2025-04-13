@@ -3,18 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sstoev <sstoev@student.42.fr>              +#+  +:+       +#+        */
+/*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 10:45:40 by sstoev            #+#    #+#             */
-/*   Updated: 2025/03/24 10:45:42 by sstoev           ###   ########.fr       */
+/*   Updated: 2025/04/12 23:47:18 by cschnath         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
 #include "ast_mock.h"
 #include "minishell.h"
+#include <stdio.h>
 
-static int	is_valid_n_flag(char *arg) // echo needs to be able to handle "echo -n -nnn -nn [char *]" types of cases
+// echo needs to be able to handle "echo -n -nnn -nn [char *]" types of cases
+static int	is_valid_n_flag(char *arg)
 {
 	size_t	i;
 
@@ -44,7 +45,7 @@ void	exec_echo(t_ast_node *node)
 	while (node->args[i])
 	{
 		ft_putstr_fd(node->args[i], node->fd_out);
-		if (node->args[i+1])
+		if (node->args[i + 1])
 			ft_putstr_fd(" ", node->fd_out);
 		i++;
 	}

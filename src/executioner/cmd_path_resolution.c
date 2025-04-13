@@ -3,30 +3,31 @@
 /*                                                        :::      ::::::::   */
 /*   cmd_path_resolution.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sstoev <sstoev@student.42.fr>              +#+  +:+       +#+        */
+/*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/05 13:30:51 by sstoev            #+#    #+#             */
-/*   Updated: 2025/04/05 13:30:52 by sstoev           ###   ########.fr       */
+/*   Updated: 2025/04/12 23:16:46 by cschnath         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <unistd.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <fcntl.h>
-#include <sys/stat.h>
+#include "ast_mock.h"
+#include "env_utils.h"
 #include "executioner.h"
 #include "lexer.h"
 #include "minishell.h"
-#include "ast_mock.h"
-#include "env_utils.h"
 #include "utils.h"
+#include <fcntl.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 static bool	is_command_executable(const char *path, t_shell *sh);
 static char	*try_direct_execution(const char *cmd, t_shell *sh);
 static char	*try_current_directory(const char *cmd, t_shell *sh);
-static char	*search_in_path(const char *cmd, const char *path_value, t_shell *sh);
+static char	*search_in_path(const char *cmd, const char *path_value,
+				t_shell *sh);
 
 char	*find_exec_pathname(t_shell *sh, t_list *env_list, char *cmd_name)
 {
@@ -35,7 +36,7 @@ char	*find_exec_pathname(t_shell *sh, t_list *env_list, char *cmd_name)
 
 	if (!cmd_name || !*cmd_name)
 		return (NULL);
-	//if (is_builtin(cmd_name))	// in case we want to run builtins in child process too
+	// if (is_builtin(cmd_name))	// in case we want to run builtins in child process too
 	//	return (ft_strdup(cmd_name));
 	direct_path = try_direct_execution(cmd_name, sh);
 	if (direct_path)
@@ -95,7 +96,8 @@ static char	*try_current_directory(const char *cmd, t_shell *sh)
 	return (path);
 }
 
-static char	*search_in_path(const char *cmd, const char *path_value, t_shell *sh)
+static char	*search_in_path(const char *cmd, const char *path_value,
+		t_shell *sh)
 {
 	char	**paths;
 	char	*full_path;
@@ -107,7 +109,8 @@ static char	*search_in_path(const char *cmd, const char *path_value, t_shell *sh
 	i = -1;
 	while (paths[++i])
 	{
-		full_path = ft_strjoin_multiple((char *[]){paths[i], "/", (char *)cmd}, 3);
+		full_path = ft_strjoin_multiple((char *[]){paths[i], "/", (char *)cmd},
+				3);
 		if (!full_path)
 		{
 			ft_free_2d_array(&paths, -1);

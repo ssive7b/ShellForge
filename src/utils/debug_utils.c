@@ -6,13 +6,14 @@
 /*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 23:36:33 by sstoev            #+#    #+#             */
-/*   Updated: 2025/04/10 22:09:52 by cschnath         ###   ########.fr       */
+/*   Updated: 2025/04/13 16:39:21 by cschnath         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
-#include "utils.h"
 #include "ast_mock.h"
+#include <stdio.h>
+
+void	print_ast(t_ast_node *node, int level);
 
 void	print_stack(t_ast_stack *stack, const char *name)
 {
@@ -25,8 +26,16 @@ void	print_stack(t_ast_stack *stack, const char *name)
 	}
 }
 
-void	print_ast2(int j, t_ast_node *n, t_list *re, t_redir *r)
+void	print_ast3(t_ast_node *node, int level)
 {
+	print_ast(node->left, level + 1);
+	print_ast(node->right, level + 1);
+}
+
+void	print_ast2(t_ast_node *n, t_list *re, t_redir *r)
+{
+	int	j;
+
 	j = 0;
 	printf("CMD: ");
 	while (n->args[j])
@@ -37,16 +46,16 @@ void	print_ast2(int j, t_ast_node *n, t_list *re, t_redir *r)
 	printf("\n");
 	if (re)
 	{
-		while(re)
+		while (re)
 		{
 			r = re->content;
-			printf("   Redirection: type: %d file: %s\n");
-			r->type;
 			if (r->file_name)
-				printf("%s\n", r->file_name);
+				printf("   Redirection: type: %d file: %s\n", r->type,
+					r->file_name);
 			else
-				printf("%s\n", r->delimiter_heredoc);
-			r = re->next;
+				printf("   Redirection: type: %d file: %s\n", r->type,
+					r->delimiter_heredoc);
+			re = re->next;
 		}
 	}
 }
@@ -55,40 +64,17 @@ void	print_ast(t_ast_node *node, int level)
 {
 	t_list	*redirections;
 	t_redir	*redir;
-	int	i;
-	int j;
+	int		i;
 
 	if (!node)
 		return ;
-	i = 0;
-	while (i < level)
-	{
+	i = -1;
+	while (++i < level)
 		printf("  ");
-		i++;
-	}
 	redirections = node->redirections;
+	redir = NULL;
 	if (node->type == NODE_COMMAND)
-	{
-		j = 0;
-		printf("CMD: ");
-		while (node->args[j])
-		{
-			printf("%s ", node->args[j]);
-			j++;
-		}
-		printf("\n");
-		if (redirections)
-		{
-			while(redirections)
-			{
-				redir = redirections->content;
-				printf("   Redirection: type: %d file: %s\n",
-				redir->type,
-				redir->file_name ? redir->file_name : redir->delimiter_heredoc);
-				redirections = redirections->next;
-			}
-		}
-	}
+		print_ast2(node, redirections, redir);
 	else if (node->type == NODE_PIPE)
 		printf("PIPE\n");
 	else if (node->type == NODE_AND)
@@ -100,6 +86,5 @@ void	print_ast(t_ast_node *node, int level)
 		redir = redirections->content;
 		printf("Redirection: %d\n", redir->type);
 	}
-	print_ast(node->left, level + 1);
-	print_ast(node->right, level + 1);
+	print_ast3(node, level);
 }

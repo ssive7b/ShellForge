@@ -6,25 +6,27 @@
 /*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/28 23:15:48 by cschnath          #+#    #+#             */
-/*   Updated: 2025/04/03 14:54:15 by sstoev           ###   ########.fr       */
+/*   Updated: 2025/04/12 23:42:08 by cschnath         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ast_mock.h"
+#include "env_utils.h"
 #include "expansions.h"
 #include "lexer.h"
 #include "minishell.h"
-#include "env_utils.h"
 #include "utils.h"
 #include <ctype.h>
 #include <dirent.h>
 #include <stdio.h>
 #include <string.h>
 
-static bool	process_expansion_pass(char **result, const char *str, int *pos, t_expand_context *context);
-static char	*expand_variable_in_string(const char *str, t_expand_context *context);
+static bool	process_expansion_pass(char **result, const char *str, int *pos,
+				t_expand_context *context);
+static char	*expand_variable_in_string(const char *str,
+				t_expand_context *context);
 
-bool 	expand_variables_in_tokens(t_token **tokens, t_expand_context *context)
+bool	expand_variables_in_tokens(t_token **tokens, t_expand_context *context)
 {
 	t_token	*current;
 	char	*expanded;
@@ -34,7 +36,8 @@ bool 	expand_variables_in_tokens(t_token **tokens, t_expand_context *context)
 	current = *tokens;
 	while (current)
 	{
-		if (current->type == TOKEN_WORD_UNQUOTED || current->type == TOKEN_WORD_DQUOTED)
+		if (current->type == TOKEN_WORD_UNQUOTED
+			|| current->type == TOKEN_WORD_DQUOTED)
 		{
 			if (needs_expansion(current->value))
 			{
@@ -50,7 +53,8 @@ bool 	expand_variables_in_tokens(t_token **tokens, t_expand_context *context)
 	return (true);
 }
 
-static char	*expand_variable_in_string(const char *str, t_expand_context *context)
+static char	*expand_variable_in_string(const char *str,
+		t_expand_context *context)
 {
 	char	*result;
 	int		position;
@@ -76,7 +80,8 @@ static char	*expand_variable_in_string(const char *str, t_expand_context *contex
 	return (result);
 }
 
-static bool	process_expansion_pass(char **result, const char *str, int *pos, t_expand_context *context)
+static bool	process_expansion_pass(char **result, const char *str, int *pos,
+		t_expand_context *context)
 {
 	int	i;
 	int	start;
@@ -85,7 +90,7 @@ static bool	process_expansion_pass(char **result, const char *str, int *pos, t_e
 	start = *pos;
 	while (str[i])
 	{
-		if (str[i] == '$' && str[i+1])
+		if (str[i] == '$' && str[i + 1])
 		{
 			if (!append_chunk(result, str, start, i))
 				return (false);
@@ -101,4 +106,3 @@ static bool	process_expansion_pass(char **result, const char *str, int *pos, t_e
 	*pos = i;
 	return (true);
 }
-

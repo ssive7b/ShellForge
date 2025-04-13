@@ -3,18 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sstoev <sstoev@student.42.fr>              +#+  +:+       +#+        */
+/*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 15:20:27 by sstoev            #+#    #+#             */
-/*   Updated: 2025/04/04 15:20:29 by sstoev           ###   ########.fr       */
+/*   Updated: 2025/04/12 23:45:10 by cschnath         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdlib.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <readline/readline.h>
-#include <readline/history.h>
 #include "ast_mock.h"
 #include "env_utils.h"
 #include "executioner.h"
@@ -22,8 +17,13 @@
 #include "lexer.h"
 #include "minishell.h"
 #include "parser.h"
-#include "utils.h"
 #include "signals.h"
+#include "utils.h"
+#include <readline/history.h>
+#include <readline/readline.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 static bool	process_cmd_iteration(t_shell *shell);
 
@@ -49,7 +49,7 @@ int	main(int argc, char **argv, char **envp)
 	return (0);
 }
 
-static bool	process_cmd_iteration(t_shell *shell)	// prototyping
+static bool	process_cmd_iteration(t_shell *shell)
 {
 	if (!shell->input || !*(shell->input))
 	{
@@ -58,7 +58,8 @@ static bool	process_cmd_iteration(t_shell *shell)	// prototyping
 	}
 	if (*(shell->input))
 		add_history(shell->input);
-	shell->ast_root = get_ast_root(shell->input, shell->env_list, shell->last_exit_code);
+	shell->ast_root = get_ast_root(shell->input, shell->env_list,
+			shell->last_exit_code);
 	if (!shell->ast_root)
 	{
 		set_error(shell, 1, "Error: Failed while setting up the AST");
@@ -70,4 +71,3 @@ static bool	process_cmd_iteration(t_shell *shell)	// prototyping
 	cleanup_iteration(shell);
 	return (true);
 }
-

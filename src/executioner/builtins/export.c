@@ -3,21 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sstoev <sstoev@student.42.fr>              +#+  +:+       +#+        */
+/*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 10:48:35 by sstoev            #+#    #+#             */
-/*   Updated: 2025/03/25 10:48:36 by sstoev           ###   ########.fr       */
+/*   Updated: 2025/04/13 16:26:32 by cschnath         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdbool.h>
-#include <stdio.h>
-#include "char_designation.h"
 #include "ast_mock.h"
-#include "minishell.h"
+#include "char_designation.h"
 #include "env_utils.h"
 #include "executioner.h"
+#include "minishell.h"
 #include "utils.h"
+#include <stdbool.h>
+#include <stdio.h>
 
 static void	print_no_args_case(t_ast_node *node, t_list *env_list);
 static bool	is_valid_export_expr(const char *str);
@@ -71,10 +71,17 @@ static bool	is_valid_export_expr(const char *str)
 	return (false);
 }
 
+void	export_var2(char *var, t_list *env_list)
+{
+	t_list	*new_env;
+
+	new_env = create_new_env_node(ft_strdup(var), NULL);
+	ft_lstadd_back(&env_list, new_env);
+}
+
 static void	export_var(char *var, t_list *env_list)
 {
 	t_env	*existing_entry;
-	t_list	*new_env_node;
 	int		eq_index;
 	char	*key;
 	char	*value;
@@ -83,10 +90,7 @@ static void	export_var(char *var, t_list *env_list)
 	if (eq_index == -1)
 	{
 		if (!get_env_entry(var, env_list))
-		{
-			new_env_node = create_new_env_node(ft_strdup(var), NULL);
-			ft_lstadd_back(&env_list, new_env_node);
-		}
+			export_var2(var, env_list);
 		return ;
 	}
 	key = ft_substr(var, 0, eq_index);

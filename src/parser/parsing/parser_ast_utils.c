@@ -6,17 +6,17 @@
 /*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 01:21:51 by sstoev            #+#    #+#             */
-/*   Updated: 2025/04/03 01:55:04 by sstoev           ###   ########.fr       */
+/*   Updated: 2025/04/12 23:12:28 by cschnath         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ast_mock.h"
-#include "parser.h"
 #include "lexer.h"
+#include "parser.h"
 #include "utils.h"
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
 
 int	get_operator_precedence(t_node_type type)
 {
@@ -58,28 +58,29 @@ t_ast_node	*pop_ast_stack(t_ast_stack **stack)
 	return (node);
 }
 
-bool	process_operator(t_ast_stack **operator_stack, t_ast_stack **operand_stack)
+bool	process_operator(t_ast_stack **operator_stack,
+		t_ast_stack **operand_stack)
 {
-    t_ast_node	*op_node;
+	t_ast_node	*op_node;
 	t_ast_node	*right_operand;
 	t_ast_node	*left_operand;
 
-    if (!operator_stack || !(*operator_stack) || !operand_stack)
+	if (!operator_stack || !(*operator_stack) || !operand_stack)
 		return (false);
 	if (!*operand_stack || !(*operand_stack)->next)
 	{
 		ft_error_msg("Error: Not enough operands for operator");
 		return (false);
 	}
-    op_node = pop_ast_stack(operator_stack);
-    if (!op_node)
+	op_node = pop_ast_stack(operator_stack);
+	if (!op_node)
 		return (false);
 	right_operand = pop_ast_stack(operand_stack);
 	left_operand = pop_ast_stack(operand_stack);
-    op_node->right = right_operand;
-    op_node->left = left_operand;
-    push_ast_stack(operand_stack, op_node);
-    return (true);
+	op_node->right = right_operand;
+	op_node->left = left_operand;
+	push_ast_stack(operand_stack, op_node);
+	return (true);
 }
 
 t_node_type	get_ast_node_type_from_token(t_token_type type)

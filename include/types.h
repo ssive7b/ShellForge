@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   types.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/13 16:42:43 by cschnath          #+#    #+#             */
+/*   Updated: 2025/04/13 16:45:05 by cschnath         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef TYPES_H
 # define TYPES_H
 
@@ -25,7 +37,7 @@ typedef enum e_node_type
 	NODE_LPAREN,
 	NODE_RPAREN,
 	NODE_TYPES_COUNT
-}	t_node_type;
+}								t_node_type;
 
 typedef enum e_redir_type
 {
@@ -33,27 +45,27 @@ typedef enum e_redir_type
 	REDIR_OUTPUT,
 	REDIR_APPEND,
 	REDIR_HEREDOC
-}	t_redir_type;
+}								t_redir_type;
 
-typedef enum e_token_type 
+typedef enum e_token_type
 {
 	TOKEN_UNKNOWN,
-	TOKEN_PIPE, // |
-	TOKEN_REDIR_OUT, // >
-	TOKEN_REDIR_IN, // <
-	TOKEN_REDIR_APPEND, // >>
-	TOKEN_REDIR_HEREDOC, // <<
-	TOKEN_OR, // || ADDED THIS
-	TOKEN_AND, // && ADDED THIS
-	TOKEN_AMPERSAND, // &
-	TOKEN_SEMICOLON, // ;
-	TOKEN_WORD_UNQUOTED, 
+	TOKEN_PIPE,
+	TOKEN_REDIR_OUT,
+	TOKEN_REDIR_IN,
+	TOKEN_REDIR_APPEND,
+	TOKEN_REDIR_HEREDOC,
+	TOKEN_OR,
+	TOKEN_AND,
+	TOKEN_AMPERSAND,
+	TOKEN_SEMICOLON,
+	TOKEN_WORD_UNQUOTED,
 	TOKEN_WORD_DQUOTED,
 	TOKEN_WORD_SQUOTED,
 	TOKEN_LPAREN,
 	TOKEN_RPAREN,
 	TOKEN_DELIMITER,
 	TOKEN_END
-}	t_token_type;
+}								t_token_type;
 
 #endif

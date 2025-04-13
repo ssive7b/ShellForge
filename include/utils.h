@@ -1,10 +1,22 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/13 16:42:33 by cschnath          #+#    #+#             */
+/*   Updated: 2025/04/13 16:42:35 by cschnath         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef UTILS_H
 # define UTILS_H
 
-# include <stdbool.h>
-# include "types.h"
-# include "../libft/include/libft.h"
 # include "../libft/include/ft_printf.h"
+# include "../libft/include/libft.h"
+# include "types.h"
+# include <stdbool.h>
 
 // string_utils.c
 bool	safe_strjoin(char **dest, const char *source);
@@ -23,6 +35,8 @@ void	ft_error_msg(const char *message);
 
 // debug_utils.c
 void	print_stack(t_ast_stack *stack, const char *name);
+void	print_ast3(t_ast_node *node, int level);
+void	print_ast2(t_ast_node *n, t_list *re, t_redir *r);
 void	print_ast(t_ast_node *node, int level);
 
 // array_utils.c

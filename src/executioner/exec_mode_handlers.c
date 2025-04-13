@@ -3,25 +3,25 @@
 /*                                                        :::      ::::::::   */
 /*   exec_mode_handlers.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sstoev <sstoev@student.42.fr>              +#+  +:+       +#+        */
+/*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/22 13:24:34 by sstoev            #+#    #+#             */
-/*   Updated: 2025/03/22 13:24:35 by sstoev           ###   ########.fr       */
+/*   Updated: 2025/04/12 23:53:35 by cschnath         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <unistd.h>
+#include "ast_mock.h"
+#include "env_utils.h"
+#include "executioner.h"
+#include "lexer.h"
+#include "minishell.h"
+#include "parser.h"
+#include "utils.h"
+#include <error.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/wait.h>
-#include <error.h>
-#include "executioner.h"
-#include "parser.h"
-#include "lexer.h"
-#include "minishell.h"
-#include "ast_mock.h"
-#include "env_utils.h"
-#include "utils.h"
+#include <unistd.h>
 
 void	*execute_command(t_shell *sh, t_ast_node *node)
 {
@@ -77,11 +77,12 @@ void	*execute_pipe(t_shell *sh, t_ast_node *node)
 	return (NULL);
 }
 
-void	*execute_redirection(t_shell *sh, t_ast_node *node) // to-do: allow for HEREDOC in the below implementation
+// to-do: allow for HEREDOC in the below implementation
+void	*execute_redirection(t_shell *sh, t_ast_node *node)
 {
-	t_list	*redir_list;
-	t_redir	*redir;
-	int		fd;
+	t_list *redir_list;
+	t_redir *redir;
+	int fd;
 
 	if (!node || !node->redirections)
 		return (NULL);
@@ -89,7 +90,8 @@ void	*execute_redirection(t_shell *sh, t_ast_node *node) // to-do: allow for HER
 	while (redir_list)
 	{
 		redir = (t_redir *)redir_list->content;
-		printf("Processing redirection: type=%d, file=%s\n", redir->type, redir->file_name);
+		printf("Processing redirection: type=%d, file=%s\n", redir->type,
+			redir->file_name);
 		if (redir->type == REDIR_HEREDOC)
 			fd = get_heredoc_fd(redir);
 		else
@@ -106,7 +108,7 @@ void	*execute_redirection(t_shell *sh, t_ast_node *node) // to-do: allow for HER
 			node->fd_out = fd;
 		redir_list = redir_list->next;
 	}
-	//exec_astree(sh, node);
+	// exec_astree(sh, node);
 	clear_redirections(&redir_list);
 	return (NULL);
 }

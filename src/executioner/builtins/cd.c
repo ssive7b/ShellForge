@@ -3,24 +3,24 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sstoev <sstoev@student.42.fr>              +#+  +:+       +#+        */
+/*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 15:36:22 by sstoev            #+#    #+#             */
-/*   Updated: 2025/03/26 15:36:23 by sstoev           ###   ########.fr       */
+/*   Updated: 2025/04/12 23:15:28 by cschnath         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdbool.h>
-#include <stdio.h>
 #include "ast_mock.h"
-#include "minishell.h"
 #include "env_utils.h"
 #include "executioner.h"
+#include "minishell.h"
 #include "utils.h"
+#include <stdbool.h>
+#include <stdio.h>
 
 static void	exec_cd_home(t_ast_node *node, char *oldpwd);
 static void	update_env_var(char *key, char *value);
-static void handle_cd_error(t_ast_node *node, char *path);
+static void	handle_cd_error(t_ast_node *node, char *path);
 
 void	exec_cd(t_ast_node *node)
 {
@@ -96,7 +96,7 @@ static void	update_env_var(char *key, char *value)
 	}
 }
 
-static void handle_cd_error(t_ast_node *node, char *path)
+static void	handle_cd_error(t_ast_node *node, char *path)
 {
 	ft_putstr_fd("minishell: cd: ", STDERR_FILENO);
 	ft_putstr_fd(path, STDERR_FILENO);

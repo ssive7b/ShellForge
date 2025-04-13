@@ -3,15 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   string_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sstoev <sstoev@student.42.fr>              +#+  +:+       +#+        */
+/*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 00:59:12 by sstoev            #+#    #+#             */
-/*   Updated: 2025/03/14 00:59:13 by sstoev           ###   ########.fr       */
+/*   Updated: 2025/04/13 16:27:19 by cschnath         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "utils.h"
 #include "char_designation.h"
+#include "utils.h"
 
 bool	safe_strjoin(char **dest, const char *source)
 {
@@ -93,18 +93,4 @@ int	ft_find_char_qadjusted(const char *str, char char_to_find)
 	if (!str[idx])
 		idx--;
 	return (idx);
-}
-
-int	ft_find_char(const char *str, char char_to_find)
-{
-	size_t	i;
-
-	i = 0;
-	while (str[i])
-	{
-		if (str[i] == char_to_find)
-			return (i);
-		i++;
-	}
-	return (-1);
 }

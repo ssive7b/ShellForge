@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_init.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sstoev <sstoev@student.42.fr>              +#+  +:+       +#+        */
+/*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/19 13:00:06 by sstoev            #+#    #+#             */
-/*   Updated: 2025/03/19 13:00:07 by sstoev           ###   ########.fr       */
+/*   Updated: 2025/04/12 23:11:57 by cschnath         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,4 +64,3 @@ void	free_env_list(t_list *env_list)
 {
 	ft_lstclear(&env_list, free_env_content);
 }
-

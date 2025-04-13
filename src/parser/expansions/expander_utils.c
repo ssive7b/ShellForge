@@ -3,18 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   expander_utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sstoev <sstoev@student.42.fr>              +#+  +:+       +#+        */
+/*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 15:31:41 by sstoev            #+#    #+#             */
-/*   Updated: 2025/04/03 15:31:42 by sstoev           ###   ########.fr       */
+/*   Updated: 2025/04/12 23:12:57 by cschnath         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ast_mock.h"
+#include "env_utils.h"
 #include "expansions.h"
 #include "lexer.h"
 #include "minishell.h"
-#include "env_utils.h"
 #include "utils.h"
 #include <ctype.h>
 #include <dirent.h>
@@ -38,7 +38,8 @@ bool	append_chunk(char **result, const char *src, int start, int end)
 	return (success);
 }
 
-bool process_dollar_sign(char **result, const char *str, int *i, t_expand_context *context)
+bool	process_dollar_sign(char **result, const char *str, int *i,
+		t_expand_context *context)
 {
 	char	*var_name;
 	char	*var_value;
@@ -88,5 +89,3 @@ static char	*get_var_value(const char *name, t_expand_context *context)
 	}
 	return (value);
 }
-
-

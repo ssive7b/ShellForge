@@ -3,18 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   parser_error_handling.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sstoev <sstoev@student.42.fr>              +#+  +:+       +#+        */
+/*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 21:55:41 by sstoev            #+#    #+#             */
-/*   Updated: 2025/04/07 21:55:42 by sstoev           ###   ########.fr       */
+/*   Updated: 2025/04/12 23:43:46 by cschnath         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdlib.h>
-#include <unistd.h>
 #include "ast_mock.h"
 #include "parser.h"
 #include "utils.h"
+#include <stdlib.h>
+#include <unistd.h>
 
 void	print_syntax_error(char *token)
 {
@@ -30,7 +30,8 @@ void	print_missing_token_error(char *expected)
 	ft_putstr_fd("\n", 2);
 }
 
-void	handle_parser_error(t_lexer *lexer, t_ast_stack **operator_stack, t_ast_stack **operand_stack, t_ast_node **node)
+void	handle_parser_error(t_lexer *lexer, t_ast_stack **operator_stack,
+		t_ast_stack **operand_stack, t_ast_node **node)
 {
 	if (lexer)
 		lexer->error = 1;

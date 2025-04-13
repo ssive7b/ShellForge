@@ -3,25 +3,25 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sstoev <sstoev@student.42.fr>              +#+  +:+       +#+        */
+/*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 11:28:58 by sstoev            #+#    #+#             */
-/*   Updated: 2025/03/24 11:29:00 by sstoev           ###   ########.fr       */
+/*   Updated: 2025/04/12 23:45:58 by cschnath         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
 #include "ast_mock.h"
-#include "minishell.h"
 #include "env_utils.h"
+#include "minishell.h"
+#include <stdio.h>
 
 void	exec_env(t_ast_node *node, t_list *env_list)
 {
-	t_list	*env_node_current;
-	t_env	*env_entry;
+	t_list *env_node_current;
+	t_env *env_entry;
 
 	env_node_current = env_list;
-	while(env_node_current)
+	while (env_node_current)
 	{
 		env_entry = env_node_current->content;
 		if (env_entry->value)

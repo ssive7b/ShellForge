@@ -6,7 +6,7 @@
 /*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/28 23:15:48 by cschnath          #+#    #+#             */
-/*   Updated: 2025/04/03 14:13:26 by sstoev           ###   ########.fr       */
+/*   Updated: 2025/04/13 16:41:26 by cschnath         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,15 +18,17 @@
 typedef struct s_expand_context
 {
 	t_list	*env_list;
-	int     last_exit_status;
-}	t_expand_context;
+	int		last_exit_status;
+}			t_expand_context;
 
 // expander.c
-bool 	expand_variables_in_tokens(t_token **tokens, t_expand_context *context);
+bool		expand_variables_in_tokens(t_token **tokens,
+				t_expand_context *context);
 
 // expander_utils.c
-bool	append_chunk(char **result, const char *src, int start, int end);
-bool 	process_dollar_sign(char **result, const char *str, int *i, t_expand_context *context);
-bool	needs_expansion(const char *str);
+bool		append_chunk(char **result, const char *src, int start, int end);
+bool		process_dollar_sign(char **result, const char *str, int *i,
+				t_expand_context *context);
+bool		needs_expansion(const char *str);
 
 #endif

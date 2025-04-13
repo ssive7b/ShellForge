@@ -6,7 +6,7 @@
 /*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 00:59:02 by sstoev            #+#    #+#             */
-/*   Updated: 2025/03/27 10:50:18 by cschnath         ###   ########.fr       */
+/*   Updated: 2025/04/12 23:56:12 by cschnath         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,12 +52,4 @@ int	ft_is_meta_char(const char c)
 		|| c == ','
 		|| c == '<'
 		|| c == '>');
-}
-
-int	ft_is_unquoted_char(const char c)
-{
-	return (!ft_is_meta_char(c)
-		&& !ft_is_quote(c)
-		&& !ft_is_whitespace(c)
-		&& c != '\0');
 }

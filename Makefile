@@ -56,6 +56,7 @@ SRC						=	$(SRC_DIR)/app/main.c											\
 							$(SRC_DIR)/utils/memory_utils.c									\
 							$(SRC_DIR)/utils/error_handlers.c								\
 							$(SRC_DIR)/utils/debug_utils.c									\
+							$(SRC_DIR)/utils/utils.c										\
 							$(SRC_DIR)/utils/char_designation.c
 
 TOTAL_SRC_FILES			:=	$(words $(SRC))

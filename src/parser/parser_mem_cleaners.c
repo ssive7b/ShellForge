@@ -3,18 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   parser_mem_cleaners.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sstoev <sstoev@student.42.fr>              +#+  +:+       +#+        */
+/*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 14:32:56 by sstoev            #+#    #+#             */
-/*   Updated: 2025/04/07 21:56:00 by sstoev           ###   ########.fr       */
+/*   Updated: 2025/04/12 23:13:51 by cschnath         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdlib.h>
-#include <unistd.h>
 #include "ast_mock.h"
 #include "parser.h"
 #include "utils.h"
+#include <stdlib.h>
+#include <unistd.h>
 
 void	free_ast_node(t_ast_node **node)
 {
@@ -32,7 +32,7 @@ void	free_ast_node(t_ast_node **node)
 		if ((*node)->args)
 		{
 			i = 0;
-			while((*node)->args[i])
+			while ((*node)->args[i])
 			{
 				safe_free((void **)&(*node)->args[i]);
 				i++;
@@ -63,7 +63,8 @@ void	free_ast_stack(t_ast_stack **stack)
 	*stack = NULL;
 }
 
-void	cleanup_parser_state(t_ast_stack **operator_stack, t_ast_stack **operand_stack, t_ast_node **node)
+void	cleanup_parser_state(t_ast_stack **operator_stack,
+		t_ast_stack **operand_stack, t_ast_node **node)
 {
 	if (operand_stack)
 		free_ast_stack(operator_stack);

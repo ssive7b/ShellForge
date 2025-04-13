@@ -1,40 +1,52 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minishell.h                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/13 16:40:46 by cschnath          #+#    #+#             */
+/*   Updated: 2025/04/13 16:44:14 by cschnath         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-# include <linux/limits.h>
-# include "types.h"
 # include "../libft/include/libft.h"
 # include "termios.h"
+# include "types.h"
+# include <linux/limits.h>
 
 # define SHELL_PROMPT "minishell$> "
 
-typedef struct	s_shell
+typedef struct s_shell
 {
 	char			*input;
 	t_ast_node		*ast_root;
-	char			**envp;				// raw env array for execve
-	t_list			*env_list;			// linked list for easy manipulation
+	char			**envp;
+	t_list			*env_list;
 	char			*cwd;
 	char			*current_cmd;
 	int				last_exit_code;
-	int				is_running;			// control variable for the main loop
+	int				is_running;
 	int				is_interactive;
-	struct termios	original_term;		// saved original settings
-	int				terminal_fd;		// fd of the original terminal (tty)
-	int				std_in;				// original stdin
-	int				std_out;			// original stdout
-	int				std_err;			// original stderr
-	char			*err_msg;			// error message- human readable
-	int				error_code;			// numeric error code
-}	t_shell;
+	struct termios	original_term;
+	int				terminal_fd;
+	int				std_in;
+	int				std_out;
+	int				std_err;
+	char			*err_msg;
+	int				error_code;
+}					t_shell;
 
 // inits.c
-t_shell	*init_minishell(char **envp);
+t_shell				*init_minishell(char **envp);
 
 // cleanup_central.c
-void	cleanup_iteration(t_shell *shell);
-void	cleanup_shell(t_shell *shell);
-void	display_error(t_shell *shell);
-void	set_error(t_shell *shell, int code, const char *msg);
+void				cleanup_iteration(t_shell *shell);
+void				cleanup_shell(t_shell *shell);
+void				display_error(t_shell *shell);
+void				set_error(t_shell *shell, int code, const char *msg);
 
 #endif
