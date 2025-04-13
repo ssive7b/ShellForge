@@ -6,7 +6,7 @@
 /*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 00:40:24 by sstoev            #+#    #+#             */
-/*   Updated: 2025/04/13 16:44:32 by cschnath         ###   ########.fr       */
+/*   Updated: 2025/04/13 22:01:25 by cschnath         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,12 @@ typedef void		*(*t_lexer_state)(t_lexer *lexer);
 
 // lexer.c
 t_lexer				*run_tokenizer(const char *input);
+void				handle_single_quote(t_token token, t_lexer *lx);
+t_lexer_state		word_state(t_lexer *lx);
+t_lexer_state		operator_state(t_lexer *lx);
+t_lexer_state		delimiter_state(t_lexer *lx);
+t_token_type		get_op_token_type2(const char *input);
+t_token_type		get_op_token_type(const char *input);
 
 // lexer_utils.c
 t_lexer				*init_tokenizer(const char *input);

@@ -6,7 +6,7 @@
 /*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 00:59:12 by sstoev            #+#    #+#             */
-/*   Updated: 2025/04/13 20:14:55 by cschnath         ###   ########.fr       */
+/*   Updated: 2025/04/13 22:02:25 by cschnath         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ int	ft_is_escaped(const char *str, size_t idx)
 	return (0);
 }
 
-int	find_char_qadjusted(const char *str, char char_to_find)
+int	ft_char_qadjusted(const char *str, char char_to_find)
 {
 	size_t	idx;
 

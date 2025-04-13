@@ -17,6 +17,7 @@ SRC						=	$(SRC_DIR)/app/main.c											\
 							$(SRC_DIR)/env/env_aux.c										\
 							$(SRC_DIR)/env/env_utils.c										\
 							$(SRC_DIR)/parser/lexer/lexer.c									\
+							$(SRC_DIR)/parser/lexer/lexer2.c								\
 							$(SRC_DIR)/parser/lexer/lexer_utils.c							\
 							$(SRC_DIR)/parser/lexer/lexer_cleaners.c						\
 							$(SRC_DIR)/parser/expansions/expander.c							\
