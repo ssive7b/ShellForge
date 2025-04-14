@@ -16,7 +16,7 @@
 #include "parser.h"
 #include "utils.h"
 
-bool	validate_operators(t_lexer *lexer)
+bool	validate_operators(t_lexer *lexer) // Ensures that consecutive operators are handled correctly
 {
 	t_token	*current;
 	t_token	*prev;
@@ -27,13 +27,9 @@ bool	validate_operators(t_lexer *lexer)
 	{
 		if (prev && is_operator_token(prev->type) && is_operator_token(current->type))
 		{
-			if (!((prev->type == TOKEN_PIPE && current->type == TOKEN_PIPE)
-				|| (prev->type == TOKEN_AMPERSAND && current->type == TOKEN_AMPERSAND)))
-			{
-				lexer->error = 1;
-				print_syntax_error(current->value);
-				return (false);
-			}
+			lexer->error = 1;
+			print_syntax_error(current->value);
+			return (false);
 		}
 		if (!prev && is_operator_token(current->type) && current->type != TOKEN_LPAREN)
 		{

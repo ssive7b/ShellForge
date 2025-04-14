@@ -44,7 +44,8 @@ bool	add_redirection_to_command(t_lexer *lexer, t_ast_node *cmd)
 	if (!cmd->redirections)
 		cmd->redirections = NULL;
 	ft_lstadd_back(&cmd->redirections, ft_lstnew(redir));
-	advance_token(lexer);
+	if (lexer->tokens->next)
+		advance_token(lexer);
 	return (true);
 }
 

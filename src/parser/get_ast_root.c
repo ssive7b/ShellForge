@@ -19,11 +19,25 @@
 #include "lexer.h"
 #include "utils.h"
 
+static t_lexer		*process_lexical_analysis(const char *input, int *last_exit_code);
+static t_ast_node	*process_semantic_analysis(t_lexer *lexer, t_list *env_list, int *last_exit_code);
+
 t_ast_node	*get_ast_root(const char *input, t_list	*env_list, int *last_exit_code)
 {
-	t_ast_node			*ast_root;
-	t_lexer				*lexer;
-	t_expand_context	context;
+	t_ast_node	*ast_root;
+	t_lexer		*lexer;
+	
+	lexer = process_lexical_analysis(input, last_exit_code);
+	if (!lexer)
+		return (NULL);
+	ast_root = process_semantic_analysis(lexer, env_list, last_exit_code);
+	cleanup_lexer(&lexer);
+	return (ast_root);
+}
+
+static t_lexer	*process_lexical_analysis(const char *input, int *last_exit_code)
+{
+	t_lexer	*lexer;
 	
 	if (!input || !(*input))
 		return (NULL);
@@ -41,20 +55,18 @@ t_ast_node	*get_ast_root(const char *input, t_list	*env_list, int *last_exit_cod
 		cleanup_lexer(&lexer);
 		return (NULL);
 	}
-	ft_printf("______BREAKLINE______POST_VALIDATION\n");
+	return (lexer);
+}
+
+static t_ast_node	*process_semantic_analysis(t_lexer *lexer, t_list *env_list, int *last_exit_code)
+{
+	t_ast_node			*ast_root;
+	t_expand_context	context;
+
 	context.env_list = env_list;
 	context.last_exit_status = *last_exit_code;
 	if (!expand_variables_in_tokens(&lexer->tokens, &context))
-	{
-		cleanup_lexer(&lexer);
 		return (NULL);
-	}
 	ast_root = parse_tokens(lexer);
-	if (!ast_root)
-	{
-		cleanup_lexer(&lexer);
-		return (NULL);
-	}
-	cleanup_lexer(&lexer);
 	return (ast_root);
 }
