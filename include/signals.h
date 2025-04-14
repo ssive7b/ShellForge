@@ -20,5 +20,6 @@ void    setup_interactive_signals(void);
 void    handle_heredoc_interrupt(int signum);
 void    restore_default_signals(void);
 void    exit_on_eof(t_shell *minish);
+void	handle_child_signal(int signum, int *exit_status);
 
 #endif

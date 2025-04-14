@@ -55,18 +55,13 @@ void	*execute_pipe(t_shell *sh, t_ast_node *node)
 
 	if (!node || !create_pipe(sh, node, pipefd))
 		return (NULL);
-	if (!prepare_pipe_commands(sh, node))
-	{
-		close_pipe(pipefd);
-		return (NULL);
-	}
-	left_pid = fork_pipe_process(sh, node->left, pipefd, 1);
+	left_pid = fork_and_execute_piped_command(sh, node->left, pipefd, 1);
 	if (left_pid == -1)
 	{
 		close_pipe(pipefd);
 		return (NULL);
 	}
-	right_pid = fork_pipe_process(sh, node->right, pipefd, 0);
+	right_pid = fork_and_execute_piped_command(sh, node->right, pipefd, 0);
 	if (right_pid == -1)
 	{
 		handle_fork_error(left_pid, pipefd);

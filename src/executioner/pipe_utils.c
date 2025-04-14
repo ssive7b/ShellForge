@@ -24,6 +24,46 @@
 #include "ast_mock.h"
 #include "env_utils.h"
 #include "utils.h"
+#include "signals.h"
+
+void	setup_pipe_redirections(int pipefd[2], int is_writer)
+{
+	if (is_writer)
+	{
+		fprintf(stderr, "Redirecting STDOUT to pipefd[1]: %d\n", pipefd[1]);
+		dup2(pipefd[1], STDOUT_FILENO);
+		close(pipefd[0]);
+		close(pipefd[1]);
+	}
+	else
+	{
+		fprintf(stderr, "Redirecting STDIN to pipefd[0]: %d\n", pipefd[0]);
+		dup2(pipefd[0], STDIN_FILENO);
+		close(pipefd[0]);
+		close(pipefd[1]);
+	}
+}
+
+pid_t	fork_and_execute_piped_command(t_shell *sh, t_ast_node *cmd_node, int pipefd[2], int is_writer)
+{
+	pid_t	pid;
+
+	pid = fork();
+	if (pid == -1)
+	{
+		set_error(sh, 1, strerror(errno));
+		display_error(sh);
+		return (-1);
+	}
+	if (pid == 0)
+	{
+		restore_default_signals();
+		setup_pipe_redirections(pipefd, is_writer);
+		exec_astree(sh, cmd_node);
+		exit(cmd_node->exit_status);
+	}
+	return (pid);
+}
 
 bool	create_pipe(t_shell *sh, t_ast_node *node, int pipefd[2])
 {
@@ -36,53 +76,6 @@ bool	create_pipe(t_shell *sh, t_ast_node *node, int pipefd[2])
 	node->left->fd_out = pipefd[1];
 	node->right->fd_in = pipefd[0];
 	return (true);
-}
-
-bool	prepare_pipe_commands(t_shell *sh, t_ast_node *node)
-{
-	if (node->left->type == NODE_COMMAND && !resolve_command_path(sh, node->left))
-		return (false);
-	if (node->right->type == NODE_COMMAND && !resolve_command_path(sh, node->right))
-		return (false);
-	return (true);
-}
-
-pid_t	fork_pipe_process(t_shell *sh, t_ast_node *cmd_node, int pipefd[2], int is_writer)
-{
-	pid_t	pid;
-
-	pid = fork();
-	if (pid == -1)
-	{
-		set_error(sh, 1, "fork error");
-		display_error(sh);
-		return (-1);
-	}
-	if (pid == 0)
-		execute_pipe_child(sh, cmd_node, pipefd, is_writer);
-	return (pid);
-}
-
-void	execute_pipe_child(t_shell *sh, t_ast_node *cmd_node, int pipefd[2], int is_writer)
-{
-	if (is_writer)
-	{
-		close(pipefd[0]);
-		setup_redirections(cmd_node);
-	}
-	else
-	{
-		close(pipefd[1]);
-		setup_redirections(cmd_node);
-	}
-	if (cmd_node->type == NODE_COMMAND && cmd_node->cmd_pathname)
-		execve(cmd_node->cmd_pathname, cmd_node->args, sh->envp);
-	else
-		exec_astree(sh, cmd_node);
-	if (cmd_node->exit_status)
-		exit(cmd_node->exit_status);
-	else
-		exit(127);
 }
 
 void	handle_fork_error(pid_t left_pid, int pipefd[2])
@@ -120,10 +113,13 @@ void	wait_for_child(t_shell *sh, pid_t cpid, int *exit_status) // add some more 
 	{
 		set_error(sh, 1, strerror(errno));
 		display_error(sh);
+		*exit_status = 1;
 		return ;
 	}
 	if (WIFEXITED(status))
     	*exit_status = WEXITSTATUS(status);
+	else if (WIFSIGNALED(status))
+		handle_child_signal(WTERMSIG(status), exit_status);
  	else
     	*exit_status = 1;
 }

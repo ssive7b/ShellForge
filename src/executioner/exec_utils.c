@@ -101,6 +101,7 @@ int	open_redirection_flle(t_shell *sh, const char *file_name, t_redir_type redir
 	fd = open(file_name, flags, 0644);
 	if (fd == -1)
 	{
+		ft_printf("bad bad bad\n");
 		sh->current_cmd = (char *)file_name;
 		set_error(sh, 1, strerror(errno));
 		display_error(sh);

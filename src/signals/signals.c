@@ -72,3 +72,12 @@ void	exit_on_eof(t_shell *minish)
 		printf("exit\n");
 	exit(WEXITSTATUS(status));
 }
+
+void	handle_child_signal(int signum, int *exit_status)
+{
+	*exit_status = 128 + signum;
+	if (signum == SIGINT)
+		ft_putchar_fd('\n', STDERR_FILENO);
+	else if (signum == SIGQUIT)
+		ft_putendl_fd("Quit (core dumped)", STDERR_FILENO);
+}
