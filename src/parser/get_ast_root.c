@@ -19,7 +19,7 @@
 #include "lexer.h"
 #include "utils.h"
 
-t_ast_node	*get_ast_root(const char *input, t_list	*env_list, int last_exit_code)
+t_ast_node	*get_ast_root(const char *input, t_list	*env_list, int *last_exit_code)
 {
 	t_ast_node			*ast_root;
 	t_lexer				*lexer;
@@ -30,16 +30,20 @@ t_ast_node	*get_ast_root(const char *input, t_list	*env_list, int last_exit_code
 	lexer = run_tokenizer(input);
 	if (!lexer || !lexer->tokens || lexer->error)
 	{
+		*last_exit_code = 1;
 		cleanup_lexer(&lexer);
 		return (NULL);
 	}
+	ft_print_tokens(lexer->tokens);
 	if (!validate_input(lexer, input))
 	{
+		*last_exit_code = 1;
 		cleanup_lexer(&lexer);
 		return (NULL);
 	}
+	ft_printf("______BREAKLINE______POST_VALIDATION\n");
 	context.env_list = env_list;
-	context.last_exit_status = last_exit_code;
+	context.last_exit_status = *last_exit_code;
 	if (!expand_variables_in_tokens(&lexer->tokens, &context))
 	{
 		cleanup_lexer(&lexer);

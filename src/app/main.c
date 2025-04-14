@@ -41,8 +41,8 @@ int	main(int argc, char **argv, char **envp)
 		if (!process_cmd_iteration(shell))
 		{
 			display_error(shell);
-			cleanup_shell(shell);
-			return (shell->last_exit_code);
+			// cleanup_shell(shell);
+			// return (shell->last_exit_code);
 		}
 	}
 	cleanup_shell(shell);
@@ -58,14 +58,14 @@ static bool	process_cmd_iteration(t_shell *shell)	// prototyping
 	}
 	if (*(shell->input))
 		add_history(shell->input);
-	shell->ast_root = get_ast_root(shell->input, shell->env_list, shell->last_exit_code);
+	shell->ast_root = get_ast_root(shell->input, shell->env_list, &shell->last_exit_code);
 	if (!shell->ast_root)
 	{
 		set_error(shell, 1, "Error: Failed while setting up the AST");
 		cleanup_iteration(shell);
 		return (false);
 	}
-	// print_ast(shell->ast_root, 0); // Debugging: Print AST
+	print_ast(shell->ast_root, 0); // Debugging: Print AST
 	exec_astree(shell, shell->ast_root);
 	cleanup_iteration(shell);
 	return (true);

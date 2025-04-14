@@ -53,7 +53,7 @@ bool	validate_operators(t_lexer *lexer)
 	return (true);
 }
 
-bool validate_pipes(t_lexer *lexer)
+bool validate_pipes(t_lexer *lexer) // check for consecutive piping operators or if input starts with a pipe
 {
 	t_token	*current;
 	bool	command_found;

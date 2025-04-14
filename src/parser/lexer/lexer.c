@@ -63,7 +63,10 @@ static t_lexer_state	word_state(t_lexer *lx)
 			lx->idx++;
 		lx->idx--;
 	}
-	token.value = ft_substr(lx->input, start_idx, lx->idx - start_idx + 1);
+	if (token.type == TOKEN_WORD_UNQUOTED)
+		token.value = ft_substr(lx->input, start_idx, lx->idx - start_idx + 1);
+	else
+		token.value = ft_substr(lx->input, start_idx + 1, lx->idx - start_idx - 1); // get rid of the quotes in the tokens, once properly initialized
 	if (!token.value)
 		return (NULL);
 	if (ft_strlen(token.value) > 0)

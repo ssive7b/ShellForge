@@ -82,6 +82,6 @@ void		print_syntax_error(char *token);
 void		print_missing_token_error(char *expected);
 
 // get_ast_root.c
-t_ast_node	*get_ast_root(const char *input, t_list	*env_list, int last_exit_code);
+t_ast_node	*get_ast_root(const char *input, t_list	*env_list, int *last_exit_code);
 
 #endif

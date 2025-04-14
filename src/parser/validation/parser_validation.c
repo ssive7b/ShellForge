@@ -18,16 +18,15 @@
 
 bool	validate_input(t_lexer *lexer, const char *input)
 {
-	if (!validate_quotes(input))
+	if (!validate_quotes(input)
+	|| !validate_parentheses(lexer)
+	|| !validate_operators(lexer)
+	|| !validate_pipes(lexer)
+	|| !validate_redirections(lexer))
+	{
+		lexer->error = 1;
 		return (false);
-	if (!validate_parentheses(lexer))
-		return (false);
-	if (!validate_operators(lexer))
-		return (false);
-	if (!validate_pipes(lexer))
-		return (false);
-	if (!validate_redirections(lexer))
-		return (false);
+	}
 	return (true);
 }
 
