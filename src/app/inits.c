@@ -87,7 +87,6 @@ static int	setup_shell_context(t_shell *shell)
 		return (0);
 	shell->current_cmd = NULL;
 	shell->err_msg = NULL;
-	shell->error_code = 0;
 	shell->is_running = 1;
 	shell->last_exit_code = 0;
 	// PLACEHOLDER FOR SIGNAL SETUP

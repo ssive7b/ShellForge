@@ -29,7 +29,6 @@ void	cleanup_iteration(t_shell *shell)	// cleanup after iteration
 		shell->ast_root = NULL;
 	}
 	safe_free((void **)&shell->err_msg);
-	shell->error_code = 0;
 
 	if (shell->std_in > 2)			// reset default fd-s to original state if they have been changed
 		dup2(shell->std_in, STDIN_FILENO);
@@ -81,9 +80,14 @@ void	set_error(t_shell *shell, int code, const char *msg)
 		return ;
 	if (shell->err_msg)
 		safe_free((void **)&shell->err_msg);
-	shell->error_code = code;
+	shell->last_exit_code = code;
 	if (msg)
 		shell->err_msg = ft_strdup(msg);
 	else
 		shell->err_msg = NULL;
+}
+
+void	update_exit_code(t_shell *sh, t_ast_node *node)
+{
+	sh->last_exit_code = node->exit_status;
 }

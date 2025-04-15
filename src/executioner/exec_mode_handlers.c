@@ -28,27 +28,27 @@ void	*execute_command(t_shell *sh, t_ast_node *node)
 	pid_t	cpid;
 
 	if (!node || !node->args || !node->args[0])
-		return (NULL);
+		return (update_exit_code(sh, node), NULL);
 	if (node->redirections)
 	{
 		execute_redirection(sh, node);
 		if (!node->redirections)
-			return (NULL);
+			return (update_exit_code(sh, node), NULL);
 	}
 	if (is_builtin(node->args[0]))
 	{
 		exec_builtin(node);
-		return (NULL);
+		return (update_exit_code(sh, node), NULL);
 	}
 	if (!resolve_command_path(sh, node))
-		return (NULL);
+		return (update_exit_code(sh, node), NULL);
 	cpid = fork_external_command(sh, node);
 	if (cpid == -1)
-		return (NULL);
+		return (update_exit_code(sh, node), NULL);
 	node->pid = cpid;
 	wait_for_child(sh, cpid, &node->exit_status);
 	sh->last_exit_code = node->exit_status;
-	return (NULL);
+	return (update_exit_code(sh, node), NULL);
 }
 
 void	*execute_pipe(t_shell *sh, t_ast_node *node)

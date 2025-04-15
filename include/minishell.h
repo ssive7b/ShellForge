@@ -25,7 +25,6 @@ typedef struct	s_shell
 	int				std_out;			// original stdout
 	int				std_err;			// original stderr
 	char			*err_msg;			// error message- human readable
-	int				error_code;			// numeric error code
 }	t_shell;
 
 // inits.c
@@ -36,5 +35,6 @@ void	cleanup_iteration(t_shell *shell);
 void	cleanup_shell(t_shell *shell);
 void	display_error(t_shell *shell);
 void	set_error(t_shell *shell, int code, const char *msg);
+void	update_exit_code(t_shell *sh, t_ast_node *node);
 
 #endif

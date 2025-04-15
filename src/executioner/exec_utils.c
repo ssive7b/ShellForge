@@ -60,7 +60,7 @@ bool	resolve_command_path(t_shell *sh, t_ast_node *node)
 			if (!sh->err_msg)
 				set_error(sh, 127, "command not found");
 			display_error(sh);
-			node->exit_status = sh->error_code;
+			node->exit_status = sh->last_exit_code;
 			sh->current_cmd = NULL;
 			return (false);
 		}
