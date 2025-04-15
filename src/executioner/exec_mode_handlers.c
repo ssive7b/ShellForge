@@ -30,7 +30,11 @@ void	*execute_command(t_shell *sh, t_ast_node *node)
 	if (!node || !node->args || !node->args[0])
 		return (NULL);
 	if (node->redirections)
+	{
 		execute_redirection(sh, node);
+		if (!node->redirections)
+			return (NULL);
+	}
 	if (is_builtin(node->args[0]))
 	{
 		exec_builtin(node);
@@ -91,7 +95,7 @@ void	*execute_redirection(t_shell *sh, t_ast_node *node)
 		if (fd == -1)
 		{
 			node->exit_status = 1;
-			clear_redirections(&redir_list);
+			clear_redirections(&(node->redirections));
 			return (NULL);
 		}
 		if (redir->type == REDIR_INPUT || redir->type == REDIR_HEREDOC)
@@ -100,7 +104,6 @@ void	*execute_redirection(t_shell *sh, t_ast_node *node)
 			node->fd_out = fd;
 		redir_list = redir_list->next;
 	}
-	clear_redirections(&redir_list);
 	return (NULL);
 }
 

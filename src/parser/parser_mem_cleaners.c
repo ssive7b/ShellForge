@@ -75,27 +75,21 @@ void	cleanup_parser_state(t_ast_stack **operator_stack, t_ast_stack **operand_st
 
 void	clear_redirections(t_list **redirections)
 {
-	t_list	*current;
-	t_list	*next;
-
-	if (!redirections || !(*redirections))
+	if (!redirections)
 		return ;
-	current = *redirections;
-	while (current)
-	{
-		next = current->next;
-		free_redirection((t_redir **)&current->content);
-		safe_free((void **)&current);
-		current = next;
-	}
-	*redirections = NULL;
+	ft_lstclear(redirections, delete_redirection);
 }
 
-void	free_redirection(t_redir **redir)
+void	delete_redirection(void *content)
 {
-	if (!redir || !(*redir))
+	t_redir	*redir;
+
+	redir = (t_redir *)content;
+	if (!redir)
 		return ;
-	if ((*redir)->file_name)
-		safe_free((void **)&((*redir)->file_name));
-	safe_free((void **)redir);
+	if (redir->file_name)
+		safe_free((void **)&redir->file_name);
+	if (redir->delimiter_heredoc)
+		safe_free((void **)&redir->delimiter_heredoc);
+	safe_free((void **)&redir);
 }

@@ -48,7 +48,7 @@ static t_lexer	*process_lexical_analysis(const char *input, int *last_exit_code)
 		cleanup_lexer(&lexer);
 		return (NULL);
 	}
-	ft_print_tokens(lexer->tokens);
+	// ft_print_tokens(lexer->tokens); // Debugging: Print Lexer
 	if (!validate_input(lexer, input))
 	{
 		*last_exit_code = 1;

@@ -49,7 +49,7 @@ int	main(int argc, char **argv, char **envp)
 	return (0);
 }
 
-static bool	process_cmd_iteration(t_shell *shell)	// prototyping
+static bool	process_cmd_iteration(t_shell *shell)
 {
 	if (!shell->input || !*(shell->input))
 	{
@@ -65,7 +65,7 @@ static bool	process_cmd_iteration(t_shell *shell)	// prototyping
 		cleanup_iteration(shell);
 		return (false);
 	}
-	print_ast(shell->ast_root, 0); // Debugging: Print AST
+	// print_ast(shell->ast_root, 0); // Debugging: Print AST
 	exec_astree(shell, shell->ast_root);
 	cleanup_iteration(shell);
 	return (true);
