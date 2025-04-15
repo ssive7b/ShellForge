@@ -38,6 +38,8 @@ int	main(int argc, char **argv, char **envp)
 	while (1)
 	{
 		shell->input = readline(SHELL_PROMPT);
+		if (!shell->input)
+			exit_on_eof(shell);
 		if (!process_cmd_iteration(shell))
 		{
 			display_error(shell);
