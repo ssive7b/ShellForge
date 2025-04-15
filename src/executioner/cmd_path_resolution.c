@@ -35,8 +35,6 @@ char	*find_exec_pathname(t_shell *sh, t_list *env_list, char *cmd_name)
 
 	if (!cmd_name || !*cmd_name)
 		return (NULL);
-	//if (is_builtin(cmd_name))	// in case we want to run builtins in child process too
-	//	return (ft_strdup(cmd_name));
 	direct_path = try_direct_execution(cmd_name, sh);
 	if (direct_path)
 		return (direct_path);

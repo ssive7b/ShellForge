@@ -72,7 +72,7 @@ void	*execute_pipe(t_shell *sh, t_ast_node *node)
 	return (NULL);
 }
 
-void	*execute_redirection(t_shell *sh, t_ast_node *node) // to-do: allow for HEREDOC in the below implementation
+void	*execute_redirection(t_shell *sh, t_ast_node *node)
 {
 	t_list	*redir_list;
 	t_redir	*redir;
@@ -84,7 +84,6 @@ void	*execute_redirection(t_shell *sh, t_ast_node *node) // to-do: allow for HER
 	while (redir_list)
 	{
 		redir = (t_redir *)redir_list->content;
-		printf("Processing redirection: type=%d, file=%s\n", redir->type, redir->file_name);
 		if (redir->type == REDIR_HEREDOC)
 			fd = get_heredoc_fd(redir);
 		else
@@ -101,7 +100,6 @@ void	*execute_redirection(t_shell *sh, t_ast_node *node) // to-do: allow for HER
 			node->fd_out = fd;
 		redir_list = redir_list->next;
 	}
-	//exec_astree(sh, node);
 	clear_redirections(&redir_list);
 	return (NULL);
 }

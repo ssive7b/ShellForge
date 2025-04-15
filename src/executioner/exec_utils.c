@@ -34,7 +34,7 @@ pid_t	fork_external_command(t_shell *sh, t_ast_node *node)
 	cpid = fork();
 	if (cpid == -1)
 	{
-		set_error(sh, 1, "fork error");
+		set_error(sh, 1, strerror(errno));
 		display_error(sh);
 		return (-1);
 	}
@@ -83,7 +83,7 @@ void	setup_redirections(t_ast_node *node)
 	}
 }
 
-int	open_redirection_flle(t_shell *sh, const char *file_name, t_redir_type redir_type) // add some better handling of fds, i.e. proper handling of errors on opening/access, etc.
+int	open_redirection_flle(t_shell *sh, const char *file_name, t_redir_type redir_type)
 {
 	int	fd;
 	int	flags;
@@ -101,7 +101,6 @@ int	open_redirection_flle(t_shell *sh, const char *file_name, t_redir_type redir
 	fd = open(file_name, flags, 0644);
 	if (fd == -1)
 	{
-		ft_printf("bad bad bad\n");
 		sh->current_cmd = (char *)file_name;
 		set_error(sh, 1, strerror(errno));
 		display_error(sh);

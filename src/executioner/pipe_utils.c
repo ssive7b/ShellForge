@@ -26,21 +26,21 @@
 #include "utils.h"
 #include "signals.h"
 
-void	setup_pipe_redirections(int pipefd[2], int is_writer)
+void	setup_pipe_redirections(t_ast_node *cmd_node, int pipefd[2], int is_writer)
 {
 	if (is_writer)
 	{
-		fprintf(stderr, "Redirecting STDOUT to pipefd[1]: %d\n", pipefd[1]);
-		dup2(pipefd[1], STDOUT_FILENO);
 		close(pipefd[0]);
+		dup2(pipefd[1], STDOUT_FILENO);
 		close(pipefd[1]);
+		cmd_node->fd_out = STDOUT_FILENO;
 	}
 	else
 	{
-		fprintf(stderr, "Redirecting STDIN to pipefd[0]: %d\n", pipefd[0]);
+		close(pipefd[1]);
 		dup2(pipefd[0], STDIN_FILENO);
 		close(pipefd[0]);
-		close(pipefd[1]);
+		cmd_node->fd_in = STDIN_FILENO;
 	}
 }
 
@@ -58,7 +58,7 @@ pid_t	fork_and_execute_piped_command(t_shell *sh, t_ast_node *cmd_node, int pipe
 	if (pid == 0)
 	{
 		restore_default_signals();
-		setup_pipe_redirections(pipefd, is_writer);
+		setup_pipe_redirections(cmd_node, pipefd, is_writer);
 		exec_astree(sh, cmd_node);
 		exit(cmd_node->exit_status);
 	}
@@ -69,7 +69,7 @@ bool	create_pipe(t_shell *sh, t_ast_node *node, int pipefd[2])
 {
 	if (pipe(pipefd) == -1)
 	{
-		set_error(sh, 1, "pipe error");
+		set_error(sh, 1, strerror(errno));
 		display_error(sh);
 		return (false);
 	}
@@ -105,7 +105,7 @@ void	close_pipe(int	pipefd[2])
 }
 
 
-void	wait_for_child(t_shell *sh, pid_t cpid, int *exit_status) // add some more robust handling later, e.g. WIFSIGNALED, WIFSTOPPED, WIFCONTINUED, etc.
+void	wait_for_child(t_shell *sh, pid_t cpid, int *exit_status)
 {
 	int	status;
 
