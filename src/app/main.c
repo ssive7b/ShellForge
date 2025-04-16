@@ -23,9 +23,10 @@
 #include "minishell.h"
 #include "parser.h"
 #include "utils.h"
-#include "signals.h"
+#include "signal_handlers.h"
 
 static bool	process_cmd_iteration(t_shell *shell);
+static bool	check_termination_signal(void);
 
 int	main(int argc, char **argv, char **envp)
 {
@@ -38,7 +39,7 @@ int	main(int argc, char **argv, char **envp)
 	while (1)
 	{
 		shell->input = readline(SHELL_PROMPT);
-		if (!shell->input)
+		if (!shell->input || check_termination_signal())
 			exit_on_eof(shell);
 		if (!process_cmd_iteration(shell))
 		{
@@ -71,5 +72,10 @@ static bool	process_cmd_iteration(t_shell *shell)
 	exec_astree(shell, shell->ast_root);
 	cleanup_iteration(shell);
 	return (true);
+}
+
+static bool	check_termination_signal(void)
+{
+	return (g_received_signal == SIGTERM || g_received_signal == SIGQUIT);
 }
 

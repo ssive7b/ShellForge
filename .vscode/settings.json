@@ -13,7 +13,9 @@
 		"env_utils.h": "c",
 		"expansions.h": "c",
 		"unistd.h": "c",
-		"signal.h": "c"
+		"signal.h": "c",
+		"readline.h": "c",
+		"signal_handlers.h": "c"
 	},
 	"makefile.configureOnOpen": false
 }

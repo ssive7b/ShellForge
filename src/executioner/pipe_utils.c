@@ -24,7 +24,7 @@
 #include "ast_mock.h"
 #include "env_utils.h"
 #include "utils.h"
-#include "signals.h"
+#include "signal_handlers.h"
 
 void	setup_pipe_redirections(t_ast_node *cmd_node, int pipefd[2], int is_writer)
 {
@@ -93,9 +93,11 @@ void	wait_for_pipeline(t_shell *sh, pid_t left_pid, pid_t right_pid, int *exit_s
 {
 	int	status;
 
+	setup_parent_signals();
 	wait_for_child(sh, left_pid, &status);
 	wait_for_child(sh, right_pid, exit_status);
 	sh->last_exit_code = *exit_status;
+	setup_interactive_signals();
 }
 
 void	close_pipe(int	pipefd[2])

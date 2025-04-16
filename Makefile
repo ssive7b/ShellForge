@@ -50,7 +50,8 @@ SRC						=	$(SRC_DIR)/app/main.c											\
 							$(SRC_DIR)/executioner/builtins/export_utils.c					\
 							$(SRC_DIR)/executioner/builtins/pwd.c							\
 							$(SRC_DIR)/executioner/builtins/unset.c							\
-							$(SRC_DIR)/signals/signals.c									\
+							$(SRC_DIR)/signals/signal_setup.c								\
+							$(SRC_DIR)/signals/signal_handlers.c							\
 							$(SRC_DIR)/utils/string_utils.c									\
 							$(SRC_DIR)/utils/array_utils.c									\
 							$(SRC_DIR)/utils/memory_utils.c									\

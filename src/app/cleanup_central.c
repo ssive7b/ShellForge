@@ -42,8 +42,8 @@ void	cleanup_shell(t_shell *shell)	// cleanup the whole shell
 {
 	if (!shell)
 		return ;
-	if (shell->is_interactive)
-		ft_printf("exit\n");
+	// if (shell->is_interactive)
+	//	ft_printf("exit\n");
 	if (shell->is_interactive && shell->terminal_fd != -1)
 	{
 		tcsetattr(shell->terminal_fd, TCSANOW, &shell->original_term);

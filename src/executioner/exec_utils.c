@@ -24,6 +24,7 @@
 #include "ast_mock.h"
 #include "env_utils.h"
 #include "utils.h"
+#include "signal_handlers.h"
 
 static bool	validate_redir_file(t_shell *sh, const char *file_name, t_redir_type e_redir_type);
 
@@ -40,6 +41,7 @@ pid_t	fork_external_command(t_shell *sh, t_ast_node *node)
 	}
 	if (cpid == 0)
 	{
+		restore_default_signals();
 		setup_redirections(node);
 		execve(node->cmd_pathname, node->args, sh->envp);
 		set_error(sh, 127, strerror(errno));
