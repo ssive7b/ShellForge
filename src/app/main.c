@@ -68,7 +68,7 @@ static bool	process_cmd_iteration(t_shell *shell)
 		cleanup_iteration(shell);
 		return (false);
 	}
-	// print_ast(shell->ast_root, 0); // Debugging: Print AST
+	print_ast(shell->ast_root, 0); // Debugging: Print AST
 	exec_ast(shell, shell->ast_root);
 	cleanup_iteration(shell);
 	return (true);

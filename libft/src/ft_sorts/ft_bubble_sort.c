@@ -28,7 +28,7 @@ void	ft_bubble_sort(char **arr, size_t size)
 		i = 0;
 		while (i < size -1)
 		{
-			if (ft_strcmp(arr[i], arr[i+1]) > 0)
+			if (ft_strcmp(arr[i], arr[i + 1]) > 0)
 			{
 				swap_elements(arr, i);
 				swapped = 1;
@@ -44,6 +44,6 @@ static void	swap_elements(char **arr, size_t i)
 	char	*temp;
 
 	temp = arr[i];
-	arr[i] = arr[i+1];
-	arr[i+1] = temp;
+	arr[i] = arr[i + 1];
+	arr[i + 1] = temp;
 }

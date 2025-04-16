@@ -20,7 +20,6 @@
 
 // string_utils.c
 bool	safe_strjoin(char **dest, const char *source);
-char	*ft_strjoin_multiple(char **str_list, size_t num_strings);
 int		ft_skip_whitespaces(const char *str);
 int		ft_is_escaped(const char *str, size_t idx);
 int		ft_find_char_qadjusted(const char *str, char char_to_find);

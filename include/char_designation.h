@@ -18,7 +18,6 @@
 # include "../libft/include/libft.h"
 
 int		ft_is_whitespace(char c);
-int		ft_is_operator(char c);
 int		ft_check_form_op(char prev, char current);
 int		ft_is_quote(char c);
 int		ft_is_meta_char(const char c);

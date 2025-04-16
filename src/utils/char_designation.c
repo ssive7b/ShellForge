@@ -17,13 +17,6 @@ int	ft_is_whitespace(char c)
 	return (c == '\t' || c == ' ');
 }
 
-int	ft_is_operator(char c)
-{
-	if (ft_strchr("><|&()", c))
-		return (1);
-	return (0);
-}
-
 int	ft_check_form_op(char prev, char current)
 {
 	if ((prev == '<' && current == '<')
