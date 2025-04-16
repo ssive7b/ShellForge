@@ -13,24 +13,24 @@
 #include "env_utils.h"
 #include "utils.h"
 
-t_list	*to_env_node(char *env_string)
+t_list	*to_env_node(char *env_str)
 {
 	t_list	*env_node;
 	t_env	*env_entry;
 	char	*ptr_eq;
 	size_t	idx_eq;
 
-	if (!env_string)
+	if (!env_str)
 		return (NULL);
 	env_entry = malloc(sizeof(t_env));
 	if (!env_entry)
 		return (NULL);
-	ptr_eq = ft_strchr(env_string, '=');
+	ptr_eq = ft_strchr(env_str, '=');
 	if (!ptr_eq)
 		return (NULL);
-	idx_eq = ptr_eq - env_string;
-	env_entry->key = ft_substr(env_string, 0, idx_eq);
-	env_entry->value = ft_substr(env_string, idx_eq + 1, ft_strlen(env_string) - idx_eq - 1);
+	idx_eq = ptr_eq - env_str;
+	env_entry->key = ft_substr(env_str, 0, idx_eq);
+	env_entry->value = ft_strdup(env_str + idx_eq + 1);
 	env_node = ft_lstnew((t_env *)env_entry);
 	if (!env_node)
 		return (NULL);

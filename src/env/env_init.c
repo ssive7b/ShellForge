@@ -64,4 +64,3 @@ void	free_env_list(t_list *env_list)
 {
 	ft_lstclear(&env_list, free_env_content);
 }
-
