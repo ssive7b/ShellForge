@@ -16,6 +16,7 @@
 #include "env_utils.h"
 #include "executioner.h"
 #include "utils.h"
+#include "signal_handlers.h"
 
 static int	setup_environment(t_shell *shell, char **envp);
 static void	setup_terminal_and_io(t_shell *shell);
@@ -67,9 +68,9 @@ static int	setup_environment(t_shell *shell, char **envp)
 static void	setup_terminal_and_io(t_shell *shell)
 {
 	shell->terminal_fd = get_terminal_fd();
-	shell->is_interactive = (shell->terminal_fd != -1); // checks if stdin is connected to a terminal
+	shell->is_interactive = (shell->terminal_fd != -1);
 	if (shell->is_interactive)
-		tcgetattr(STDIN_FILENO, &shell->original_term); // preserve original terminal settings so that we can restore on exit
+		tcgetattr(STDIN_FILENO, &shell->original_term);
 	shell->std_in = dup(STDIN_FILENO);
 	shell->std_out = dup(STDOUT_FILENO);
 	shell->std_err = dup(STDERR_FILENO);
@@ -89,8 +90,6 @@ static int	setup_shell_context(t_shell *shell)
 	shell->err_msg = NULL;
 	shell->is_running = 1;
 	shell->last_exit_code = 0;
-	// PLACEHOLDER FOR SIGNAL SETUP
-	// E.g. setup_signals(void);
-	// PLACEHOLDER FOR SIGNAL SETUP
+	setup_interactive_signals();
 	return (1);
 }

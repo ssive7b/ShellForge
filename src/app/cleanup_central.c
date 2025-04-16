@@ -18,7 +18,7 @@
 #include "env_utils.h"
 #include "utils.h"
 
-void	cleanup_iteration(t_shell *shell)	// cleanup after iteration
+void	cleanup_iteration(t_shell *shell)
 {
 	if (!shell)
 		return ;
@@ -29,8 +29,7 @@ void	cleanup_iteration(t_shell *shell)	// cleanup after iteration
 		shell->ast_root = NULL;
 	}
 	safe_free((void **)&shell->err_msg);
-
-	if (shell->std_in > 2)			// reset default fd-s to original state if they have been changed
+	if (shell->std_in > 2)
 		dup2(shell->std_in, STDIN_FILENO);
 	if (shell->std_out > 2)
 		dup2(shell->std_out, STDOUT_FILENO);
@@ -38,16 +37,14 @@ void	cleanup_iteration(t_shell *shell)	// cleanup after iteration
 		dup2(shell->std_err, STDERR_FILENO);
 }
 
-void	cleanup_shell(t_shell *shell)	// cleanup the whole shell
+void	cleanup_shell(t_shell *shell)
 {
 	if (!shell)
 		return ;
-	// if (shell->is_interactive)
-	//	ft_printf("exit\n");
 	if (shell->is_interactive && shell->terminal_fd != -1)
 	{
 		tcsetattr(shell->terminal_fd, TCSANOW, &shell->original_term);
-		if (shell->terminal_fd != STDIN_FILENO)	// close only if we opened a new fd
+		if (shell->terminal_fd != STDIN_FILENO)
 			close(shell->terminal_fd);
 	}
 	if (shell->std_in > 2)
