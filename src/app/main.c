@@ -61,7 +61,7 @@ static bool	process_cmd_iteration(t_shell *shell)
 	}
 	if (*(shell->input))
 		add_history(shell->input);
-	shell->ast_root = get_ast_root(shell->input, shell->env_list, &shell->last_exit_code);
+	shell->ast_root = ast_root(shell->input, shell->env_list, &shell->last_exit_code);
 	if (!shell->ast_root)
 	{
 		set_error(shell, 1, "Error: Failed while setting up the AST");
@@ -69,7 +69,7 @@ static bool	process_cmd_iteration(t_shell *shell)
 		return (false);
 	}
 	// print_ast(shell->ast_root, 0); // Debugging: Print AST
-	exec_astree(shell, shell->ast_root);
+	exec_ast(shell, shell->ast_root);
 	cleanup_iteration(shell);
 	return (true);
 }

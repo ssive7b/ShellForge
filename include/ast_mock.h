@@ -28,7 +28,7 @@ typedef struct s_redirection
 
 typedef struct s_ast_node
 {
-	t_node_type				type;
+	t_ntype					type;
 	char					*cmd_pathname;
 	char					**args;
 	int						pid;
@@ -38,12 +38,12 @@ typedef struct s_ast_node
 	t_list					*redirections;
 	struct s_ast_node		*left;
 	struct s_ast_node		*right;
-}							t_ast_node;
+}							t_anode;
 
 typedef struct s_ast_stack
 {
-	t_ast_node				*node;
+	t_anode					*node;
 	struct s_ast_stack		*next;
-}							t_ast_stack;
+}							t_stack;
 
 #endif

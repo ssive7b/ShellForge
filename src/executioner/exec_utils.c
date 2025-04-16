@@ -28,7 +28,7 @@
 
 static bool	validate_redir_file(t_shell *sh, const char *file_name, t_redir_type e_redir_type);
 
-pid_t	fork_external_command(t_shell *sh, t_ast_node *node)
+pid_t	fork_extern_cmd(t_shell *sh, t_anode *node)
 {
 	pid_t	cpid;
 
@@ -42,7 +42,7 @@ pid_t	fork_external_command(t_shell *sh, t_ast_node *node)
 	if (cpid == 0)
 	{
 		restore_default_signals();
-		setup_redirections(node);
+		setup_redirs(node);
 		execve(node->cmd_pathname, node->args, sh->envp);
 		set_error(sh, 127, strerror(errno));
 		display_error(sh);
@@ -51,12 +51,12 @@ pid_t	fork_external_command(t_shell *sh, t_ast_node *node)
 	return (cpid);
 }
 
-bool	resolve_command_path(t_shell *sh, t_ast_node *node)
+bool	resolve_path(t_shell *sh, t_anode *node)
 {
 	if (!node->cmd_pathname && !is_builtin(node->args[0]))
 	{
 		sh->current_cmd = node->args[0];
-		node->cmd_pathname = find_exec_pathname(sh, sh->env_list, node->args[0]);
+		node->cmd_pathname = find_cmd_path(sh, sh->env_list, node->args[0]);
 		if (!node->cmd_pathname)
 		{
 			if (!sh->err_msg)
@@ -71,7 +71,7 @@ bool	resolve_command_path(t_shell *sh, t_ast_node *node)
 	return (true);
 }
 
-void	setup_redirections(t_ast_node *node)
+void	setup_redirs(t_anode *node)
 {
 	if (node->fd_in != STDIN_FILENO)
 	{
@@ -85,7 +85,7 @@ void	setup_redirections(t_ast_node *node)
 	}
 }
 
-int	open_redirection_flle(t_shell *sh, const char *file_name, t_redir_type redir_type)
+int	open_redir_flle(t_shell *sh, char *file_name, t_redir_type redir_type)
 {
 	int	fd;
 	int	flags;

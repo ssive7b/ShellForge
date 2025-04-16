@@ -16,7 +16,7 @@
 #include "parser.h"
 #include "utils.h"
 
-bool	validate_redirections(t_lexer *lexer)
+bool	validate_redirs(t_lexer *lexer)
 {
 	t_token	*current;
 	t_token	*next;
@@ -24,12 +24,12 @@ bool	validate_redirections(t_lexer *lexer)
 	current = lexer->tokens;
 	while (current)
 	{
-		if (is_redirection_token(current->type))
+		if (is_redir_tok(current->type))
 		{
 			next = current->next;
 			while (next && next->type == TOKEN_DELIMITER)
 				next = next->next;
-			if (!next || !is_argument_token(next->type))
+			if (!next || !is_arg_tok(next->type))
 			{
 				lexer->error = 1;
 				ft_error_msg("minishell: syntax error: redirection without target");

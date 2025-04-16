@@ -19,10 +19,10 @@
 bool	validate_input(t_lexer *lexer, const char *input)
 {
 	if (!validate_quotes(input)
-	|| !validate_parentheses(lexer)
-	|| !validate_operators(lexer)
+	|| !validate_parens(lexer)
+	|| !validate_ops(lexer)
 	|| !validate_pipes(lexer)
-	|| !validate_redirections(lexer))
+	|| !validate_redirs(lexer))
 	{
 		lexer->error = 1;
 		return (false);
@@ -58,7 +58,7 @@ bool	validate_quotes(const char *input)
 	return (true);
 }
 
-bool	validate_parentheses(t_lexer *lexer)
+bool	validate_parens(t_lexer *lexer)
 {
 	int		parentheses_count;
 	t_token	*current;

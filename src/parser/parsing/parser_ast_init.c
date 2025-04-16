@@ -19,19 +19,19 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-static void	initialize_ast_node(t_ast_node *node, t_node_type type);
-static bool	setup_command_node(t_ast_node *node, char *value);
+static void	initialize_ast_node(t_anode *node, t_ntype type);
+static bool	setup_command_node(t_anode *node, char *value);
 
-t_ast_node	*ast_new(t_node_type type, t_token *token)
+t_anode	*node_new(t_ntype type, t_token *token)
 {
-	t_ast_node	*new;
+	t_anode	*new;
 
 	if (!token)
 	{
-		ft_error_msg("Error: ast_new received NULL token");
+		ft_error_msg("Error: node_new received NULL token");
 		return (NULL);
 	}
-	new = malloc(sizeof(t_ast_node));
+	new = malloc(sizeof(t_anode));
 	if (!new)
 		return (NULL);
 	initialize_ast_node(new, type);
@@ -39,15 +39,15 @@ t_ast_node	*ast_new(t_node_type type, t_token *token)
 	{
 		if (!setup_command_node(new, token->value))
 		{
-			ft_error_msg("Error: Memory allocation failed for args in ast_new");
-			free_ast_node(&new);
+			ft_error_msg("Error: Memory allocation failed for args in node_new");
+			node_free(&new);
 			return (NULL);
 		}
 	}
 	return (new);
 }
 
-static void	initialize_ast_node(t_ast_node *node, t_node_type type)
+static void	initialize_ast_node(t_anode *node, t_ntype type)
 {
 	if (!node)
 		return ;
@@ -63,7 +63,7 @@ static void	initialize_ast_node(t_ast_node *node, t_node_type type)
     node->right = NULL;
 }
 
-static bool	setup_command_node(t_ast_node *node, char *value)
+static bool	setup_command_node(t_anode *node, char *value)
 {
 	node->cmd_pathname = NULL;
     node->args = malloc(2 * sizeof(char *));

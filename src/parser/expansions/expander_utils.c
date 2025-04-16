@@ -21,7 +21,7 @@
 #include <stdio.h>
 #include <string.h>
 
-static char	*get_var_value(const char *name, t_expand_context *context);
+static char	*get_var_value(const char *name, t_exp_ctx *context);
 
 bool	append_chunk(char **result, const char *src, int start, int end)
 {
@@ -38,7 +38,7 @@ bool	append_chunk(char **result, const char *src, int start, int end)
 	return (success);
 }
 
-bool process_dollar_sign(char **result, const char *str, int *i, t_expand_context *context)
+bool proc_doll_sign(char **result, const char *str, int *i, t_exp_ctx *context)
 {
 	char	*var_name;
 	char	*var_value;
@@ -70,7 +70,7 @@ bool	needs_expansion(const char *str)
 	return (str && ft_strchr(str, '$') != NULL);
 }
 
-static char	*get_var_value(const char *name, t_expand_context *context)
+static char	*get_var_value(const char *name, t_exp_ctx *context)
 {
 	char	*value;
 

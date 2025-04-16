@@ -21,10 +21,10 @@
 #include <stdio.h>
 #include <string.h>
 
-static bool	process_expansion_pass(char **result, const char *str, int *pos, t_expand_context *context);
-static char	*expand_variable_in_string(const char *str, t_expand_context *context);
+static bool	process_expansion_pass(char **result, const char *str, int *pos, t_exp_ctx *context);
+static char	*expand_variable_in_string(const char *str, t_exp_ctx *context);
 
-bool 	expand_variables_in_tokens(t_token **tokens, t_expand_context *context)
+bool 	expand_variables_in_tokens(t_token **tokens, t_exp_ctx *context)
 {
 	t_token	*current;
 	char	*expanded;
@@ -50,7 +50,7 @@ bool 	expand_variables_in_tokens(t_token **tokens, t_expand_context *context)
 	return (true);
 }
 
-static char	*expand_variable_in_string(const char *str, t_expand_context *context)
+static char	*expand_variable_in_string(const char *str, t_exp_ctx *context)
 {
 	char	*result;
 	int		position;
@@ -76,7 +76,7 @@ static char	*expand_variable_in_string(const char *str, t_expand_context *contex
 	return (result);
 }
 
-static bool	process_expansion_pass(char **result, const char *str, int *pos, t_expand_context *context)
+static bool	process_expansion_pass(char **result, const char *str, int *pos, t_exp_ctx *context)
 {
 	int	i;
 	int	start;
@@ -89,7 +89,7 @@ static bool	process_expansion_pass(char **result, const char *str, int *pos, t_e
 		{
 			if (!append_chunk(result, str, start, i))
 				return (false);
-			if (!process_dollar_sign(result, str, &i, context))
+			if (!proc_doll_sign(result, str, &i, context))
 				return (false);
 			*pos = i;
 			return (true);

@@ -19,11 +19,11 @@
 #include "executioner.h"
 #include "utils.h"
 
-static void	print_no_args_case(t_ast_node *node, t_list *env_list);
+static void	print_no_args_case(t_anode *node, t_list *env_list);
 static bool	is_valid_export_expr(const char *str);
 static void	export_var(char *var, t_list *env_list);
 
-void	exec_export(t_ast_node *node)
+void	exec_export(t_anode *node)
 {
 	size_t	i;
 
@@ -47,14 +47,14 @@ void	exec_export(t_ast_node *node)
 	}
 }
 
-static void	print_no_args_case(t_ast_node *node, t_list *env_list)
+static void	print_no_args_case(t_anode *node, t_list *env_list)
 {
 	char	**sorted_env_array;
 
-	sorted_env_array = get_sorted_env_array(env_list);
+	sorted_env_array = get_sorted_env(env_list);
 	if (!sorted_env_array)
 		return ;
-	print_sorted_env_list(node, sorted_env_array);
+	print_sorted_env(node, sorted_env_array);
 }
 
 static bool	is_valid_export_expr(const char *str)
@@ -94,9 +94,9 @@ static void	export_var(char *var, t_list *env_list)
 	existing_entry = get_env_entry(key, env_list);
 	if (existing_entry)
 	{
-		update_existing_env_entry(existing_entry, value);
+		update_env_entry(existing_entry, value);
 		free(key);
 	}
 	else
-		add_new_env_entry(key, value, env_list);
+		add_env_entry(key, value, env_list);
 }

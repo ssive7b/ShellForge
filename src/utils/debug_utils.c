@@ -14,7 +14,7 @@
 #include "utils.h"
 #include "ast_mock.h"
 
-void	print_stack(t_ast_stack *stack, const char *name)
+void	print_stack(t_stack *stack, const char *name)
 {
 	printf("Stack %s:\n", name);
 	while (stack)
@@ -25,7 +25,7 @@ void	print_stack(t_ast_stack *stack, const char *name)
 	}
 }
 
-void	print_ast(t_ast_node *node, int level)
+void	print_ast(t_anode *node, int level)
 {
 	t_list	*redirections;
 	t_redir	*redir;

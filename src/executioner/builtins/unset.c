@@ -61,7 +61,7 @@ static void	unset_var(const char *var)
 	}
 }
 
-void	exec_unset(t_ast_node *node)
+void	exec_unset(t_anode *node)
 {
 	size_t	i;
 

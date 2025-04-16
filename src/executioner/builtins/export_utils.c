@@ -18,13 +18,13 @@
 #include "executioner.h"
 #include "utils.h"
 
-void update_existing_env_entry(t_env *existing_entry, char *value)
+void update_env_entry(t_env *existing_entry, char *value)
 {
 	free(existing_entry->value);
 	existing_entry->value = value;
 }
 
-void	add_new_env_entry(char *key, char *value, t_list *env_list)
+void	add_env_entry(char *key, char *value, t_list *env_list)
 {
 	t_list	*new_node;
 
@@ -32,7 +32,7 @@ void	add_new_env_entry(char *key, char *value, t_list *env_list)
 	ft_lstadd_back(&env_list, new_node);
 }
 
-char **get_sorted_env_array(t_list *env_list)
+char **get_sorted_env(t_list *env_list)
 {
 	t_list	*env_node;
 	t_env	*env_entry;
@@ -66,7 +66,7 @@ char **get_sorted_env_array(t_list *env_list)
 	return (sorted_env_array);
 }
 
-void print_sorted_env_list(t_ast_node *node, char **sorted_env_array)
+void print_sorted_env(t_anode *node, char **sorted_env_array)
 {
 	size_t	i;
 	

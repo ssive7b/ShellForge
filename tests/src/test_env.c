@@ -34,11 +34,11 @@ Test(environment_suite, find_exec_pathname_should_find_correct_path)
     char *envp[] = {"PATH=/bin:/usr/bin", NULL};
     t_list	*env_list = create_env_list(envp);
 
-    char *path = find_exec_pathname(env_list, "ls");
+    char *path = find_cmd_path(env_list, "ls");
     cr_assert_not_null(path, "Executable path should not be NULL");
     cr_assert(access(path, F_OK) == 0, "Path should be a valid executable");
     free(path);
-    char *invalid_path = find_exec_pathname(env_list, "nonexistent_command");
+    char *invalid_path = find_cmd_path(env_list, "nonexistent_command");
     cr_assert_null(invalid_path, "Nonexistent command should return NULL");
 }
 

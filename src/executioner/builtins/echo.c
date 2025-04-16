@@ -29,7 +29,7 @@ static int	is_valid_n_flag(char *arg) // echo needs to be able to handle "echo -
 	return (1);
 }
 
-void	exec_echo(t_ast_node *node)
+void	exec_echo(t_anode *node)
 {
 	size_t	i;
 	int		include_new_line;

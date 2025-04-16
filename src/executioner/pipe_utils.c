@@ -26,7 +26,7 @@
 #include "utils.h"
 #include "signal_handlers.h"
 
-void	setup_pipe_redirections(t_ast_node *cmd_node, int pipefd[2], int is_writer)
+void	setup_pipe_redirs(t_anode *cmd_node, int pipefd[2], int is_writer)
 {
 	if (is_writer)
 	{
@@ -44,7 +44,7 @@ void	setup_pipe_redirections(t_ast_node *cmd_node, int pipefd[2], int is_writer)
 	}
 }
 
-pid_t	fork_and_execute_piped_command(t_shell *sh, t_ast_node *cmd_node, int pipefd[2], int is_writer)
+pid_t	fork_pipe_cmd(t_shell *sh, t_anode *cmd_node, int pipefd[2], int is_writer)
 {
 	pid_t	pid;
 
@@ -58,14 +58,14 @@ pid_t	fork_and_execute_piped_command(t_shell *sh, t_ast_node *cmd_node, int pipe
 	if (pid == 0)
 	{
 		restore_default_signals();
-		setup_pipe_redirections(cmd_node, pipefd, is_writer);
-		exec_astree(sh, cmd_node);
+		setup_pipe_redirs(cmd_node, pipefd, is_writer);
+		exec_ast(sh, cmd_node);
 		exit(cmd_node->exit_status);
 	}
 	return (pid);
 }
 
-bool	create_pipe(t_shell *sh, t_ast_node *node, int pipefd[2])
+bool	create_pipe(t_shell *sh, t_anode *node, int pipefd[2])
 {
 	if (pipe(pipefd) == -1)
 	{
@@ -78,7 +78,7 @@ bool	create_pipe(t_shell *sh, t_ast_node *node, int pipefd[2])
 	return (true);
 }
 
-void	handle_fork_error(pid_t left_pid, int pipefd[2])
+void	handle_fork_err(pid_t left_pid, int pipefd[2])
 {
 	close(pipefd[0]);
 	close(pipefd[1]);
@@ -89,13 +89,13 @@ void	handle_fork_error(pid_t left_pid, int pipefd[2])
 	}
 }
 
-void	wait_for_pipeline(t_shell *sh, pid_t left_pid, pid_t right_pid, int *exit_status)
+void	wait_pipeline(t_shell *sh, pid_t left_pid, pid_t right_pid, int *exit_status)
 {
 	int	status;
 
 	setup_parent_signals();
-	wait_for_child(sh, left_pid, &status);
-	wait_for_child(sh, right_pid, exit_status);
+	wait_child(sh, left_pid, &status);
+	wait_child(sh, right_pid, exit_status);
 	sh->last_exit_code = *exit_status;
 	setup_interactive_signals();
 }
@@ -107,7 +107,7 @@ void	close_pipe(int	pipefd[2])
 }
 
 
-void	wait_for_child(t_shell *sh, pid_t cpid, int *exit_status)
+void	wait_child(t_shell *sh, pid_t cpid, int *exit_status)
 {
 	int	status;
 

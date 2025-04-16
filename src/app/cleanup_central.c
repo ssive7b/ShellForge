@@ -25,7 +25,7 @@ void	cleanup_iteration(t_shell *shell)	// cleanup after iteration
 	safe_free((void **)&shell->input);
 	if (shell->ast_root)
 	{
-		free_ast_node(&shell->ast_root);
+		node_free(&shell->ast_root);
 		shell->ast_root = NULL;
 	}
 	safe_free((void **)&shell->err_msg);
@@ -87,7 +87,7 @@ void	set_error(t_shell *shell, int code, const char *msg)
 		shell->err_msg = NULL;
 }
 
-void	update_exit_code(t_shell *sh, t_ast_node *node)
+void	update_exit_code(t_shell *sh, t_anode *node)
 {
 	sh->last_exit_code = node->exit_status;
 }

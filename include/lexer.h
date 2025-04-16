@@ -17,19 +17,19 @@
 # include "../libft/include/libft.h"
 # include "types.h"
 
-typedef struct	s_token
+typedef struct s_token
 {
 	char			*value;
 	t_token_type	type;
 	struct s_token	*next;
 }	t_token;
 
-typedef struct	s_lexer
+typedef struct s_lexer
 {
 	char			*input;
 	size_t			idx;	
 	t_token			*tokens;
-	int				error;			// error state
+	int				error;
 }	t_lexer;
 
 // function pointers for state transitioning
@@ -45,7 +45,7 @@ void	ft_append_token(t_token **tokens_queue, t_token *new_token);
 void	ft_print_tokens(t_token *tokens);
 
 // lexer_cleaners.c
-void		cleanup_lexer(t_lexer **lexer);
-void		free_tokens(t_token *tokens);
+void	cleanup_lexer(t_lexer **lexer);
+void	free_tokens(t_token *tokens);
 
 #endif

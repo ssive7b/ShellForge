@@ -28,7 +28,7 @@ static char	*try_direct_execution(const char *cmd, t_shell *sh);
 static char	*try_current_directory(const char *cmd, t_shell *sh);
 static char	*search_in_path(const char *cmd, const char *path_value, t_shell *sh);
 
-char	*find_exec_pathname(t_shell *sh, t_list *env_list, char *cmd_name)
+char	*find_cmd_path(t_shell *sh, t_list *env_list, char *cmd_name)
 {
 	char	*direct_path;
 	char	*path_value;

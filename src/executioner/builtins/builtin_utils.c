@@ -35,7 +35,7 @@ int	is_builtin(char *cmd_name)
 }
 
 
-void	exec_builtin(t_ast_node *cmd_node)
+void	exec_builtin(t_anode *cmd_node)
 {
 	if (ft_strcmp(cmd_node->args[0], "echo") == 0)
 		exec_echo(cmd_node);

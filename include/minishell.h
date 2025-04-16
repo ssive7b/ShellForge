@@ -1,30 +1,42 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minishell.h                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sstoev <sstoev@student.42malaga.com>       +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/16 15:51:36 by sstoev            #+#    #+#             */
+/*   Updated: 2025/04/16 15:51:37 by sstoev           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
 # include <linux/limits.h>
+# include <termios.h>
 # include "types.h"
 # include "../libft/include/libft.h"
-# include "termios.h"
 
 # define SHELL_PROMPT "minishell$> "
 
-typedef struct	s_shell
+typedef struct s_shell
 {
 	char			*input;
-	t_ast_node		*ast_root;
-	char			**envp;				// raw env array for execve
-	t_list			*env_list;			// linked list for easy manipulation
+	t_anode			*ast_root;
+	char			**envp;
+	t_list			*env_list;
 	char			*cwd;
 	char			*current_cmd;
 	int				last_exit_code;
-	int				is_running;			// control variable for the main loop
+	int				is_running;
 	int				is_interactive;
-	struct termios	original_term;		// saved original settings
-	int				terminal_fd;		// fd of the original terminal (tty)
-	int				std_in;				// original stdin
-	int				std_out;			// original stdout
-	int				std_err;			// original stderr
-	char			*err_msg;			// error message- human readable
+	struct termios	original_term;
+	int				terminal_fd;
+	int				std_in;
+	int				std_out;
+	int				std_err;
+	char			*err_msg;
 }	t_shell;
 
 // inits.c
@@ -35,6 +47,6 @@ void	cleanup_iteration(t_shell *shell);
 void	cleanup_shell(t_shell *shell);
 void	display_error(t_shell *shell);
 void	set_error(t_shell *shell, int code, const char *msg);
-void	update_exit_code(t_shell *sh, t_ast_node *node);
+void	update_exit_code(t_shell *sh, t_anode *node);
 
 #endif

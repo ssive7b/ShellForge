@@ -16,16 +16,16 @@
 #include "parser.h"
 #include "utils.h"
 
-void	free_ast_node(t_ast_node **node)
+void	node_free(t_anode **node)
 {
 	size_t	i;
 
 	if (!node || !*node)
 		return ;
 	if ((*node)->left)
-		free_ast_node(&(*node)->left);
+		node_free(&(*node)->left);
 	if ((*node)->right)
-		free_ast_node(&(*node)->right);
+		node_free(&(*node)->right);
 	if ((*node)->type == NODE_COMMAND)
 	{
 		safe_free((void **)&(*node)->cmd_pathname);
@@ -41,14 +41,14 @@ void	free_ast_node(t_ast_node **node)
 		}
 	}
 	if ((*node)->redirections)
-		clear_redirections(&(*node)->redirections);
+		clear_redirs(&(*node)->redirections);
 	safe_free((void **)node);
 }
 
-void	free_ast_stack(t_ast_stack **stack)
+void	stack_free(t_stack **stack)
 {
-	t_ast_stack	*current;
-	t_ast_stack	*next;
+	t_stack	*current;
+	t_stack	*next;
 
 	if (!stack || !*stack)
 		return ;
@@ -56,31 +56,31 @@ void	free_ast_stack(t_ast_stack **stack)
 	while (current)
 	{
 		next = current->next;
-		free_ast_node(&current->node);
+		node_free(&current->node);
 		safe_free((void **)&current);
 		current = next;
 	}
 	*stack = NULL;
 }
 
-void	cleanup_parser_state(t_ast_stack **operator_stack, t_ast_stack **operand_stack, t_ast_node **node)
+void	parser_cleanup(t_stack **operator_stack, t_stack **operand_stack, t_anode **node)
 {
 	if (operand_stack)
-		free_ast_stack(operator_stack);
+		stack_free(operator_stack);
 	if (operand_stack)
-		free_ast_stack(operand_stack);
+		stack_free(operand_stack);
 	if (node && *node)
-		free_ast_node(node);
+		node_free(node);
 }
 
-void	clear_redirections(t_list **redirections)
+void	clear_redirs(t_list **redirections)
 {
 	if (!redirections)
 		return ;
-	ft_lstclear(redirections, delete_redirection);
+	ft_lstclear(redirections, del_redir);
 }
 
-void	delete_redirection(void *content)
+void	del_redir(void *content)
 {
 	t_redir	*redir;
 

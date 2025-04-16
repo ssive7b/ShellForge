@@ -19,7 +19,7 @@
 
 static int	read_heredoc_content(int pipefd[2], t_redir *redir);
 
-int	get_heredoc_fd(t_redir *redir)
+int	get_hdoc_fd(t_redir *redir)
 {
 	int				pipefd[2];
 	int				result;

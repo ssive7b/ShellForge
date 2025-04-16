@@ -22,9 +22,9 @@
 
 void	init_exec_table(t_exec_table *exec_table)
 {
-	exec_table->exec_modes[NODE_COMMAND] = execute_command;
-	exec_table->exec_modes[NODE_PIPE] = execute_pipe;
-	exec_table->exec_modes[NODE_REDIRECTION] = execute_redirection;
-	exec_table->exec_modes[NODE_AND] = execute_and;
-	exec_table->exec_modes[NODE_OR] = execute_or;
+	exec_table->exec_modes[NODE_COMMAND] = exec_command;
+	exec_table->exec_modes[NODE_PIPE] = exec_pipe;
+	exec_table->exec_modes[NODE_REDIRECTION] = exec_redir;
+	exec_table->exec_modes[NODE_AND] = exec_and;
+	exec_table->exec_modes[NODE_OR] = exec_or;
 }

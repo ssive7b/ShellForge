@@ -23,7 +23,7 @@
 #include "env_utils.h"
 #include "utils.h"
 
-void	*execute_command(t_shell *sh, t_ast_node *node)
+void	*exec_command(t_shell *sh, t_anode *node)
 {
 	pid_t	cpid;
 
@@ -31,7 +31,7 @@ void	*execute_command(t_shell *sh, t_ast_node *node)
 		return (update_exit_code(sh, node), NULL);
 	if (node->redirections)
 	{
-		execute_redirection(sh, node);
+		exec_redir(sh, node);
 		if (!node->redirections)
 			return (update_exit_code(sh, node), NULL);
 	}
@@ -40,18 +40,18 @@ void	*execute_command(t_shell *sh, t_ast_node *node)
 		exec_builtin(node);
 		return (update_exit_code(sh, node), NULL);
 	}
-	if (!resolve_command_path(sh, node))
+	if (!resolve_path(sh, node))
 		return (update_exit_code(sh, node), NULL);
-	cpid = fork_external_command(sh, node);
+	cpid = fork_extern_cmd(sh, node);
 	if (cpid == -1)
 		return (update_exit_code(sh, node), NULL);
 	node->pid = cpid;
-	wait_for_child(sh, cpid, &node->exit_status);
+	wait_child(sh, cpid, &node->exit_status);
 	sh->last_exit_code = node->exit_status;
 	return (update_exit_code(sh, node), NULL);
 }
 
-void	*execute_pipe(t_shell *sh, t_ast_node *node)
+void	*exec_pipe(t_shell *sh, t_anode *node)
 {
 	int		pipefd[2];
 	pid_t	left_pid;
@@ -59,24 +59,24 @@ void	*execute_pipe(t_shell *sh, t_ast_node *node)
 
 	if (!node || !create_pipe(sh, node, pipefd))
 		return (NULL);
-	left_pid = fork_and_execute_piped_command(sh, node->left, pipefd, 1);
+	left_pid = fork_pipe_cmd(sh, node->left, pipefd, 1);
 	if (left_pid == -1)
 	{
 		close_pipe(pipefd);
 		return (NULL);
 	}
-	right_pid = fork_and_execute_piped_command(sh, node->right, pipefd, 0);
+	right_pid = fork_pipe_cmd(sh, node->right, pipefd, 0);
 	if (right_pid == -1)
 	{
-		handle_fork_error(left_pid, pipefd);
+		handle_fork_err(left_pid, pipefd);
 		return (NULL);
 	}
 	close_pipe(pipefd);
-	wait_for_pipeline(sh, left_pid, right_pid, &node->exit_status);
+	wait_pipeline(sh, left_pid, right_pid, &node->exit_status);
 	return (NULL);
 }
 
-void	*execute_redirection(t_shell *sh, t_ast_node *node)
+void	*exec_redir(t_shell *sh, t_anode *node)
 {
 	t_list	*redir_list;
 	t_redir	*redir;
@@ -89,13 +89,13 @@ void	*execute_redirection(t_shell *sh, t_ast_node *node)
 	{
 		redir = (t_redir *)redir_list->content;
 		if (redir->type == REDIR_HEREDOC)
-			fd = get_heredoc_fd(redir);
+			fd = get_hdoc_fd(redir);
 		else
-			fd = open_redirection_flle(sh, redir->file_name, redir->type);
+			fd = open_redir_flle(sh, redir->file_name, redir->type);
 		if (fd == -1)
 		{
 			node->exit_status = 1;
-			clear_redirections(&(node->redirections));
+			clear_redirs(&(node->redirections));
 			return (NULL);
 		}
 		if (redir->type == REDIR_INPUT || redir->type == REDIR_HEREDOC)
@@ -107,14 +107,14 @@ void	*execute_redirection(t_shell *sh, t_ast_node *node)
 	return (NULL);
 }
 
-void	*execute_and(t_shell *sh, t_ast_node *node)
+void	*exec_and(t_shell *sh, t_anode *node)
 {
 	if (!node)
 		return (NULL);
-	exec_astree(sh, node->left);
+	exec_ast(sh, node->left);
 	if (node->left->exit_status == 0)
 	{
-		exec_astree(sh, node->right);
+		exec_ast(sh, node->right);
 		node->exit_status = node->right->exit_status;
 	}
 	else
@@ -123,14 +123,14 @@ void	*execute_and(t_shell *sh, t_ast_node *node)
 	return (NULL);
 }
 
-void	*execute_or(t_shell *sh, t_ast_node *node)
+void	*exec_or(t_shell *sh, t_anode *node)
 {
 	if (!node)
 		return (NULL);
-	exec_astree(sh, node->left);
+	exec_ast(sh, node->left);
 	if (node->left->exit_status != 0)
 	{
-		exec_astree(sh, node->right);
+		exec_ast(sh, node->right);
 		node->exit_status = node->right->exit_status;
 	}
 	else

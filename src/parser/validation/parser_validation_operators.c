@@ -16,7 +16,7 @@
 #include "parser.h"
 #include "utils.h"
 
-bool	validate_operators(t_lexer *lexer) // Ensures that consecutive operators are handled correctly
+bool	validate_ops(t_lexer *lexer) // Ensures that consecutive operators are handled correctly
 {
 	t_token	*current;
 	t_token	*prev;
@@ -25,25 +25,25 @@ bool	validate_operators(t_lexer *lexer) // Ensures that consecutive operators ar
 	prev = NULL;
 	while(current)
 	{
-		if (prev && is_operator_token(prev->type) && is_operator_token(current->type))
+		if (prev && is_op_tok(prev->type) && is_op_tok(current->type))
 		{
 			lexer->error = 1;
-			print_syntax_error(current->value);
+			print_syn_err(current->value);
 			return (false);
 		}
-		if (!prev && is_operator_token(current->type) && current->type != TOKEN_LPAREN)
+		if (!prev && is_op_tok(current->type) && current->type != TOKEN_LPAREN)
 		{
 			lexer->error = 1;
-			print_syntax_error(current->value);
+			print_syn_err(current->value);
 			return (false);
 		}
 		prev = current;
 		current = current->next;
 	}
-	if (prev && is_operator_token(prev->type) && prev->type != TOKEN_RPAREN)
+	if (prev && is_op_tok(prev->type) && prev->type != TOKEN_RPAREN)
 	{
 		lexer->error = 1;
-		print_syntax_error("newline");
+		print_syn_err("newline");
 		return (false);
 	}
 	return (true);
@@ -63,12 +63,12 @@ bool validate_pipes(t_lexer *lexer) // check for consecutive piping operators or
 			if (!command_found)
 			{
 				lexer->error = 1;
-				print_syntax_error("|");
+				print_syn_err("|");
 				return (false);
 			}
 			command_found = false;
 		}
-		else if (is_command_token(current->type) || is_argument_token(current->type))
+		else if (is_cmd_tok(current->type) || is_arg_tok(current->type))
 			command_found = true;
 		current = current->next;
 	}

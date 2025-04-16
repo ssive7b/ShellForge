@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_ast_root.c                                     :+:      :+:    :+:   */
+/*   ast_root.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sstoev <sstoev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -20,11 +20,11 @@
 #include "utils.h"
 
 static t_lexer		*process_lexical_analysis(const char *input, int *last_exit_code);
-static t_ast_node	*process_semantic_analysis(t_lexer *lexer, t_list *env_list, int *last_exit_code);
+static t_anode	*process_semantic_analysis(t_lexer *lexer, t_list *env_list, int *last_exit_code);
 
-t_ast_node	*get_ast_root(const char *input, t_list	*env_list, int *last_exit_code)
+t_anode	*ast_root(const char *input, t_list	*env_list, int *last_exit_code)
 {
-	t_ast_node	*ast_root;
+	t_anode	*ast_root;
 	t_lexer		*lexer;
 	
 	lexer = process_lexical_analysis(input, last_exit_code);
@@ -58,15 +58,15 @@ static t_lexer	*process_lexical_analysis(const char *input, int *last_exit_code)
 	return (lexer);
 }
 
-static t_ast_node	*process_semantic_analysis(t_lexer *lexer, t_list *env_list, int *last_exit_code)
+static t_anode	*process_semantic_analysis(t_lexer *lexer, t_list *env_list, int *last_exit_code)
 {
-	t_ast_node			*ast_root;
-	t_expand_context	context;
+	t_anode			*ast_root;
+	t_exp_ctx	context;
 
 	context.env_list = env_list;
 	context.last_exit_status = *last_exit_code;
 	if (!expand_variables_in_tokens(&lexer->tokens, &context))
 		return (NULL);
-	ast_root = parse_tokens(lexer);
+	ast_root = parse_toks(lexer);
 	return (ast_root);
 }

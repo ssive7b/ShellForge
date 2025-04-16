@@ -16,11 +16,11 @@
 #include "parser.h"
 #include "utils.h"
 
-bool	advance_token(t_lexer *lexer)
+bool	next_token(t_lexer *lexer)
 {
 	if (!lexer)
 	{
-		ft_error_msg("Error: Lexer is NULL in advance_token");
+		ft_error_msg("Error: Lexer is NULL in next_token");
 		return (false);
 	}
 	if (!lexer->tokens)
@@ -36,13 +36,13 @@ bool	skip_delims(t_lexer *lexer)
 {
 	while (lexer->tokens && lexer->tokens->type == TOKEN_DELIMITER)
 	{
-		if (!advance_token(lexer))
+		if (!next_token(lexer))
 			return (false);
 	}
 	return (true);
 }
 
-bool	add_argument_to_node(t_ast_node *node, const char *arg)
+bool	add_arg(t_anode *node, const char *arg)
 {
 	char	**new_args;
 	int		arg_count;

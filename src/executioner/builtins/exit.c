@@ -39,7 +39,7 @@ static bool	is_valid_number(char *str)
 	return (true);
 }
 
-void	exec_exit(t_ast_node *node)
+void	exec_exit(t_anode *node)
 {
 	ft_putstr_fd("exit\n", STDOUT_FILENO);
 	if (node->args[1])

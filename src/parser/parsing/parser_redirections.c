@@ -16,40 +16,40 @@
 #include "parser.h"
 #include "utils.h"
 
-bool	add_redirection_to_command(t_lexer *lexer, t_ast_node *cmd)
+bool	add_redir(t_lexer *lexer, t_anode *cmd)
 {
 	t_redir	*redir;
 
-	redir = create_redirection(lexer);
+	redir = new_redir(lexer);
 	if (!redir)
 		return (false);
-	advance_token(lexer);
+	next_token(lexer);
 	skip_delims(lexer);
-	if (!lexer->tokens || !is_argument_token(lexer->tokens->type))
+	if (!lexer->tokens || !is_arg_tok(lexer->tokens->type))
 	{
 		ft_error_msg("Error: Expected word after redirection");
 		lexer->error = 1;
 		safe_free((void **)&redir);
-		clear_redirections(&(cmd->redirections));
+		clear_redirs(&(cmd->redirections));
 		return (false);
 	}
-	if (!set_redirection_target(lexer, redir))
+	if (!set_redir_tgt(lexer, redir))
 	{
 		ft_error_msg("Error: Unable to set the redirection target");
 		lexer->error = 1;
 		safe_free((void **)&redir);
-		clear_redirections(&(cmd->redirections));
+		clear_redirs(&(cmd->redirections));
 		return (false);
 	}
 	if (!cmd->redirections)
 		cmd->redirections = NULL;
 	ft_lstadd_back(&cmd->redirections, ft_lstnew(redir));
 	if (lexer->tokens->next)
-		advance_token(lexer);
+		next_token(lexer);
 	return (true);
 }
 
-t_redir	*create_redirection(t_lexer *lexer)
+t_redir	*new_redir(t_lexer *lexer)
 {
 	t_redir			*redir;
 	t_token_type	token_type;
@@ -77,7 +77,7 @@ t_redir	*create_redirection(t_lexer *lexer)
 	return (redir);
 }
 
-bool	set_redirection_target(t_lexer *lexer, t_redir *redir)
+bool	set_redir_tgt(t_lexer *lexer, t_redir *redir)
 {
 	char	*value;
 

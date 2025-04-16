@@ -18,11 +18,11 @@
 #include "executioner.h"
 #include "utils.h"
 
-static void	exec_cd_home(t_ast_node *node, char *oldpwd);
+static void	exec_cd_home(t_anode *node, char *oldpwd);
 static void	update_env_var(char *key, char *value);
-static void handle_cd_error(t_ast_node *node, char *path);
+static void handle_cd_error(t_anode *node, char *path);
 
-void	exec_cd(t_ast_node *node)
+void	exec_cd(t_anode *node)
 {
 	char	*cwd;
 
@@ -49,7 +49,7 @@ void	exec_cd(t_ast_node *node)
 	}
 }
 
-static void	exec_cd_home(t_ast_node *node, char *oldpwd)
+static void	exec_cd_home(t_anode *node, char *oldpwd)
 {
 	char	*path_home;
 	char	*new_cwd;
@@ -96,7 +96,7 @@ static void	update_env_var(char *key, char *value)
 	}
 }
 
-static void handle_cd_error(t_ast_node *node, char *path)
+static void handle_cd_error(t_anode *node, char *path)
 {
 	ft_putstr_fd("minishell: cd: ", STDERR_FILENO);
 	ft_putstr_fd(path, STDERR_FILENO);

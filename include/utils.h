@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sstoev <sstoev@student.42malaga.com>       +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/16 16:45:54 by sstoev            #+#    #+#             */
+/*   Updated: 2025/04/16 16:45:55 by sstoev           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef UTILS_H
 # define UTILS_H
 
@@ -22,8 +34,8 @@ char	*safe_strdup(const char *str);
 void	ft_error_msg(const char *message);
 
 // debug_utils.c
-void	print_stack(t_ast_stack *stack, const char *name);
-void	print_ast(t_ast_node *node, int level);
+void	print_stack(t_stack *stack, const char *name);
+void	print_ast(t_anode *node, int level);
 
 // array_utils.c
 void	ft_free_2d_array(char ***array, int n);

@@ -21,7 +21,7 @@ char	**get_cwd(void)
 	return (&cwd);
 }
 
-void	exec_pwd(t_ast_node *node)
+void	exec_pwd(t_anode *node)
 {
 	char	*buffer;
 	size_t	size_buffer;

@@ -16,92 +16,92 @@
 #include "parser.h"
 #include "utils.h"
 
-static bool	parse_command_arguments(t_lexer *lexer, t_ast_node *cmd);
+static bool	parse_command_arguments(t_lexer *lexer, t_anode *cmd);
 
-bool	handle_operator_precedence(t_lexer *lexer, t_ast_stack **operator_stack, t_ast_stack **operand_stack)
+bool	handle_op_prec(t_lexer *lexer, t_stack **operator_stack, t_stack **operand_stack)
 {
-	t_node_type	current_op_type;
-	t_ast_node	*op_node;
+	t_ntype	current_op_type;
+	t_anode	*op_node;
 
-	current_op_type = get_ast_node_type_from_token(lexer->tokens->type);
-	while (*operator_stack && get_operator_precedence((*operator_stack)->node->type) >= get_operator_precedence(current_op_type))
+	current_op_type = tok_to_node(lexer->tokens->type);
+	while (*operator_stack && op_precedence((*operator_stack)->node->type) >= op_precedence(current_op_type))
 	{
-		if (!process_operator(operator_stack, operand_stack))
+		if (!apply_op(operator_stack, operand_stack))
 			return (false);
 	}
-	op_node = ast_new(current_op_type, lexer->tokens);
+	op_node = node_new(current_op_type, lexer->tokens);
 	if (!op_node)
 		return (false);
-	if (!push_ast_stack(operator_stack, op_node))
+	if (!stack_push(operator_stack, op_node))
 		return (false);
-	advance_token(lexer);
+	next_token(lexer);
 	return (true);
 }
 
-t_ast_node	*parse_command(t_lexer *lexer)
+t_anode	*parse_cmd(t_lexer *lexer)
 {
-	t_ast_node	*node;
+	t_anode	*node;
 
-	if (!lexer->tokens || !is_command_token(lexer->tokens->type))
+	if (!lexer->tokens || !is_cmd_tok(lexer->tokens->type))
 	{
 		ft_error_msg("Syntax error: Expected command");
 		// printf("received: %d %s\n", lexer->tokens->type, lexer->tokens->value);
-		handle_parser_error(lexer, NULL, NULL, NULL);
+		parse_err(lexer, NULL, NULL, NULL);
 		return (NULL);
 	}
 	// printf("good- received: %d %s\n", lexer->tokens->type, lexer->tokens->value);
-	node = ast_new(NODE_COMMAND, lexer->tokens);
+	node = node_new(NODE_COMMAND, lexer->tokens);
 	if (!node)
 	{
-		handle_parser_error(lexer, NULL, NULL, NULL);
+		parse_err(lexer, NULL, NULL, NULL);
 		return (NULL);
 	}
-	if (!advance_token(lexer))
+	if (!next_token(lexer))
 	{
-		handle_parser_error(lexer, NULL, NULL, NULL);
+		parse_err(lexer, NULL, NULL, NULL);
 		ft_error_msg("Syntax error: Couldn't advance tokens");
 		return (NULL);
 	}
 	if (!parse_command_arguments(lexer, node))
 	{
-		handle_parser_error(lexer, NULL, NULL, &node);
+		parse_err(lexer, NULL, NULL, &node);
 		return (NULL);
 	}
 	return (node);
 }
 
-t_ast_node	*parse_parenthesized_expression(t_lexer *lexer, t_ast_stack **operator_stack, t_ast_stack **operand_stack)
+t_anode	*parse_paren_expr(t_lexer *lexer, t_stack **operator_stack, t_stack **operand_stack)
 {
-	t_ast_node	*expr;
+	t_anode	*expr;
 
-	advance_token(lexer);
-	expr = parse_expression(lexer, operator_stack, operand_stack);
+	next_token(lexer);
+	expr = parse_expr(lexer, operator_stack, operand_stack);
 	if (!expr)
 	{
-		handle_parser_error(lexer, NULL, NULL, NULL);
+		parse_err(lexer, NULL, NULL, NULL);
 		return (NULL);
 	}
 	if (!lexer->tokens || lexer->tokens->type != TOKEN_RPAREN)
 	{
 		ft_error_msg("Error: Missing closing parenthesis");
-		handle_parser_error(lexer, NULL, NULL, &expr);
+		parse_err(lexer, NULL, NULL, &expr);
 		return (NULL);
 	}
-	advance_token(lexer);
+	next_token(lexer);
 	return (expr);
 }
 
-static bool	parse_command_arguments(t_lexer *lexer, t_ast_node *cmd)
+static bool	parse_command_arguments(t_lexer *lexer, t_anode *cmd)
 {
 	skip_delims(lexer);
 	// printf("cmd_args- received: %d %s\n", lexer->tokens->type, lexer->tokens->value);
-	while (lexer->tokens && is_argument_token(lexer->tokens->type))
+	while (lexer->tokens && is_arg_tok(lexer->tokens->type))
 	{
-		if (!add_argument_to_node(cmd, lexer->tokens->value))
+		if (!add_arg(cmd, lexer->tokens->value))
 			return (false);
-		advance_token(lexer);
+		next_token(lexer);
 		while (lexer->tokens && lexer->tokens->type == TOKEN_DELIMITER)
-			advance_token(lexer);
+			next_token(lexer);
 	}
 	// printf("cmd_args- received: %d %s\n", lexer->tokens->type, lexer->tokens->value);
 	return (true);
