@@ -57,7 +57,7 @@ static void	unset_var(const char *var)
 			return ;
 		}
 		env_node_prev = env_node_current;
-		env_node_current= env_node_current->next;
+		env_node_current = env_node_current->next;
 	}
 }
 

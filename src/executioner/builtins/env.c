@@ -21,7 +21,7 @@ void	exec_env(t_anode *node, t_list *env_list)
 	t_env	*env_entry;
 
 	env_node_current = env_list;
-	while(env_node_current)
+	while (env_node_current)
 	{
 		env_entry = env_node_current->content;
 		if (env_entry->value)

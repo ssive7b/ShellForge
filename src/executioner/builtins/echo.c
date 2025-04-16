@@ -14,7 +14,7 @@
 #include "ast_mock.h"
 #include "minishell.h"
 
-static int	is_valid_n_flag(char *arg) // echo needs to be able to handle "echo -n -nnn -nn [char *]" types of cases
+static int	is_valid_n_flag(char *arg)
 {
 	size_t	i;
 
@@ -44,7 +44,7 @@ void	exec_echo(t_anode *node)
 	while (node->args[i])
 	{
 		ft_putstr_fd(node->args[i], node->fd_out);
-		if (node->args[i+1])
+		if (node->args[i + 1])
 			ft_putstr_fd(" ", node->fd_out);
 		i++;
 	}

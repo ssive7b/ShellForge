@@ -20,7 +20,7 @@
 
 static void	exec_cd_home(t_anode *node, char *oldpwd);
 static void	update_env_var(char *key, char *value);
-static void handle_cd_error(t_anode *node, char *path);
+static void	handle_cd_error(t_anode *node, char *path);
 
 void	exec_cd(t_anode *node)
 {
@@ -96,7 +96,7 @@ static void	update_env_var(char *key, char *value)
 	}
 }
 
-static void handle_cd_error(t_anode *node, char *path)
+static void	handle_cd_error(t_anode *node, char *path)
 {
 	ft_putstr_fd("minishell: cd: ", STDERR_FILENO);
 	ft_putstr_fd(path, STDERR_FILENO);
