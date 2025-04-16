@@ -18,11 +18,19 @@
 
 extern volatile sig_atomic_t	g_received_signal;
 
+typedef struct s_sighandlers
+{
+	struct sigaction	sa_old_int;
+	struct sigaction	sa_old_quit;
+}	t_sighandlers;
+
+
 // signal_setup.c
 void    setup_interactive_signals(void);
 void    setup_parent_signals(void);
+void    setup_heredoc_signals(t_sighandlers *sig_ctx);
 void    restore_default_signals(void);
-void    setup_heredoc_signals(void);
+void	restore_heredoc_signals(t_sighandlers *sig_ctx);
 
 // signal_handlers.c
 void    sigint_prompt_handler(int signum);

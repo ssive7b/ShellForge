@@ -39,16 +39,16 @@ void	setup_parent_signals(void)
 	sigaction(SIGQUIT, &sa, NULL);
 }
 
-void	setup_heredoc_signals(void)
+void	setup_heredoc_signals(t_sighandlers *sig_ctx)
 {
 	struct sigaction	sa;
 
 	sigemptyset(&sa.sa_mask);
-	sa.sa_flags = SA_RESTART;
+	sa.sa_flags = 0;
 	sa.sa_handler = handle_heredoc_interrupt;
-	sigaction(SIGINT, &sa, NULL);
+	sigaction(SIGINT, &sa, &sig_ctx->sa_old_int);
 	sa.sa_handler = SIG_IGN;
-	sigaction(SIGQUIT, &sa, NULL);
+	sigaction(SIGQUIT, &sa, &sig_ctx->sa_old_quit);
 }
 
 void	restore_default_signals(void)
@@ -62,3 +62,8 @@ void	restore_default_signals(void)
 	sigaction(SIGQUIT, &sa, NULL);
 }
 
+void	restore_heredoc_signals(t_sighandlers *sig_ctx)
+{
+	sigaction(SIGINT, &sig_ctx->sa_old_int, NULL);
+	sigaction(SIGQUIT, &sig_ctx->sa_old_quit, NULL);
+}
