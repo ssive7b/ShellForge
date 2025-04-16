@@ -26,7 +26,6 @@ void	sigint_prompt_handler(int signum)
 void	handle_heredoc_interrupt(int signum)
 {
 	(void)signum;
-	// write(STDOUT_FILENO, "^C\n", 3);
 	write(STDOUT_FILENO, "\n", 1);
 	g_received_signal = SIGINT;
 	close(STDIN_FILENO);
