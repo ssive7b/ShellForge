@@ -19,10 +19,10 @@
 bool	validate_input(t_lexer *lexer, const char *input)
 {
 	if (!validate_quotes(input)
-	|| !validate_parens(lexer)
-	|| !validate_ops(lexer)
-	|| !validate_pipes(lexer)
-	|| !validate_redirs(lexer))
+		|| !validate_parens(lexer)
+		|| !validate_ops(lexer)
+		|| !validate_pipes(lexer)
+		|| !validate_redirs(lexer))
 	{
 		lexer->error = 1;
 		return (false);
@@ -37,7 +37,7 @@ bool	validate_quotes(const char *input)
 
 	in_single_quotes = false;
 	in_double_quotes = false;
-	while(*input)
+	while (*input)
 	{
 		if (*input == SINGLE_QUOTE && !in_double_quotes)
 			in_single_quotes = !in_single_quotes;
@@ -73,17 +73,15 @@ bool	validate_parens(t_lexer *lexer)
 			parentheses_count--;
 		if (parentheses_count < 0)
 		{
-			lexer->error = 1;
-			ft_error_msg("minishell: syntax error: unexpected ')', unmatched parentheses");
-			return (false);
+			ft_error_msg("minishell: syntax error: unmatched parentheses");
+			return (lexer->error = 1, false);
 		}
 		current = current->next;
 	}
 	if (parentheses_count > 0)
 	{
-		lexer->error = 1;
-		ft_error_msg("minishell: syntax error: unexpected EOF, unmatched parentheses");
-		return (false);
+		ft_error_msg("minishell: syntax error: unmatched parentheses");
+		return (lexer->error = 1, false);
 	}
 	return (true);
 }

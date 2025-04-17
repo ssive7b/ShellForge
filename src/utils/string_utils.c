@@ -29,19 +29,19 @@ bool	safe_strjoin(char **dest, const char *source)
 	return (true);
 }
 
-int	ft_skip_whitespaces(const char *str)
+int	skip_whitesps(const char *str)
 {
 	size_t	i;
 
 	if (!str)
 		return (-1);
 	i = 0;
-	while (str[i] && ft_is_whitespace(str[i]))
+	while (str[i] && is_whitespace(str[i]))
 		i++;
 	return (i);
 }
 
-int	ft_is_escaped(const char *str, size_t idx)
+int	is_esc(const char *str, size_t idx)
 {
 	if (str[idx] == '\0')
 		return (0);
@@ -56,21 +56,21 @@ int	ft_is_escaped(const char *str, size_t idx)
 	return (0);
 }
 
-int	ft_find_char_qadjusted(const char *str, char char_to_find)
+int	find_char_qadj(const char *str, char char_to_find)
 {
 	size_t	idx;
 
 	if (!str || !*str)
 		return (-1);
 	idx = 0;
-	while (str[idx] && (str[idx] != char_to_find || ft_is_escaped(str, idx)))
+	while (str[idx] && (str[idx] != char_to_find || is_esc(str, idx)))
 		idx++;
 	if (!str[idx])
 		idx--;
 	return (idx);
 }
 
-int	ft_find_char(const char *str, char char_to_find)
+int	find_char(const char *str, char char_to_find)
 {
 	size_t	i;
 

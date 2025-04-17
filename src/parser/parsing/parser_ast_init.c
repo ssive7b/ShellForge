@@ -39,7 +39,7 @@ t_anode	*node_new(t_ntype type, t_token *token)
 	{
 		if (!setup_command_node(new, token->value))
 		{
-			ft_error_msg("Error: Memory allocation failed for args in node_new");
+			ft_error_msg("Error: Memory allocation failed in node_new()");
 			node_free(&new);
 			return (NULL);
 		}
@@ -52,33 +52,33 @@ static void	initialize_ast_node(t_anode *node, t_ntype type)
 	if (!node)
 		return ;
 	node->type = type;
-    node->cmd_pathname = NULL;
-    node->args = NULL;
-    node->pid = -1;
-    node->fd_in = STDIN_FILENO;
-    node->fd_out = STDOUT_FILENO;
-    node->exit_status = 0;
-    node->redirs = NULL;
-    node->left = NULL;
-    node->right = NULL;
+	node->cmd_pathname = NULL;
+	node->args = NULL;
+	node->pid = -1;
+	node->fd_in = STDIN_FILENO;
+	node->fd_out = STDOUT_FILENO;
+	node->exit_status = 0;
+	node->redirs = NULL;
+	node->left = NULL;
+	node->right = NULL;
 }
 
 static bool	setup_command_node(t_anode *node, char *value)
 {
 	node->cmd_pathname = NULL;
-    node->args = malloc(2 * sizeof(char *));
-    if (!node->args)
-    {
+	node->args = malloc(2 * sizeof(char *));
+	if (!node->args)
+	{
 		safe_free((void **)&node->cmd_pathname);
-        return (false);
-    }
-    node->args[0] = ft_strdup(value);
+		return (false);
+	}
+	node->args[0] = ft_strdup(value);
 	if (!node->args[0])
 	{
 		safe_free((void **)&node->args);
 		safe_free((void **)&node->cmd_pathname);
 		return (false);
 	}
-    node->args[1] = NULL;
+	node->args[1] = NULL;
 	return (true);
 }

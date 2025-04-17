@@ -60,26 +60,26 @@ t_anode	*stack_pop(t_stack **stack)
 
 bool	apply_op(t_stack **operator_stack, t_stack **operand_stack)
 {
-    t_anode	*op_node;
+	t_anode	*op_node;
 	t_anode	*right_operand;
 	t_anode	*left_operand;
 
-    if (!operator_stack || !(*operator_stack) || !operand_stack)
+	if (!operator_stack || !(*operator_stack) || !operand_stack)
 		return (false);
 	if (!*operand_stack || !(*operand_stack)->next)
 	{
 		ft_error_msg("Error: Not enough operands for operator");
 		return (false);
 	}
-    op_node = stack_pop(operator_stack);
-    if (!op_node)
+	op_node = stack_pop(operator_stack);
+	if (!op_node)
 		return (false);
 	right_operand = stack_pop(operand_stack);
 	left_operand = stack_pop(operand_stack);
-    op_node->right = right_operand;
-    op_node->left = left_operand;
-    stack_push(operand_stack, op_node);
-    return (true);
+	op_node->right = right_operand;
+	op_node->left = left_operand;
+	stack_push(operand_stack, op_node);
+	return (true);
 }
 
 t_ntype	tok_to_node(t_token_type type)

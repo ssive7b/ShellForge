@@ -16,93 +16,88 @@
 #include "parser.h"
 #include "utils.h"
 
-static bool	parse_command_arguments(t_lexer *lexer, t_anode *cmd);
+static bool	parse_command_arguments(t_lexer *lex, t_anode *cmd);
 
-bool	handle_op_prec(t_lexer *lexer, t_stack **operator_stack, t_stack **operand_stack)
+bool	handle_op_prec(t_lexer *lex, t_stack **ops, t_stack **opnds)
 {
 	t_ntype	current_op_type;
 	t_anode	*op_node;
+	int		current_op_prec;
 
-	current_op_type = tok_to_node(lexer->tokens->type);
-	while (*operator_stack && op_precedence((*operator_stack)->node->type) >= op_precedence(current_op_type))
+	current_op_type = tok_to_node(lex->tokens->type);
+	current_op_prec = op_precedence(current_op_type);
+	while (*ops && op_precedence((*ops)->node->type) >= current_op_prec)
 	{
-		if (!apply_op(operator_stack, operand_stack))
+		if (!apply_op(ops, opnds))
 			return (false);
 	}
-	op_node = node_new(current_op_type, lexer->tokens);
+	op_node = node_new(current_op_type, lex->tokens);
 	if (!op_node)
 		return (false);
-	if (!stack_push(operator_stack, op_node))
+	if (!stack_push(ops, op_node))
 		return (false);
-	next_token(lexer);
+	next_token(lex);
 	return (true);
 }
 
-t_anode	*parse_cmd(t_lexer *lexer)
+t_anode	*parse_cmd(t_lexer *lex)
 {
 	t_anode	*node;
 
-	if (!lexer->tokens || !is_cmd_tok(lexer->tokens->type))
+	if (!lex->tokens || !is_cmd_tok(lex->tokens->type))
 	{
 		ft_error_msg("Syntax error: Expected command");
-		// printf("received: %d %s\n", lexer->tokens->type, lexer->tokens->value);
-		parse_err(lexer, NULL, NULL, NULL);
+		parse_err(lex, NULL, NULL, NULL);
 		return (NULL);
 	}
-	// printf("good- received: %d %s\n", lexer->tokens->type, lexer->tokens->value);
-	node = node_new(NODE_COMMAND, lexer->tokens);
+	node = node_new(NODE_COMMAND, lex->tokens);
 	if (!node)
+		return (parse_err(lex, NULL, NULL, NULL), NULL);
+	if (!next_token(lex))
 	{
-		parse_err(lexer, NULL, NULL, NULL);
-		return (NULL);
-	}
-	if (!next_token(lexer))
-	{
-		parse_err(lexer, NULL, NULL, NULL);
+		parse_err(lex, NULL, NULL, NULL);
 		ft_error_msg("Syntax error: Couldn't advance tokens");
 		return (NULL);
 	}
-	if (!parse_command_arguments(lexer, node))
+	if (!parse_command_arguments(lex, node))
 	{
-		parse_err(lexer, NULL, NULL, &node);
+		parse_err(lex, NULL, NULL, &node);
 		return (NULL);
 	}
 	return (node);
 }
 
-t_anode	*parse_paren_expr(t_lexer *lexer, t_stack **operator_stack, t_stack **operand_stack)
+t_anode	*parse_paren_expr(t_lexer *lex, t_stack **ops, t_stack **opnds)
 {
 	t_anode	*expr;
 
-	next_token(lexer);
-	expr = parse_expr(lexer, operator_stack, operand_stack);
+	next_token(lex);
+	expr = parse_expr(lex, ops, opnds);
 	if (!expr)
 	{
-		parse_err(lexer, NULL, NULL, NULL);
+		parse_err(lex, NULL, NULL, NULL);
 		return (NULL);
 	}
-	if (!lexer->tokens || lexer->tokens->type != TOKEN_RPAREN)
+	if (!lex->tokens || lex->tokens->type != TOKEN_RPAREN)
 	{
 		ft_error_msg("Error: Missing closing parenthesis");
-		parse_err(lexer, NULL, NULL, &expr);
+		parse_err(lex, NULL, NULL, &expr);
 		return (NULL);
 	}
-	next_token(lexer);
+	next_token(lex);
 	return (expr);
 }
 
-static bool	parse_command_arguments(t_lexer *lexer, t_anode *cmd)
+static bool	parse_command_arguments(t_lexer *lex, t_anode *cmd)
 {
-	skip_delims(lexer);
-	// printf("cmd_args- received: %d %s\n", lexer->tokens->type, lexer->tokens->value);
-	while (lexer->tokens && is_arg_tok(lexer->tokens->type))
+	skip_delims(lex);
+	while (lex->tokens && is_arg_tok(lex->tokens->type))
 	{
-		if (!add_arg(cmd, lexer->tokens->value))
+		if (!add_arg(cmd, lex->tokens->value))
 			return (false);
-		next_token(lexer);
-		while (lexer->tokens && lexer->tokens->type == TOKEN_DELIMITER)
-			next_token(lexer);
+		next_token(lex);
+		while (lex->tokens && lex->tokens->type == TOKEN_DELIMITER)
+			next_token(lex);
 	}
-	// printf("cmd_args- received: %d %s\n", lexer->tokens->type, lexer->tokens->value);
 	return (true);
 }

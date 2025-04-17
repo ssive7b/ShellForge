@@ -21,24 +21,25 @@
 #include <stdio.h>
 #include <string.h>
 
-static bool	process_expansion_pass(char **result, const char *str, int *pos, t_exp_ctx *context);
-static char	*expand_variable_in_string(const char *str, t_exp_ctx *context);
+static bool	proc_exp_step(char **res, char *str, int *pos, t_exp_ctx *ctx);
+static char	*expand_str(char *str, t_exp_ctx *ctx);
 
-bool 	expand_variables_in_tokens(t_token **tokens, t_exp_ctx *context)
+bool	expand_variables_in_tokens(t_token **tokens, t_exp_ctx *ctx)
 {
 	t_token	*current;
 	char	*expanded;
 
-	if (!tokens || !*tokens || !context)
+	if (!tokens || !*tokens || !ctx)
 		return (true);
 	current = *tokens;
 	while (current)
 	{
-		if (current->type == TOKEN_WORD_UNQUOTED || current->type == TOKEN_WORD_DQUOTED)
+		if (current->type == TOKEN_WORD_UNQUOTED
+			|| current->type == TOKEN_WORD_DQUOTED)
 		{
 			if (needs_expansion(current->value))
 			{
-				expanded = expand_variable_in_string(current->value, context);
+				expanded = expand_str(current->value, ctx);
 				if (!expanded)
 					return (false);
 				safe_free((void **)&current->value);
@@ -50,9 +51,9 @@ bool 	expand_variables_in_tokens(t_token **tokens, t_exp_ctx *context)
 	return (true);
 }
 
-static char	*expand_variable_in_string(const char *str, t_exp_ctx *context)
+static char	*expand_str(char *str, t_exp_ctx *ctx)
 {
-	char	*result;
+	char	*res;
 	int		position;
 
 	position = 0;
@@ -60,23 +61,23 @@ static char	*expand_variable_in_string(const char *str, t_exp_ctx *context)
 		return (NULL);
 	if (!needs_expansion(str))
 		return (ft_strdup(str));
-	result = ft_strdup("");
-	if (!result)
+	res = ft_strdup("");
+	if (!res)
 		return (NULL);
 	while (str[position])
 	{
-		if (!process_expansion_pass(&result, str, &position, context))
+		if (!proc_exp_step(&res, str, &position, ctx))
 		{
-			safe_free((void **)&result);
+			safe_free((void **)&res);
 			return (NULL);
 		}
 		if (str[position] == '\0')
 			break ;
 	}
-	return (result);
+	return (res);
 }
 
-static bool	process_expansion_pass(char **result, const char *str, int *pos, t_exp_ctx *context)
+static bool	proc_exp_step(char **res, char *str, int *pos, t_exp_ctx *ctx)
 {
 	int	i;
 	int	start;
@@ -85,20 +86,19 @@ static bool	process_expansion_pass(char **result, const char *str, int *pos, t_e
 	start = *pos;
 	while (str[i])
 	{
-		if (str[i] == '$' && str[i+1])
+		if (str[i] == '$' && str[i + 1])
 		{
-			if (!append_chunk(result, str, start, i))
+			if (!append_chunk(res, str, start, i))
 				return (false);
-			if (!proc_doll_sign(result, str, &i, context))
+			if (!proc_doll_sign(res, str, &i, ctx))
 				return (false);
 			*pos = i;
 			return (true);
 		}
 		i++;
 	}
-	if (!append_chunk(result, str, start, i))
+	if (!append_chunk(res, str, start, i))
 		return (false);
 	*pos = i;
 	return (true);
 }
-

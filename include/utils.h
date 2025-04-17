@@ -20,10 +20,10 @@
 
 // string_utils.c
 bool	safe_strjoin(char **dest, const char *source);
-int		ft_skip_whitespaces(const char *str);
-int		ft_is_escaped(const char *str, size_t idx);
-int		ft_find_char_qadjusted(const char *str, char char_to_find);
-int		ft_find_char(const char *str, char char_to_find);
+int		skip_whitesps(const char *str);
+int		is_esc(const char *str, size_t idx);
+int		find_char_qadj(const char *str, char char_to_find);
+int		find_char(const char *str, char char_to_find);
 
 // memory_utils.c
 void	safe_free(void **ptr);
@@ -38,7 +38,7 @@ void	print_stack(t_stack *stack, const char *name);
 void	print_ast(t_anode *node, int level);
 
 // array_utils.c
-void	ft_free_2d_array(char ***array, int n);
+void	free_2d_array(char ***array, int n);
 int		count_args(char **args);
 char	**allocate_args_array(int size);
 bool	copy_args(char **dst, char **src, int count);

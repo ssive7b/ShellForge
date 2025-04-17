@@ -31,7 +31,7 @@ t_lexer	*run_tokenizer(const char *input)
 	lx = init_tokenizer(input);
 	if (!lx)
 		return (NULL);
-	lx->idx = ft_skip_whitespaces(input);
+	lx->idx = skip_whitesps(input);
 	while (next_state && input[lx->idx])
 	{
 		next_state = (t_lexer_state) next_state(lx);
@@ -43,34 +43,14 @@ t_lexer	*run_tokenizer(const char *input)
 static t_lexer_state	word_state(t_lexer *lx)
 {
 	t_token	token;
-	size_t	start_idx;
+	size_t	start;
 
-	start_idx = lx->idx;
-	if (lx->input[lx->idx] == DOUBLE_QUOTE)
-	{
-		token.type = TOKEN_WORD_DQUOTED;
-		lx->idx += ft_find_char_qadjusted(&lx->input[lx->idx + 1], DOUBLE_QUOTE) + 1;
-	}
-	else if (lx->input[lx->idx] == SINGLE_QUOTE)
-	{
-		token.type = TOKEN_WORD_SQUOTED;
-		lx->idx += ft_find_char_qadjusted(&lx->input[lx->idx + 1], SINGLE_QUOTE) + 1;
-	}
-	else
-	{
-		token.type = TOKEN_WORD_UNQUOTED;
-		while (ft_is_unquoted_char(lx->input[lx->idx]) || ft_is_escaped(lx->input, lx->idx))
-			lx->idx++;
-		lx->idx--;
-	}
-	if (token.type == TOKEN_WORD_UNQUOTED)
-		token.value = ft_substr(lx->input, start_idx, lx->idx - start_idx + 1);
-	else
-		token.value = ft_substr(lx->input, start_idx + 1, lx->idx - start_idx - 1); // get rid of the quotes in the tokens, once properly initialized
+	start = lx->idx;
+	extract_word_token(lx, &token, start);
 	if (!token.value)
 		return (NULL);
 	if (ft_strlen(token.value) > 0)
-		ft_append_token(&lx->tokens, ft_create_token(token));
+		append_token(&lx->tokens, create_token(token));
 	return ((t_lexer_state) delimiter_state);
 }
 
@@ -81,17 +61,13 @@ t_lexer_state	operator_state(t_lexer *lx)
 
 	token.type = get_op_token_type(&lx->input[lx->idx]);
 	if (token.type == TOKEN_PIPE
-		|| token.type == TOKEN_REDIR_OUT
-		|| token.type == TOKEN_REDIR_IN
-		|| token.type == TOKEN_AMPERSAND
-		|| token.type == TOKEN_SEMICOLON
-		|| token.type == TOKEN_LPAREN
-		|| token.type == TOKEN_RPAREN)
+		|| token.type == TOKEN_REDIR_OUT || token.type == TOKEN_REDIR_IN
+		|| token.type == TOKEN_AMPERSAND || token.type == TOKEN_SEMICOLON
+		|| token.type == TOKEN_LPAREN || token.type == TOKEN_RPAREN)
 		len = 1;
 	else if (token.type == TOKEN_REDIR_APPEND
 		|| token.type == TOKEN_REDIR_HEREDOC
-		|| token.type == TOKEN_AND
-		|| token.type == TOKEN_OR)
+		|| token.type == TOKEN_AND || token.type == TOKEN_OR)
 		len = 2;
 	else
 		return (NULL);
@@ -100,7 +76,7 @@ t_lexer_state	operator_state(t_lexer *lx)
 		return (NULL);
 	lx->idx = lx->idx + len - 1;
 	if (ft_strlen(token.value) > 0)
-		ft_append_token(&lx->tokens, ft_create_token(token));
+		append_token(&lx->tokens, create_token(token));
 	return ((t_lexer_state) delimiter_state);
 }
 
@@ -110,7 +86,7 @@ static t_lexer_state	delimiter_state(t_lexer *lx)
 	size_t	count_skipped_spaces;
 	char	next_non_whitespace_char;
 
-	count_skipped_spaces = ft_skip_whitespaces(&lx->input[lx->idx]);
+	count_skipped_spaces = skip_whitesps(&lx->input[lx->idx]);
 	next_non_whitespace_char = lx->input[lx->idx + count_skipped_spaces];
 	if (next_non_whitespace_char == '\0')
 		return (NULL);
@@ -119,11 +95,11 @@ static t_lexer_state	delimiter_state(t_lexer *lx)
 		lx->idx += count_skipped_spaces - 1;
 		token.value = NULL;
 		token.type = TOKEN_DELIMITER;
-		ft_append_token(&lx->tokens, ft_create_token(token));
+		append_token(&lx->tokens, create_token(token));
 	}
 	else
 		lx->idx += -1;
-	if (ft_is_meta_char(next_non_whitespace_char))
+	if (is_meta_char(next_non_whitespace_char))
 		return ((t_lexer_state) operator_state);
 	return ((t_lexer_state) word_state);
 }
@@ -132,30 +108,22 @@ static t_token_type	get_op_token_type(const char *input)
 {
 	if (!input || !*input)
 		return (TOKEN_UNKNOWN);
+	if (input[0] == '>' && input[1] == '>')
+		return (TOKEN_REDIR_APPEND);
 	if (input[0] == '>')
-	{
-		if (input[1] == '>')
-			return (TOKEN_REDIR_APPEND);
 		return (TOKEN_REDIR_OUT);
-	}
+	if (input[0] == '<' && input[1] == '<')
+		return (TOKEN_REDIR_HEREDOC);
 	if (input[0] == '<')
-	{
-		if (input[1] == '<')
-			return (TOKEN_REDIR_HEREDOC);
 		return (TOKEN_REDIR_IN);
-	}
+	if (input[0] == '&' && input[1] == '&')
+		return (TOKEN_AND);
 	if (input[0] == '&')
-	{
-		if (input[1] == '&')
-			return (TOKEN_AND);
 		return (TOKEN_AMPERSAND);
-	}
+	if (input[0] == '|' && input[1] == '|')
+		return (TOKEN_OR);
 	if (input[0] == '|')
-	{
-		if (input[1] == '|')
-			return (TOKEN_OR);
 		return (TOKEN_PIPE);
-	}
 	if (input[0] == ';')
 		return (TOKEN_SEMICOLON);
 	if (input[0] == '(')

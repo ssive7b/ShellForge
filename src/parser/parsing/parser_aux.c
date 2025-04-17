@@ -58,10 +58,10 @@ bool	add_arg(t_anode *node, const char *arg)
 	new_args[arg_count] = safe_strdup(arg);
 	if (!new_args[arg_count])
 	{
-		ft_free_2d_array(&new_args, arg_count);
+		free_2d_array(&new_args, arg_count);
 		return (false);
 	}
-	ft_free_2d_array(&node->args, -1);
+	free_2d_array(&node->args, -1);
 	node->args = new_args;
 	return (true);
 }

@@ -32,7 +32,7 @@ bool	validate_redirs(t_lexer *lexer)
 			if (!next || !is_arg_tok(next->type))
 			{
 				lexer->error = 1;
-				ft_error_msg("minishell: syntax error: redirection without target");
+				ft_error_msg("minishell: syntax error: redir without target");
 				return (false);
 			}
 		}

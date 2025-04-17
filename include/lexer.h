@@ -40,9 +40,10 @@ t_lexer	*run_tokenizer(const char *input);
 
 // lexer_utils.c
 t_lexer	*init_tokenizer(const char *input);
-t_token	*ft_create_token(t_token token_data);
-void	ft_append_token(t_token **tokens_queue, t_token *new_token);
-void	ft_print_tokens(t_token *tokens);
+t_token	*create_token(t_token token_data);
+void	append_token(t_token **tokens_queue, t_token *new_token);
+void	print_tokens(t_token *tokens);
+size_t	extract_word_token(t_lexer *lx, t_token *token, size_t start);
 
 // lexer_cleaners.c
 void	cleanup_lexer(t_lexer **lexer);

@@ -19,7 +19,7 @@
 
 static bool	is_valid_number(char *str)
 {
-	while (ft_is_whitespace(*str))
+	while (is_whitespace(*str))
 		str++;
 	if (*str == '\0')
 		return (false);
@@ -33,7 +33,7 @@ static bool	is_valid_number(char *str)
 			return (false);
 		str++;
 	}
-	while (ft_is_whitespace(*str))
+	while (is_whitespace(*str))
 		str++;
 	if (*str)
 		return (false);

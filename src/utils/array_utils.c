@@ -12,7 +12,7 @@
 
 #include "utils.h"
 
-void	ft_free_2d_array(char ***array, int n)
+void	free_2d_array(char ***array, int n)
 {
 	int	i;
 
@@ -64,7 +64,7 @@ bool	copy_args(char **dst, char **src, int count)
 		dst[i] = safe_strdup(src[i]);
 		if (!dst[i])
 		{
-			ft_free_2d_array(&dst, i);
+			free_2d_array(&dst, i);
 			return (false);
 		}
 		i++;

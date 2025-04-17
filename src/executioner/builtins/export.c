@@ -78,7 +78,7 @@ static void	export_var(char *var, t_list *env_list)
 	char	*key;
 	char	*value;
 
-	eq_index = ft_find_char(var, '=');
+	eq_index = find_char(var, '=');
 	if (eq_index == -1)
 	{
 		if (!get_env_entry(var, env_list))

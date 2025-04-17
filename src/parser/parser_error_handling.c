@@ -30,16 +30,16 @@ void	print_miss_tok(char *expected)
 	ft_putstr_fd("\n", 2);
 }
 
-void	parse_err(t_lexer *lexer, t_stack **operator_stack, t_stack **operand_stack, t_anode **node)
+void	parse_err(t_lexer *lex, t_stack **ops, t_stack **opnds, t_anode **node)
 {
-	if (lexer)
-		lexer->error = 1;
-	if (operand_stack)
-		stack_free(operator_stack);
-	if (operand_stack)
-		stack_free(operand_stack);
+	if (lex)
+		lex->error = 1;
+	if (opnds)
+		stack_free(ops);
+	if (opnds)
+		stack_free(opnds);
 	if (node && *node)
 		node_free(node);
-	if (!lexer->error)
+	if (!lex->error)
 		ft_error_msg("minishell: syntax error in command line");
 }

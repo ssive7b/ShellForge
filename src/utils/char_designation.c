@@ -12,12 +12,12 @@
 
 #include "char_designation.h"
 
-int	ft_is_whitespace(char c)
+int	is_whitespace(char c)
 {
 	return (c == '\t' || c == ' ');
 }
 
-int	ft_check_form_op(char prev, char current)
+int	check_form_op(char prev, char current)
 {
 	if ((prev == '<' && current == '<')
 		|| (prev == '>' && current == '>')
@@ -27,12 +27,12 @@ int	ft_check_form_op(char prev, char current)
 	return (0);
 }
 
-int	ft_is_quote(char c)
+int	is_quote(char c)
 {
 	return (c == SINGLE_QUOTE || c == DOUBLE_QUOTE);
 }
 
-int	ft_is_meta_char(const char c)
+int	is_meta_char(const char c)
 {
 	return (c == ' '
 		|| c == '\t'
@@ -47,10 +47,10 @@ int	ft_is_meta_char(const char c)
 		|| c == '>');
 }
 
-int	ft_is_unquoted_char(const char c)
+int	is_unq_char(const char c)
 {
-	return (!ft_is_meta_char(c)
-		&& !ft_is_quote(c)
-		&& !ft_is_whitespace(c)
+	return (!is_meta_char(c)
+		&& !is_quote(c)
+		&& !is_whitespace(c)
 		&& c != '\0');
 }

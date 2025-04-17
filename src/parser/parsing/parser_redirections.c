@@ -16,6 +16,8 @@
 #include "parser.h"
 #include "utils.h"
 
+static bool	fail_redir(t_lexer *lex, t_anode *cmd, t_redir **redir, char *msg);
+
 bool	add_redir(t_lexer *lexer, t_anode *cmd)
 {
 	t_redir	*redir;
@@ -26,21 +28,11 @@ bool	add_redir(t_lexer *lexer, t_anode *cmd)
 	next_token(lexer);
 	skip_delims(lexer);
 	if (!lexer->tokens || !is_arg_tok(lexer->tokens->type))
-	{
-		ft_error_msg("Error: Expected word after redirection");
-		lexer->error = 1;
-		safe_free((void **)&redir);
-		clr_redirs(&(cmd->redirs));
-		return (false);
-	}
+		return (fail_redir(lexer, cmd, &redir,
+				"Error: Expected word after redirection"));
 	if (!set_redir_tgt(lexer, redir))
-	{
-		ft_error_msg("Error: Unable to set the redirection target");
-		lexer->error = 1;
-		safe_free((void **)&redir);
-		clr_redirs(&(cmd->redirs));
-		return (false);
-	}
+		return (fail_redir(lexer, cmd, &redir,
+				"Error: Unable to set the redirection target"));
 	if (!cmd->redirs)
 		cmd->redirs = NULL;
 	ft_lstadd_back(&cmd->redirs, ft_lstnew(redir));
@@ -93,4 +85,13 @@ bool	set_redir_tgt(t_lexer *lexer, t_redir *redir)
 	else
 		redir->file_name = value;
 	return (true);
+}
+
+static bool	fail_redir(t_lexer *lex, t_anode *cmd, t_redir **redir, char *msg)
+{
+	ft_error_msg(msg);
+	lex->error = 1;
+	safe_free((void **)redir);
+	clr_redirs(&(cmd->redirs));
+	return (false);
 }

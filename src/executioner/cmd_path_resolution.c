@@ -107,12 +107,12 @@ static char	*search_in_path(const char *cmd, const char *path_val, t_shell *sh)
 	{
 		epath = ft_strjoin_multiple((char *[]){paths[i], "/", (char *)cmd}, 3);
 		if (!epath)
-			return (ft_free_2d_array(&paths, -1), NULL);
+			return (free_2d_array(&paths, -1), NULL);
 		if (access(epath, F_OK | X_OK) == 0)
-			return (ft_free_2d_array(&paths, -1), epath);
+			return (free_2d_array(&paths, -1), epath);
 		safe_free((void **)&epath);
 	}
-	ft_free_2d_array(&paths, -1);
+	free_2d_array(&paths, -1);
 	set_error(sh, 127, "Command not found");
 	return (NULL);
 }

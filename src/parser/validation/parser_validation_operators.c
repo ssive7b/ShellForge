@@ -16,40 +16,30 @@
 #include "parser.h"
 #include "utils.h"
 
-bool	validate_ops(t_lexer *lexer) // Ensures that consecutive operators are handled correctly
+static bool	op_err(t_lexer *lexer, char *value);
+
+bool	validate_ops(t_lexer *lexer)
 {
 	t_token	*current;
 	t_token	*prev;
 
 	current = lexer->tokens;
 	prev = NULL;
-	while(current)
+	while (current)
 	{
 		if (prev && is_op_tok(prev->type) && is_op_tok(current->type))
-		{
-			lexer->error = 1;
-			print_syn_err(current->value);
-			return (false);
-		}
+			return (op_err(lexer, current->value));
 		if (!prev && is_op_tok(current->type) && current->type != TOKEN_LPAREN)
-		{
-			lexer->error = 1;
-			print_syn_err(current->value);
-			return (false);
-		}
+			return (op_err(lexer, current->value));
 		prev = current;
 		current = current->next;
 	}
 	if (prev && is_op_tok(prev->type) && prev->type != TOKEN_RPAREN)
-	{
-		lexer->error = 1;
-		print_syn_err("newline");
-		return (false);
-	}
+		return (op_err(lexer, "newline"));
 	return (true);
 }
 
-bool validate_pipes(t_lexer *lexer) // check for consecutive piping operators or if input starts with a pipe
+bool	validate_pipes(t_lexer *lexer)
 {
 	t_token	*current;
 	bool	command_found;
@@ -73,4 +63,11 @@ bool validate_pipes(t_lexer *lexer) // check for consecutive piping operators or
 		current = current->next;
 	}
 	return (true);
+}
+
+static bool	op_err(t_lexer *lexer, char *value)
+{
+	lexer->error = 1;
+	print_syn_err(value);
+	return (false);
 }

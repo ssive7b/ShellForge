@@ -32,7 +32,7 @@ void	node_free(t_anode **node)
 		if ((*node)->args)
 		{
 			i = 0;
-			while((*node)->args[i])
+			while ((*node)->args[i])
 			{
 				safe_free((void **)&(*node)->args[i]);
 				i++;
@@ -63,12 +63,12 @@ void	stack_free(t_stack **stack)
 	*stack = NULL;
 }
 
-void	parser_cleanup(t_stack **operator_stack, t_stack **operand_stack, t_anode **node)
+void	parser_cleanup(t_stack **ops, t_stack **opnds, t_anode **node)
 {
-	if (operand_stack)
-		stack_free(operator_stack);
-	if (operand_stack)
-		stack_free(operand_stack);
+	if (opnds)
+		stack_free(ops);
+	if (opnds)
+		stack_free(opnds);
 	if (node && *node)
 		node_free(node);
 }
