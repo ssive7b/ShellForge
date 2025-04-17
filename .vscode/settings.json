@@ -15,7 +15,14 @@
 		"unistd.h": "c",
 		"signal.h": "c",
 		"readline.h": "c",
-		"signal_handlers.h": "c"
+		"signal_handlers.h": "c",
+		"optional": "c",
+		"system_error": "c",
+		"array": "c",
+		"functional": "c",
+		"tuple": "c",
+		"type_traits": "c",
+		"utility": "c"
 	},
 	"makefile.configureOnOpen": false
 }

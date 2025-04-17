@@ -30,7 +30,7 @@ bool	add_redir(t_lexer *lexer, t_anode *cmd)
 		ft_error_msg("Error: Expected word after redirection");
 		lexer->error = 1;
 		safe_free((void **)&redir);
-		clear_redirs(&(cmd->redirections));
+		clr_redirs(&(cmd->redirs));
 		return (false);
 	}
 	if (!set_redir_tgt(lexer, redir))
@@ -38,12 +38,12 @@ bool	add_redir(t_lexer *lexer, t_anode *cmd)
 		ft_error_msg("Error: Unable to set the redirection target");
 		lexer->error = 1;
 		safe_free((void **)&redir);
-		clear_redirs(&(cmd->redirections));
+		clr_redirs(&(cmd->redirs));
 		return (false);
 	}
-	if (!cmd->redirections)
-		cmd->redirections = NULL;
-	ft_lstadd_back(&cmd->redirections, ft_lstnew(redir));
+	if (!cmd->redirs)
+		cmd->redirs = NULL;
+	ft_lstadd_back(&cmd->redirs, ft_lstnew(redir));
 	if (lexer->tokens->next)
 		next_token(lexer);
 	return (true);

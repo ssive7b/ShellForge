@@ -13,13 +13,7 @@
 #include <stdio.h>
 #include "ast_mock.h"
 #include "minishell.h"
-
-char	**get_cwd(void)
-{
-	static char	*cwd = NULL;
-
-	return (&cwd);
-}
+#include "utils.h"
 
 void	exec_pwd(t_anode *node)
 {
@@ -31,8 +25,12 @@ void	exec_pwd(t_anode *node)
 	buffer = malloc(sizeof(char) * size_buffer);
 	if (!buffer)
 		return ;
-	getcwd(buffer, size_buffer);
-	printf("%s\n", buffer);
-	*get_cwd() = buffer;
-	// free buffer???
+	if (getcwd(buffer, size_buffer) == NULL)
+	{
+		perror("pwd");
+		safe_free((void **)&buffer);
+		return ;
+	}
+	ft_printf("%s\n", buffer);
+	safe_free((void **)&buffer);
 }

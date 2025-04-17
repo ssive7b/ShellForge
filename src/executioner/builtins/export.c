@@ -74,7 +74,6 @@ static bool	is_valid_export_expr(const char *str)
 static void	export_var(char *var, t_list *env_list)
 {
 	t_env	*existing_entry;
-	t_list	*new_env_node;
 	int		eq_index;
 	char	*key;
 	char	*value;
@@ -83,10 +82,7 @@ static void	export_var(char *var, t_list *env_list)
 	if (eq_index == -1)
 	{
 		if (!get_env_entry(var, env_list))
-		{
-			new_env_node = create_new_env_node(ft_strdup(var), NULL);
-			ft_lstadd_back(&env_list, new_env_node);
-		}
+			ft_lstadd_back(&env_list, create_env_node(ft_strdup(var), NULL));
 		return ;
 	}
 	key = ft_substr(var, 0, eq_index);
@@ -95,7 +91,7 @@ static void	export_var(char *var, t_list *env_list)
 	if (existing_entry)
 	{
 		update_env_entry(existing_entry, value);
-		free(key);
+		safe_free((void **)&key);
 	}
 	else
 		add_env_entry(key, value, env_list);

@@ -15,6 +15,7 @@
 #include "ast_mock.h"
 #include "minishell.h"
 #include "char_designation.h"
+#include "utils.h"
 
 static bool	is_valid_number(char *str)
 {
@@ -55,7 +56,7 @@ void	exec_exit(t_anode *node)
 		if (node->args[2])
 		{
 			node->exit_status = 1;
-			ft_putstr_fd("minishell: exit: too many arguments\n", STDERR_FILENO);
+			shell_error("exit", "too many arguments");
 			return ;
 		}
 		node->exit_status = ft_atoi(node->args[1]) % 256;

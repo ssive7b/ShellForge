@@ -26,7 +26,7 @@
 static bool	is_command_executable(const char *path, t_shell *sh);
 static char	*try_direct_execution(const char *cmd, t_shell *sh);
 static char	*try_current_directory(const char *cmd, t_shell *sh);
-static char	*search_in_path(const char *cmd, const char *path_value, t_shell *sh);
+static char	*search_in_path(const char *cmd, const char *path_val, t_shell *sh);
 
 char	*find_cmd_path(t_shell *sh, t_list *env_list, char *cmd_name)
 {
@@ -86,37 +86,31 @@ static char	*try_current_directory(const char *cmd, t_shell *sh)
 	executable = (access(path, F_OK | X_OK) == 0);
 	if (!executable)
 	{
-		free(path);
+		safe_free((void **)&path);
 		set_error(sh, 127, "Command not found");
 		return (NULL);
 	}
 	return (path);
 }
 
-static char	*search_in_path(const char *cmd, const char *path_value, t_shell *sh)
+static char	*search_in_path(const char *cmd, const char *path_val, t_shell *sh)
 {
 	char	**paths;
-	char	*full_path;
+	char	*epath;
 	int		i;
 
-	paths = ft_split(path_value, ':');
+	paths = ft_split(path_val, ':');
 	if (!paths)
 		return (NULL);
 	i = -1;
 	while (paths[++i])
 	{
-		full_path = ft_strjoin_multiple((char *[]){paths[i], "/", (char *)cmd}, 3);
-		if (!full_path)
-		{
-			ft_free_2d_array(&paths, -1);
-			return (NULL);
-		}
-		if (access(full_path, F_OK | X_OK) == 0)
-		{
-			ft_free_2d_array(&paths, -1);
-			return (full_path);
-		}
-		free(full_path);
+		epath = ft_strjoin_multiple((char *[]){paths[i], "/", (char *)cmd}, 3);
+		if (!epath)
+			return (ft_free_2d_array(&paths, -1), NULL);
+		if (access(epath, F_OK | X_OK) == 0)
+			return (ft_free_2d_array(&paths, -1), epath);
+		safe_free((void **)&epath);
 	}
 	ft_free_2d_array(&paths, -1);
 	set_error(sh, 127, "Command not found");

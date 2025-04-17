@@ -22,7 +22,7 @@
 
 void	exec_ast(t_shell *sh, t_anode *cmd_node)
 {
-	t_exec_table exec_table;
+	t_exec_table	exec_table;
 
 	init_exec_table(&exec_table);
 	if (!cmd_node)

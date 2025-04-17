@@ -29,10 +29,10 @@ void	*exec_command(t_shell *sh, t_anode *node)
 
 	if (!node || !node->args || !node->args[0])
 		return (update_exit_code(sh, node), NULL);
-	if (node->redirections)
+	if (node->redirs)
 	{
 		exec_redir(sh, node);
-		if (!node->redirections)
+		if (!node->redirs)
 			return (update_exit_code(sh, node), NULL);
 	}
 	if (is_builtin(node->args[0]))
@@ -82,9 +82,9 @@ void	*exec_redir(t_shell *sh, t_anode *node)
 	t_redir	*redir;
 	int		fd;
 
-	if (!node || !node->redirections)
+	if (!node || !node->redirs)
 		return (NULL);
-	redir_list = node->redirections;
+	redir_list = node->redirs;
 	while (redir_list)
 	{
 		redir = (t_redir *)redir_list->content;
@@ -93,11 +93,7 @@ void	*exec_redir(t_shell *sh, t_anode *node)
 		else
 			fd = open_redir_flle(sh, redir->file_name, redir->type);
 		if (fd == -1)
-		{
-			node->exit_status = 1;
-			clear_redirs(&(node->redirections));
-			return (NULL);
-		}
+			return (node->exit_status = 1, clr_redirs(&(node->redirs)), NULL);
 		if (redir->type == REDIR_INPUT || redir->type == REDIR_HEREDOC)
 			node->fd_in = fd;
 		else

@@ -18,6 +18,8 @@
 #include "executioner.h"
 #include "utils.h"
 
+static char	*format_env_entry(t_env *env_entry);
+
 void	update_env_entry(t_env *existing_entry, char *value)
 {
 	free(existing_entry->value);
@@ -28,14 +30,13 @@ void	add_env_entry(char *key, char *value, t_list *env_list)
 {
 	t_list	*new_node;
 
-	new_node = create_new_env_node(key, value);
+	new_node = create_env_node(key, value);
 	ft_lstadd_back(&env_list, new_node);
 }
 
 char	**get_sorted_env(t_list *env_list)
 {
 	t_list	*env_node;
-	t_env	*env_entry;
 	char	**sorted_env_array;
 	size_t	i;
 	size_t	env_size;
@@ -48,16 +49,7 @@ char	**get_sorted_env(t_list *env_list)
 	i = 0;
 	while (env_node)
 	{
-		env_entry = env_node->content;
-		if (env_entry->value)
-		{
-			if (*env_entry->value == '\0')
-				sorted_env_array[i] = ft_strjoin_multiple((char *[]){env_entry->key, "=", "\"\""}, 3);
-			else
-				sorted_env_array[i] = ft_strjoin_multiple((char *[]){env_entry->key, "=", env_entry->value}, 3);
-		}
-		else
-			sorted_env_array[i] = ft_strdup(env_entry->key);
+		sorted_env_array[i] = format_env_entry(env_node->content);
 		env_node = env_node->next;
 		i++;
 	}
@@ -82,4 +74,19 @@ void	print_sorted_env(t_anode *node, char **sorted_env_array)
 	}
 	free(sorted_env_array);
 	sorted_env_array = NULL;
+}
+
+static char	*format_env_entry(t_env *env_entry)
+{
+	char	*value_str;
+	char	*res;
+
+	if (!env_entry->value)
+		return (ft_strdup(env_entry->key));
+	if (*env_entry->value == '\0')
+		value_str = "\"\"";
+	else
+		value_str = env_entry->value;
+	res = ft_strjoin_multiple((char *[]){env_entry->key, "=", value_str}, 3);
+	return (res);
 }

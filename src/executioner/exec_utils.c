@@ -26,7 +26,7 @@
 #include "utils.h"
 #include "signal_handlers.h"
 
-static bool	validate_redir_file(t_shell *sh, const char *file_name, t_redir_type e_redir_type);
+static bool	validate_file(t_shell *sh, const char *fname, t_redir_type rtype);
 
 pid_t	fork_extern_cmd(t_shell *sh, t_anode *node)
 {
@@ -90,9 +90,9 @@ int	open_redir_flle(t_shell *sh, char *file_name, t_redir_type redir_type)
 	int	fd;
 	int	flags;
 
-	if (!validate_redir_file(sh, file_name, redir_type))
+	if (!validate_file(sh, file_name, redir_type))
 		return (-1);
-	if (redir_type == REDIR_INPUT)	// populate the open_flags variable in the redir struct later
+	if (redir_type == REDIR_INPUT)
 		flags = O_RDONLY;
 	else if (redir_type == REDIR_OUTPUT)
 		flags = O_WRONLY | O_CREAT | O_TRUNC;
@@ -111,25 +111,25 @@ int	open_redir_flle(t_shell *sh, char *file_name, t_redir_type redir_type)
 	return (fd);
 }
 
-static bool	validate_redir_file(t_shell *sh, const char *file_name, t_redir_type e_redir_type)
+static bool	validate_file(t_shell *sh, const char *fname, t_redir_type rtype)
 {
-	if (!file_name)
+	if (!fname)
 	{
 		set_error(sh, 1, "No filename provided for redirection");
 		return (false);
 	}
-	if (e_redir_type == REDIR_INPUT && access(file_name, F_OK) == -1)
+	if (rtype == REDIR_INPUT && access(fname, F_OK) == -1)
 	{
-		sh->current_cmd = (char *)file_name;
+		sh->current_cmd = (char *)fname;
 		set_error(sh, 1, "No such file or directory");
 		display_error(sh);
 		sh->current_cmd = NULL;
 		return (false);
 	}
-	if ((e_redir_type == REDIR_OUTPUT || e_redir_type == REDIR_APPEND)
-		&& access(file_name, F_OK) == 0 && access(file_name, W_OK) == -1)
+	if ((rtype == REDIR_OUTPUT || rtype == REDIR_APPEND)
+		&& access(fname, F_OK) == 0 && access(fname, W_OK) == -1)
 	{
-		sh->current_cmd = (char *)file_name;
+		sh->current_cmd = (char *)fname;
 		set_error(sh, 1, "Permission denied");
 		display_error(sh);
 		sh->current_cmd = NULL;

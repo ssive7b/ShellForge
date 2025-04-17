@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipe_utils.c                                       :+:      :+:    :+:   */
+/*   pipe_setup.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sstoev <sstoev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/06 03:07:57 by sstoev            #+#    #+#             */
-/*   Updated: 2025/04/06 03:07:58 by sstoev           ###   ########.fr       */
+/*   Updated: 2025/04/17 15:16:28 by sstoev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,9 @@
 #include "utils.h"
 #include "signal_handlers.h"
 
-void	setup_pipe_redirs(t_anode *cmd_node, int pipefd[2], int is_writer)
+void	setup_pipe_redirs(t_anode *cmd_node, int pipefd[2], int is_wr)
 {
-	if (is_writer)
+	if (is_wr)
 	{
 		close(pipefd[0]);
 		dup2(pipefd[1], STDOUT_FILENO);
@@ -44,27 +44,6 @@ void	setup_pipe_redirs(t_anode *cmd_node, int pipefd[2], int is_writer)
 	}
 }
 
-pid_t	fork_pipe_cmd(t_shell *sh, t_anode *cmd_node, int pipefd[2], int is_writer)
-{
-	pid_t	pid;
-
-	pid = fork();
-	if (pid == -1)
-	{
-		set_error(sh, 1, strerror(errno));
-		display_error(sh);
-		return (-1);
-	}
-	if (pid == 0)
-	{
-		restore_default_signals();
-		setup_pipe_redirs(cmd_node, pipefd, is_writer);
-		exec_ast(sh, cmd_node);
-		exit(cmd_node->exit_status);
-	}
-	return (pid);
-}
-
 bool	create_pipe(t_shell *sh, t_anode *node, int pipefd[2])
 {
 	if (pipe(pipefd) == -1)
@@ -78,50 +57,8 @@ bool	create_pipe(t_shell *sh, t_anode *node, int pipefd[2])
 	return (true);
 }
 
-void	handle_fork_err(pid_t left_pid, int pipefd[2])
+void	close_pipe(int pipefd[2])
 {
 	close(pipefd[0]);
 	close(pipefd[1]);
-	if (left_pid > 0)
-	{
-		kill(left_pid, SIGTERM);
-		waitpid(left_pid, NULL, 0);
-	}
-}
-
-void	wait_pipeline(t_shell *sh, pid_t left_pid, pid_t right_pid, int *exit_status)
-{
-	int	status;
-
-	setup_parent_signals();
-	wait_child(sh, left_pid, &status);
-	wait_child(sh, right_pid, exit_status);
-	sh->last_exit_code = *exit_status;
-	setup_interactive_signals();
-}
-
-void	close_pipe(int	pipefd[2])
-{
-	close(pipefd[0]);
-	close(pipefd[1]);
-}
-
-
-void	wait_child(t_shell *sh, pid_t cpid, int *exit_status)
-{
-	int	status;
-
-	if (waitpid(cpid, &status, 0) == -1)
-	{
-		set_error(sh, 1, strerror(errno));
-		display_error(sh);
-		*exit_status = 1;
-		return ;
-	}
-	if (WIFEXITED(status))
-    	*exit_status = WEXITSTATUS(status);
-	else if (WIFSIGNALED(status))
-		handle_child_signal(WTERMSIG(status), exit_status);
- 	else
-    	*exit_status = 1;
 }

@@ -35,7 +35,6 @@ int	main(int argc, char **argv, char **envp)
 	if (argc != 1 || argv[1])
 		return (1);
 	shell = init_minishell(envp);
-	setup_interactive_signals();
 	while (1)
 	{
 		shell->input = readline(SHELL_PROMPT);

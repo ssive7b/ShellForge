@@ -76,7 +76,7 @@ t_env	*get_env_entry(char *key, t_list *env_list)
 	return (NULL);
 }
 
-t_list	*create_new_env_node(char *key, char *value)
+t_list	*create_env_node(char *key, char *value)
 {
 	t_list	*env_node;
 	t_env	*env_entry;

@@ -31,6 +31,7 @@ char	*safe_strdup(const char *str);
 
 // error_handlers.c
 void	ft_error_msg(const char *message);
+void	shell_error(char *command, char *message);
 
 // debug_utils.c
 void	print_stack(t_stack *stack, const char *name);

@@ -37,7 +37,8 @@ SRC						=	$(SRC_DIR)/app/main.c											\
 							$(SRC_DIR)/executioner/init_execs.c								\
 							$(SRC_DIR)/executioner/execute.c								\
 							$(SRC_DIR)/executioner/exec_mode_handlers.c						\
-							$(SRC_DIR)/executioner/pipe_utils.c								\
+							$(SRC_DIR)/executioner/pipe_setup.c								\
+							$(SRC_DIR)/executioner/pipe_process.c							\
 							$(SRC_DIR)/executioner/cmd_path_resolution.c					\
 							$(SRC_DIR)/executioner/exec_utils.c								\
 							$(SRC_DIR)/executioner/heredoc.c								\

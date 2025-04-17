@@ -58,7 +58,7 @@ static void	initialize_ast_node(t_anode *node, t_ntype type)
     node->fd_in = STDIN_FILENO;
     node->fd_out = STDOUT_FILENO;
     node->exit_status = 0;
-    node->redirections = NULL;
+    node->redirs = NULL;
     node->left = NULL;
     node->right = NULL;
 }

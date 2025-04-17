@@ -50,14 +50,16 @@ int		open_redir_flle(t_shell *sh, char *file_name, t_redir_type redir_type);
 // execute.c
 void	exec_ast(t_shell *sh, t_anode *node);
 
-// pipe_utils.c
-void	setup_pipe_redirs(t_anode *cmd, int pipefd[2], int is_writer);
-pid_t	fork_pipe_cmd(t_shell *sh, t_anode *cmd, int pipefd[2], int is_writer);
+// pipe_setup.c
+void	setup_pipe_redirs(t_anode *cmd, int pipefd[2], int is_wr);
+void	close_pipe(int pipefd[2]);
+bool	create_pipe(t_shell *sh, t_anode *node, int pipefd[2]);
+
+// pipe_process.c
+pid_t	fork_pipe_cmd(t_shell *sh, t_anode *cmd, int pipefd[2], int is_wr);
 void	handle_fork_err(pid_t lpid, int pipefd[2]);
 void	wait_pipeline(t_shell *sh, pid_t lpid, pid_t rpid, int *exit_status);
-void	close_pipe(int pipefd[2]);
 void	wait_child(t_shell *sh, pid_t cpid, int *exit_status);
-bool	create_pipe(t_shell *sh, t_anode *node, int pipefd[2]);
 
 // heredoc.c
 int		get_hdoc_fd(t_redir *redir);
@@ -86,7 +88,6 @@ char	**get_sorted_env(t_list *env_list);
 void	print_sorted_env(t_anode *node, char **sorted_env_array);
 
 // pwd.c
-char	**get_cwd(void);
 void	exec_pwd(t_anode *node);
 
 // unset.c

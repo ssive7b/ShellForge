@@ -91,7 +91,7 @@ static void	update_env_var(char *key, char *value)
 	}
 	else
 	{
-		new_env_node = create_new_env_node(ft_strdup(key), ft_strdup(value));
+		new_env_node = create_env_node(ft_strdup(key), ft_strdup(value));
 		ft_lstadd_back(&current_env_node, new_env_node);
 	}
 }

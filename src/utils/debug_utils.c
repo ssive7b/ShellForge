@@ -16,7 +16,7 @@
 
 static void	print_node_type(t_anode *node, int level);
 static void	print_command_node(t_anode *node, int level);
-static void	print_redirections(t_list *redirections, int level);
+static void	print_redirections(t_list *redirs, int level);
 
 void	print_stack(t_stack *stack, const char *name)
 {
@@ -57,7 +57,7 @@ static void	print_node_type(t_anode *node, int level)
 		ft_printf("OR\n");
 	else if (node->type == NODE_REDIRECTION)
 	{
-		redir = node->redirections->content;
+		redir = node->redirs->content;
 		ft_printf("Redirection: %d\n", redir->type);
 	}
 }
@@ -66,7 +66,7 @@ static void	print_command_node(t_anode *node, int level)
 {
 	int		i;
 	int		j;
-	t_list	*redirections;
+	t_list	*redirs;
 
 	i = 0;
 	while (i++ < level)
@@ -79,19 +79,19 @@ static void	print_command_node(t_anode *node, int level)
 		j++;
 	}
 	ft_printf("\n");
-	redirections = node->redirections;
-	if (redirections)
-		print_redirections(redirections, level + 1);
+	redirs = node->redirs;
+	if (redirs)
+		print_redirections(redirs, level + 1);
 }
 
-static void	print_redirections(t_list *redirections, int level)
+static void	print_redirections(t_list *redirs, int level)
 {
 	t_redir	*redir;
 	int		i;
 
-	while (redirections)
+	while (redirs)
 	{
-		redir = redirections->content;
+		redir = redirs->content;
 		i = 0;
 		while (i++ < level)
 			ft_printf(" ");
@@ -101,6 +101,6 @@ static void	print_redirections(t_list *redirections, int level)
 		else
 			ft_printf("Redirection: type: %d file: %s\n", redir->type,
 				redir->delimiter_heredoc);
-		redirections = redirections->next;
+		redirs = redirs->next;
 	}
 }

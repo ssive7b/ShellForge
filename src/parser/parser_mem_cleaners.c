@@ -40,8 +40,8 @@ void	node_free(t_anode **node)
 			safe_free((void **)&(*node)->args);
 		}
 	}
-	if ((*node)->redirections)
-		clear_redirs(&(*node)->redirections);
+	if ((*node)->redirs)
+		clr_redirs(&(*node)->redirs);
 	safe_free((void **)node);
 }
 
@@ -73,11 +73,11 @@ void	parser_cleanup(t_stack **operator_stack, t_stack **operand_stack, t_anode *
 		node_free(node);
 }
 
-void	clear_redirs(t_list **redirections)
+void	clr_redirs(t_list **redirs)
 {
-	if (!redirections)
+	if (!redirs)
 		return ;
-	ft_lstclear(redirections, del_redir);
+	ft_lstclear(redirs, del_redir);
 }
 
 void	del_redir(void *content)

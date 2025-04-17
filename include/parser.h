@@ -73,7 +73,7 @@ bool	validate_pipes(t_lexer *lex);
 void	node_free(t_anode **node);
 void	stack_free(t_stack **stack);
 void	parser_cleanup(t_stack **ops, t_stack **opnds, t_anode **node);
-void	clear_redirs(t_list **redirs);
+void	clr_redirs(t_list **redirs);
 void	del_redir(void *content);
 
 // parser_error_handling.c
