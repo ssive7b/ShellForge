@@ -14,17 +14,26 @@
 
 void	free_2d_array(char ***array, int n)
 {
-	int	i;
+	int		actual_size;
+	int		i;
 
-	i = 0;
 	if (!array || !*array)
 		return ;
+	i = 0;
+	if (n >= 0)
+	{
+		actual_size = 0;
+		while ((*array)[actual_size] != NULL)
+			actual_size++;
+		if (n > actual_size)
+			n = actual_size;
+	}
 	while ((n == -1 || i < n) && (*array)[i])
 	{
 		safe_free((void **)&(*array)[i]);
 		i++;
 	}
-	safe_free((void **)(*array));
+	safe_free((void **)array);
 	*array = NULL;
 }
 

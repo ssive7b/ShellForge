@@ -30,11 +30,17 @@ t_lexer	*run_tokenizer(const char *input)
 	next_state = (t_lexer_state) word_state;
 	lx = init_tokenizer(input);
 	if (!lx)
-		return (NULL);
+		return (lx->error = 1, NULL);
 	lx->idx = skip_whitesps(input);
 	while (next_state && input[lx->idx])
 	{
 		next_state = (t_lexer_state) next_state(lx);
+		if (!next_state)
+		{
+			lx->error = 1;
+			cleanup_lexer(&lx);
+			return (NULL);
+		}
 		lx->idx++;
 	}
 	return (lx);
@@ -50,7 +56,9 @@ static t_lexer_state	word_state(t_lexer *lx)
 	if (!token.value)
 		return (NULL);
 	if (ft_strlen(token.value) > 0)
-		append_token(&lx->tokens, create_token(token));
+		if (!append_token(&lx->tokens, clone_token(token)))
+			return (safe_free((void **)&token.value), NULL);
+	safe_free((void **)&token.value);
 	return ((t_lexer_state) delimiter_state);
 }
 
@@ -76,7 +84,9 @@ t_lexer_state	operator_state(t_lexer *lx)
 		return (NULL);
 	lx->idx = lx->idx + len - 1;
 	if (ft_strlen(token.value) > 0)
-		append_token(&lx->tokens, create_token(token));
+		if (!append_token(&lx->tokens, clone_token(token)))
+			return (safe_free((void **)&token.value), NULL);
+	safe_free((void **)&token.value);
 	return ((t_lexer_state) delimiter_state);
 }
 
@@ -95,7 +105,7 @@ static t_lexer_state	delimiter_state(t_lexer *lx)
 		lx->idx += count_skipped_spaces - 1;
 		token.value = NULL;
 		token.type = TOKEN_DELIMITER;
-		append_token(&lx->tokens, create_token(token));
+		append_token(&lx->tokens, clone_token(token));
 	}
 	else
 		lx->idx += -1;

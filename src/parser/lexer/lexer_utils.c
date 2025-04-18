@@ -26,38 +26,52 @@ t_lexer	*init_tokenizer(const char *input)
 		return (NULL);
 	lx->input = ft_strdup(input);
 	if (!lx->input)
+	{
+		safe_free((void **)&lx);
 		return (NULL);
+	}
 	lx->idx = 0;
 	lx->tokens = NULL;
 	lx->error = 0;
 	return (lx);
 }
 
-t_token	*create_token(t_token token_data)
+t_token	*clone_token(t_token token_data)
 {
 	t_token	*new_token;
 
 	new_token = malloc(sizeof(t_token));
 	if (!new_token)
 		return (NULL);
-	*new_token = token_data;
+	new_token->type = token_data.type;
 	new_token->next = NULL;
+	if (token_data.value)
+	{
+		new_token->value = ft_strdup(token_data.value);
+		if (!new_token->value)
+			return (safe_free((void **)&new_token), NULL);
+	}
+	else
+		new_token->value = NULL;
 	return (new_token);
 }
 
-void	append_token(t_token **tokens_queue, t_token *new_token)
+bool	append_token(t_token **tokens_queue, t_token *new_token)
 {
 	t_token	*last_token;
 
+	if (!new_token)
+		return (false);
 	if (!*tokens_queue)
 	{
 		*tokens_queue = new_token;
-		return ;
+		return (true);
 	}
 	last_token = *tokens_queue;
 	while (last_token->next)
 		last_token = last_token->next;
 	last_token->next = new_token;
+	return (true);
 }
 
 void	print_tokens(t_token *tokens)
