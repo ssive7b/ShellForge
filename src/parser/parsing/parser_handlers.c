@@ -17,6 +17,7 @@
 #include "utils.h"
 
 static bool	parse_command_arguments(t_lexer *lex, t_anode *cmd);
+static char	*join_consecutive_tokens(t_lexer *lex);
 
 bool	handle_op_prec(t_lexer *lex, t_stack **ops, t_stack **opnds)
 {
@@ -90,14 +91,42 @@ t_anode	*parse_paren_expr(t_lexer *lex, t_stack **ops, t_stack **opnds)
 
 static bool	parse_command_arguments(t_lexer *lex, t_anode *cmd)
 {
+	char	*arg;
+	bool	success;
+
 	skip_delims(lex);
 	while (lex->tokens && is_arg_tok(lex->tokens->type))
 	{
-		if (!add_arg(cmd, lex->tokens->value))
+		arg = join_consecutive_tokens(lex);
+		if (!arg)
 			return (false);
-		next_token(lex);
+		success = add_arg(cmd, arg);
+		safe_free((void **)&arg);
+		if (!success)
+			return (false);
 		while (lex->tokens && lex->tokens->type == TOKEN_DELIMITER)
 			next_token(lex);
 	}
 	return (true);
+}
+
+static char	*join_consecutive_tokens(t_lexer *lex)
+{
+	char	*arg;
+	char	*temp;
+
+	arg = ft_strdup(lex->tokens->value);
+	if (!arg)
+		return (NULL);
+	next_token(lex);
+	while (lex->tokens && is_arg_tok(lex->tokens->type))
+	{
+		temp = arg;
+		arg = ft_strjoin(temp, lex->tokens->value);
+		safe_free((void **)&temp);
+		if (!arg)
+			return (NULL);
+		next_token(lex);
+	}
+	return (arg);
 }
