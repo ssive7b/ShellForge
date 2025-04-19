@@ -21,6 +21,7 @@
 static void	exec_cd_home(t_anode *node, char *oldpwd);
 static void	update_env_var(char *key, char *value);
 static void	handle_cd_error(t_anode *node, char *path);
+static char	*get_home_path(t_anode *node);
 
 void	exec_cd(t_anode *node)
 {
@@ -54,13 +55,9 @@ static void	exec_cd_home(t_anode *node, char *oldpwd)
 	char	*path_home;
 	char	*new_cwd;
 
-	path_home = ft_strdup(get_envp_value("HOME", *get_env()));
+	path_home = get_home_path(node);
 	if (!path_home)
-	{
-		ft_putstr_fd("minishell: cd: HOME not set\n", STDERR_FILENO);
-		node->exit_status = 1;
 		return ;
-	}
 	if (chdir(path_home) == 0)
 	{
 		update_env_var("OLDPWD", oldpwd);
@@ -101,4 +98,25 @@ static void	handle_cd_error(t_anode *node, char *path)
 	ft_putstr_fd("minishell: cd: ", STDERR_FILENO);
 	ft_putstr_fd(path, STDERR_FILENO);
 	node->exit_status = 1;
+}
+
+static char	*get_home_path(t_anode *node)
+{
+	char	*home_value;
+	char	*path_home;
+
+	home_value = get_envp_value("HOME", *get_env());
+	if (!home_value)
+	{
+		ft_putstr_fd("minishell: cd: HOME not set\n", STDERR_FILENO);
+		node->exit_status = 1;
+		return (NULL);
+	}
+	path_home = ft_strdup(home_value);
+	if (!path_home)
+	{
+		ft_putstr_fd("minishell: cd: memory error\n", STDERR_FILENO);
+		node->exit_status = 1;
+	}
+	return (path_home);
 }

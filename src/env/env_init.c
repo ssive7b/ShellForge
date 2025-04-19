@@ -27,21 +27,23 @@ t_list	*create_env_list(char **envp)
 	t_list	*env_node;
 	size_t	i;
 
-	env_list = NULL;
-	*get_env() = env_list;
 	if (!envp || !envp[0])
-		return (env_list);
-	i = 0;
-	while (envp[i])
+		env_list = create_minimal_env();
+	else
 	{
-		env_node = to_env_node(envp[i]);
-		if (!env_node)
+		env_list = NULL;
+		i = 0;
+		while (envp[i])
 		{
-			ft_lstclear(&env_list, free_env_content);
-			return (NULL);
+			env_node = to_env_node(envp[i]);
+			if (!env_node)
+			{
+				ft_lstclear(&env_list, free_env_content);
+				return (NULL);
+			}
+			ft_lstadd_back(&env_list, env_node);
+			i++;
 		}
-		ft_lstadd_back(&env_list, env_node);
-		i++;
 	}
 	*get_env() = env_list;
 	return (env_list);
