@@ -78,15 +78,24 @@ void	print_sorted_env(t_anode *node, char **sorted_env_array)
 
 static char	*format_env_entry(t_env *env_entry)
 {
-	char	*value_str;
+	char	*val;
 	char	*res;
+	bool	need_free;
 
 	if (!env_entry->value)
 		return (ft_strdup(env_entry->key));
+	need_free = false;
 	if (*env_entry->value == '\0')
-		value_str = "\"\"";
+		val = "\"\"";
 	else
-		value_str = env_entry->value;
-	res = ft_strjoin_multiple((char *[]){env_entry->key, "=", value_str}, 3);
+	{
+		val = ft_strjoin_multiple((char *[]){"\"", env_entry->value, "\""}, 3);
+		if (!val)
+			return (NULL);
+		need_free = true;
+	}
+	res = ft_strjoin_multiple((char *[]){env_entry->key, "=", val}, 3);
+	if (need_free)
+		safe_free((void **)&val);
 	return (res);
 }

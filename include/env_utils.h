@@ -39,4 +39,7 @@ t_list	*create_env_node(char *key, char *value);
 bool	is_valid_var_char(char c);
 char	*extract_var_name(const char *str, int *i);
 
+// env_default.c
+t_list	*create_minimal_env(void);
+
 #endif
