@@ -32,6 +32,7 @@ t_lexer	*init_tokenizer(const char *input)
 	}
 	lx->idx = 0;
 	lx->tokens = NULL;
+	lx->head = NULL;
 	lx->error = 0;
 	return (lx);
 }
@@ -56,18 +57,19 @@ t_token	*clone_token(t_token token_data)
 	return (new_token);
 }
 
-bool	append_token(t_token **tokens_queue, t_token *new_token)
+bool	add_token_to_lex(t_lexer *lex, t_token *new_token)
 {
 	t_token	*last_token;
 
 	if (!new_token)
 		return (false);
-	if (!*tokens_queue)
+	if (!lex->tokens)
 	{
-		*tokens_queue = new_token;
+		lex->tokens = new_token;
+		lex->head = new_token;
 		return (true);
 	}
-	last_token = *tokens_queue;
+	last_token = lex->tokens;
 	while (last_token->next)
 		last_token = last_token->next;
 	last_token->next = new_token;

@@ -27,9 +27,10 @@ t_list	*create_env_list(char **envp)
 	t_list	*env_node;
 	size_t	i;
 
-	if (!envp)
-		return (NULL);
 	env_list = NULL;
+	*get_env() = env_list;
+	if (!envp || !envp[0])
+		return (env_list);
 	i = 0;
 	while (envp[i])
 	{

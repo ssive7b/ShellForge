@@ -50,7 +50,7 @@ void	exec_exit(t_anode *node)
 			node->exit_status = 255;
 			ft_putstr_fd("minishell: exit: ", STDERR_FILENO);
 			ft_putstr_fd(node->args[1], STDERR_FILENO);
-			ft_putstr_fd(": numberic argument required\n", STDERR_FILENO);
+			ft_putstr_fd(": numeric argument required\n", STDERR_FILENO);
 			exit(255);
 		}
 		if (node->args[2])

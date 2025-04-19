@@ -29,6 +29,7 @@ typedef struct s_lexer
 	char			*input;
 	size_t			idx;	
 	t_token			*tokens;
+	t_token			*head;
 	int				error;
 }	t_lexer;
 
@@ -41,7 +42,7 @@ t_lexer	*run_tokenizer(const char *input);
 // lexer_utils.c
 t_lexer	*init_tokenizer(const char *input);
 t_token	*clone_token(t_token token_data);
-bool	append_token(t_token **tokens_queue, t_token *new_token);
+bool	add_token_to_lex(t_lexer *lex, t_token *new_token);
 void	print_tokens(t_token *tokens);
 size_t	extract_word_token(t_lexer *lx, t_token *token, size_t start);
 
