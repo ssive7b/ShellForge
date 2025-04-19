@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sstoev <sstoev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 19:52:01 by sstoev            #+#    #+#             */
-/*   Updated: 2025/04/12 23:15:40 by cschnath         ###   ########.fr       */
+/*   Updated: 2025/03/18 19:52:02 by sstoev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ast_mock.h"
-#include "env_utils.h"
-#include "executioner.h"
 #include "minishell.h"
+#include "executioner.h"
+#include "env_utils.h"
 
 int	is_builtin(char *cmd_name)
 {
@@ -34,7 +34,7 @@ int	is_builtin(char *cmd_name)
 	return (0);
 }
 
-void	exec_builtin(t_ast_node *cmd_node)
+void	exec_builtin(t_anode *cmd_node)
 {
 	if (ft_strcmp(cmd_node->args[0], "echo") == 0)
 		exec_echo(cmd_node);

@@ -3,27 +3,27 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sstoev <sstoev@student.42malaga.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/13 16:40:46 by cschnath          #+#    #+#             */
-/*   Updated: 2025/04/13 16:44:14 by cschnath         ###   ########.fr       */
+/*   Created: 2025/04/16 15:51:36 by sstoev            #+#    #+#             */
+/*   Updated: 2025/04/16 15:51:37 by sstoev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-# include "../libft/include/libft.h"
-# include "termios.h"
-# include "types.h"
 # include <linux/limits.h>
+# include <termios.h>
+# include "types.h"
+# include "../libft/include/libft.h"
 
 # define SHELL_PROMPT "minishell$> "
 
 typedef struct s_shell
 {
 	char			*input;
-	t_ast_node		*ast_root;
+	t_anode			*ast_root;
 	char			**envp;
 	t_list			*env_list;
 	char			*cwd;
@@ -37,16 +37,16 @@ typedef struct s_shell
 	int				std_out;
 	int				std_err;
 	char			*err_msg;
-	int				error_code;
-}					t_shell;
+}	t_shell;
 
 // inits.c
-t_shell				*init_minishell(char **envp);
+t_shell	*init_minishell(char **envp);
 
 // cleanup_central.c
-void				cleanup_iteration(t_shell *shell);
-void				cleanup_shell(t_shell *shell);
-void				display_error(t_shell *shell);
-void				set_error(t_shell *shell, int code, const char *msg);
+void	cleanup_iteration(t_shell *shell);
+void	cleanup_shell(t_shell *shell);
+void	display_error(t_shell *shell);
+void	set_error(t_shell *shell, int code, const char *msg);
+void	update_exit_code(t_shell *sh, t_anode *node);
 
 #endif

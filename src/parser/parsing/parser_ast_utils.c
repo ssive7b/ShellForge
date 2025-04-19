@@ -6,19 +6,19 @@
 /*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 01:21:51 by sstoev            #+#    #+#             */
-/*   Updated: 2025/04/13 20:29:50 by cschnath         ###   ########.fr       */
+/*   Updated: 2025/04/03 01:55:04 by sstoev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ast_mock.h"
-#include "lexer.h"
 #include "parser.h"
+#include "lexer.h"
 #include "utils.h"
-#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
-int	op_precedence(t_node_type type)
+int	op_precedence(t_ntype type)
 {
 	if (type == NODE_LPAREN || type == NODE_RPAREN)
 		return (3);
@@ -31,11 +31,11 @@ int	op_precedence(t_node_type type)
 	return (-1);
 }
 
-int	push_ast_stack(t_ast_stack **stack, t_ast_node *node)
+int	stack_push(t_stack **stack, t_anode *node)
 {
-	t_ast_stack	*new_node;
+	t_stack	*new_node;
 
-	new_node = malloc(sizeof(t_ast_stack));
+	new_node = malloc(sizeof(t_stack));
 	if (!new_node)
 		return (0);
 	new_node->node = node;
@@ -44,10 +44,10 @@ int	push_ast_stack(t_ast_stack **stack, t_ast_node *node)
 	return (1);
 }
 
-t_ast_node	*pop_ast_stack(t_ast_stack **stack)
+t_anode	*stack_pop(t_stack **stack)
 {
-	t_ast_stack	*current;
-	t_ast_node	*node;
+	t_stack	*current;
+	t_anode	*node;
 
 	current = *stack;
 	if (current == NULL)
@@ -58,12 +58,11 @@ t_ast_node	*pop_ast_stack(t_ast_stack **stack)
 	return (node);
 }
 
-bool	process_operator(t_ast_stack **operator_stack,
-		t_ast_stack **operand_stack)
+bool	apply_op(t_stack **operator_stack, t_stack **operand_stack)
 {
-	t_ast_node	*op_node;
-	t_ast_node	*right_operand;
-	t_ast_node	*left_operand;
+	t_anode	*op_node;
+	t_anode	*right_operand;
+	t_anode	*left_operand;
 
 	if (!operator_stack || !(*operator_stack) || !operand_stack)
 		return (false);
@@ -72,18 +71,18 @@ bool	process_operator(t_ast_stack **operator_stack,
 		ft_error_msg("Error: Not enough operands for operator");
 		return (false);
 	}
-	op_node = pop_ast_stack(operator_stack);
+	op_node = stack_pop(operator_stack);
 	if (!op_node)
 		return (false);
-	right_operand = pop_ast_stack(operand_stack);
-	left_operand = pop_ast_stack(operand_stack);
+	right_operand = stack_pop(operand_stack);
+	left_operand = stack_pop(operand_stack);
 	op_node->right = right_operand;
 	op_node->left = left_operand;
-	push_ast_stack(operand_stack, op_node);
+	stack_push(operand_stack, op_node);
 	return (true);
 }
 
-t_node_type	get_ast_node_type_from_token(t_token_type type)
+t_ntype	tok_to_node(t_token_type type)
 {
 	if (type == TOKEN_PIPE)
 		return (NODE_PIPE);

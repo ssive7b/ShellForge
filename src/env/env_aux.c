@@ -3,35 +3,35 @@
 /*                                                        :::      ::::::::   */
 /*   env_aux.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sstoev <sstoev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/19 14:03:45 by sstoev            #+#    #+#             */
-/*   Updated: 2025/04/12 23:33:00 by cschnath         ###   ########.fr       */
+/*   Updated: 2025/04/03 14:00:11 by sstoev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "env_utils.h"
 #include "utils.h"
 
-t_list	*to_env_node(char *env_s)
+t_list	*to_env_node(char *env_str)
 {
 	t_list	*env_node;
-	t_env	*env;
+	t_env	*env_entry;
 	char	*ptr_eq;
 	size_t	idx_eq;
 
-	if (!env_s)
+	if (!env_str)
 		return (NULL);
-	env = malloc(sizeof(t_env));
-	if (!env)
+	env_entry = malloc(sizeof(t_env));
+	if (!env_entry)
 		return (NULL);
-	ptr_eq = ft_strchr(env_s, '=');
+	ptr_eq = ft_strchr(env_str, '=');
 	if (!ptr_eq)
 		return (NULL);
-	idx_eq = ptr_eq - env_s;
-	env->key = ft_substr(env_s, 0, idx_eq);
-	env->value = ft_substr(env_s, idx_eq + 1, ft_strlen(env_s) - idx_eq - 1);
-	env_node = ft_lstnew((t_env *)env);
+	idx_eq = ptr_eq - env_str;
+	env_entry->key = ft_substr(env_str, 0, idx_eq);
+	env_entry->value = ft_strdup(env_str + idx_eq + 1);
+	env_node = ft_lstnew((t_env *)env_entry);
 	if (!env_node)
 		return (NULL);
 	return (env_node);
@@ -76,7 +76,7 @@ t_env	*get_env_entry(char *key, t_list *env_list)
 	return (NULL);
 }
 
-t_list	*create_new_env_node(char *key, char *value)
+t_list	*create_env_node(char *key, char *value)
 {
 	t_list	*env_node;
 	t_env	*env_entry;

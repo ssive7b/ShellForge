@@ -15,34 +15,34 @@
 #include "minishell.h"
 #include "parser.h"
 
-bool	is_command_token(t_token_type type)
+bool	is_cmd_tok(t_token_type type)
 {
 	return (type == TOKEN_WORD_UNQUOTED
 		|| type == TOKEN_WORD_DQUOTED
 		|| type == TOKEN_WORD_SQUOTED);
 }
 
-bool	is_operator_token(t_token_type type)
+bool	is_op_tok(t_token_type type)
 {
 	return (type == TOKEN_PIPE
 		|| type == TOKEN_AND
 		|| type == TOKEN_OR);
 }
 
-bool	is_argument_token(t_token_type type)
+bool	is_arg_tok(t_token_type type)
 {
 	return (type == TOKEN_WORD_UNQUOTED
 		|| type == TOKEN_WORD_DQUOTED
 		|| type == TOKEN_WORD_SQUOTED);
 }
 
-bool	is_command_separator(t_token_type type)
+bool	is_cmd_sep(t_token_type type)
 {
 	return (type == TOKEN_SEMICOLON
 		|| type == TOKEN_AMPERSAND);
 }
 
-bool	is_redirection_token(t_token_type type)
+bool	is_redir_tok(t_token_type type)
 {
 	return (type == TOKEN_REDIR_IN
 		|| type == TOKEN_REDIR_OUT

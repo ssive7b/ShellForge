@@ -3,27 +3,27 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sstoev <sstoev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 10:48:35 by sstoev            #+#    #+#             */
-/*   Updated: 2025/04/13 16:26:32 by cschnath         ###   ########.fr       */
+/*   Updated: 2025/03/25 10:48:36 by sstoev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ast_mock.h"
-#include "char_designation.h"
-#include "env_utils.h"
-#include "executioner.h"
-#include "minishell.h"
-#include "utils.h"
 #include <stdbool.h>
 #include <stdio.h>
+#include "char_designation.h"
+#include "ast_mock.h"
+#include "minishell.h"
+#include "env_utils.h"
+#include "executioner.h"
+#include "utils.h"
 
-static void	print_no_args_case(t_ast_node *node, t_list *env_list);
+static void	print_no_args_case(t_anode *node, t_list *env_list);
 static bool	is_valid_export_expr(const char *str);
 static void	export_var(char *var, t_list *env_list);
 
-void	exec_export(t_ast_node *node)
+void	exec_export(t_anode *node)
 {
 	size_t	i;
 
@@ -47,14 +47,14 @@ void	exec_export(t_ast_node *node)
 	}
 }
 
-static void	print_no_args_case(t_ast_node *node, t_list *env_list)
+static void	print_no_args_case(t_anode *node, t_list *env_list)
 {
 	char	**sorted_env_array;
 
-	sorted_env_array = get_sorted_env_array(env_list);
+	sorted_env_array = get_sorted_env(env_list);
 	if (!sorted_env_array)
 		return ;
-	print_sorted_env_list(node, sorted_env_array);
+	print_sorted_env(node, sorted_env_array);
 }
 
 static bool	is_valid_export_expr(const char *str)
@@ -71,14 +71,6 @@ static bool	is_valid_export_expr(const char *str)
 	return (false);
 }
 
-void	export_var2(char *var, t_list *env_list)
-{
-	t_list	*new_env;
-
-	new_env = create_new_env_node(ft_strdup(var), NULL);
-	ft_lstadd_back(&env_list, new_env);
-}
-
 static void	export_var(char *var, t_list *env_list)
 {
 	t_env	*existing_entry;
@@ -86,11 +78,11 @@ static void	export_var(char *var, t_list *env_list)
 	char	*key;
 	char	*value;
 
-	eq_index = ft_find_char(var, '=');
+	eq_index = find_char(var, '=');
 	if (eq_index == -1)
 	{
 		if (!get_env_entry(var, env_list))
-			export_var2(var, env_list);
+			ft_lstadd_back(&env_list, create_env_node(ft_strdup(var), NULL));
 		return ;
 	}
 	key = ft_substr(var, 0, eq_index);
@@ -98,9 +90,9 @@ static void	export_var(char *var, t_list *env_list)
 	existing_entry = get_env_entry(key, env_list);
 	if (existing_entry)
 	{
-		update_existing_env_entry(existing_entry, value);
-		free(key);
+		update_env_entry(existing_entry, value);
+		safe_free((void **)&key);
 	}
 	else
-		add_new_env_entry(key, value, env_list);
+		add_env_entry(key, value, env_list);
 }

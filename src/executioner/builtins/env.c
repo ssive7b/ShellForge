@@ -3,19 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sstoev <sstoev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 11:28:58 by sstoev            #+#    #+#             */
-/*   Updated: 2025/04/13 19:46:47 by cschnath         ###   ########.fr       */
+/*   Updated: 2025/03/24 11:29:00 by sstoev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ast_mock.h"
-#include "env_utils.h"
-#include "minishell.h"
 #include <stdio.h>
+#include "ast_mock.h"
+#include "minishell.h"
+#include "env_utils.h"
 
-void	exec_env(t_ast_node *node, t_list *env_list)
+void	exec_env(t_anode *node, t_list *env_list)
 {
 	t_list	*env_node_current;
 	t_env	*env_entry;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_bubble_sort.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sstoev <sstoev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:37:38 by sstoev            #+#    #+#             */
-/*   Updated: 2025/04/13 00:09:22 by cschnath         ###   ########.fr       */
+/*   Updated: 2025/03/26 11:37:39 by sstoev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void	ft_bubble_sort(char **arr, size_t size)
 	{
 		swapped = 0;
 		i = 0;
-		while (i < size - 1)
+		while (i < size -1)
 		{
 			if (ft_strcmp(arr[i], arr[i + 1]) > 0)
 			{

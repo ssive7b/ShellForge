@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sstoev <sstoev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 12:39:08 by sstoev            #+#    #+#             */
-/*   Updated: 2025/04/13 19:41:06 by cschnath         ###   ########.fr       */
+/*   Updated: 2025/03/24 12:39:10 by sstoev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,11 @@
 #include "ast_mock.h"
 #include "minishell.h"
 #include "char_designation.h"
+#include "utils.h"
 
 static bool	is_valid_number(char *str)
 {
-	while (ft_is_whitespace(*str))
+	while (is_whitespace(*str))
 		str++;
 	if (*str == '\0')
 		return (false);
@@ -32,14 +33,14 @@ static bool	is_valid_number(char *str)
 			return (false);
 		str++;
 	}
-	while (ft_is_whitespace(*str))
+	while (is_whitespace(*str))
 		str++;
 	if (*str)
 		return (false);
 	return (true);
 }
 
-void	exec_exit(t_ast_node *node)
+void	exec_exit(t_anode *node)
 {
 	ft_putstr_fd("exit\n", STDOUT_FILENO);
 	if (node->args[1])
@@ -49,14 +50,13 @@ void	exec_exit(t_ast_node *node)
 			node->exit_status = 255;
 			ft_putstr_fd("minishell: exit: ", STDERR_FILENO);
 			ft_putstr_fd(node->args[1], STDERR_FILENO);
-			ft_putstr_fd(": numberic argument required\n", STDERR_FILENO);
+			ft_putstr_fd(": numeric argument required\n", STDERR_FILENO);
 			exit(255);
 		}
 		if (node->args[2])
 		{
 			node->exit_status = 1;
-			ft_putstr_fd("minishell: exit: ", STDERR_FILENO);
-			ft_putstr_fd("too many arguments\n", STDERR_FILENO);
+			shell_error("exit", "too many arguments");
 			return ;
 		}
 		node->exit_status = ft_atoi(node->args[1]) % 256;

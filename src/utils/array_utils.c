@@ -3,28 +3,37 @@
 /*                                                        :::      ::::::::   */
 /*   array_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sstoev <sstoev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 23:43:57 by sstoev            #+#    #+#             */
-/*   Updated: 2025/04/12 23:54:13 by cschnath         ###   ########.fr       */
+/*   Updated: 2025/04/02 23:44:00 by sstoev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "utils.h"
 
-void	ft_free_2d_array(char ***array, int n)
+void	free_2d_array(char ***array, int n)
 {
-	int	i;
+	int		actual_size;
+	int		i;
 
-	i = 0;
 	if (!array || !*array)
 		return ;
+	i = 0;
+	if (n >= 0)
+	{
+		actual_size = 0;
+		while ((*array)[actual_size] != NULL)
+			actual_size++;
+		if (n > actual_size)
+			n = actual_size;
+	}
 	while ((n == -1 || i < n) && (*array)[i])
 	{
 		safe_free((void **)&(*array)[i]);
 		i++;
 	}
-	safe_free((void **)(*array));
+	safe_free((void **)array);
 	*array = NULL;
 }
 
@@ -64,7 +73,7 @@ bool	copy_args(char **dst, char **src, int count)
 		dst[i] = safe_strdup(src[i]);
 		if (!dst[i])
 		{
-			ft_free_2d_array(&dst, i);
+			free_2d_array(&dst, i);
 			return (false);
 		}
 		i++;

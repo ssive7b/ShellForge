@@ -3,36 +3,32 @@
 /*                                                        :::      ::::::::   */
 /*   cmd_path_resolution.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sstoev <sstoev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/05 13:30:51 by sstoev            #+#    #+#             */
-/*   Updated: 2025/04/13 20:05:09 by cschnath         ###   ########.fr       */
+/*   Updated: 2025/04/05 13:30:52 by sstoev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ast_mock.h"
-#include "env_utils.h"
-#include "executioner.h"
-#include "lexer.h"
-#include "minishell.h"
-#include "utils.h"
-#include <fcntl.h>
+#include <unistd.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <fcntl.h>
 #include <sys/stat.h>
-#include <unistd.h>
+#include "executioner.h"
+#include "lexer.h"
+#include "minishell.h"
+#include "ast_mock.h"
+#include "env_utils.h"
+#include "utils.h"
 
 static bool	is_command_executable(const char *path, t_shell *sh);
 static char	*try_direct_execution(const char *cmd, t_shell *sh);
 static char	*try_current_directory(const char *cmd, t_shell *sh);
-static char	*search_in_path(const char *cmd, const char *path_value,
-				t_shell *sh);
+static char	*search_in_path(const char *cmd, const char *path_val, t_shell *sh);
 
-// if (is_builtin(cmd_name))	
-// in case we want to run builtins in child process too
-//	return (ft_strdup(cmd_name));
-char	*find_exec_pathname(t_shell *sh, t_list *env_list, char *cmd_name)
+char	*find_cmd_path(t_shell *sh, t_list *env_list, char *cmd_name)
 {
 	char	*direct_path;
 	char	*path_value;
@@ -90,38 +86,33 @@ static char	*try_current_directory(const char *cmd, t_shell *sh)
 	executable = (access(path, F_OK | X_OK) == 0);
 	if (!executable)
 	{
-		free(path);
+		safe_free((void **)&path);
 		set_error(sh, 127, "Command not found");
 		return (NULL);
 	}
 	return (path);
 }
 
-static char	*search_in_path(const char *cmd, const char *path_value,
-		t_shell *sh)
+static char	*search_in_path(const char *cmd, const char *path_val, t_shell *sh)
 {
 	char	**paths;
-	char	*full_path;
+	char	*epath;
 	int		i;
 
-	paths = ft_split(path_value, ':');
+	paths = ft_split(path_val, ':');
 	if (!paths)
 		return (NULL);
 	i = -1;
 	while (paths[++i])
 	{
-		full_path = ft_strjoin_multiple((char *[]){paths[i], "/", (char *)cmd},
-				3);
-		if (!full_path)
-			return (ft_free_2d_array(&paths, -1), NULL);
-		if (access(full_path, F_OK | X_OK) == 0)
-		{
-			ft_free_2d_array(&paths, -1);
-			return (full_path);
-		}
-		free(full_path);
+		epath = ft_strjoin_multiple((char *[]){paths[i], "/", (char *)cmd}, 3);
+		if (!epath)
+			return (free_2d_array(&paths, -1), NULL);
+		if (access(epath, F_OK | X_OK) == 0)
+			return (free_2d_array(&paths, -1), epath);
+		safe_free((void **)&epath);
 	}
-	ft_free_2d_array(&paths, -1);
+	free_2d_array(&paths, -1);
 	set_error(sh, 127, "Command not found");
 	return (NULL);
 }

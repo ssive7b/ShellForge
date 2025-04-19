@@ -3,19 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   inits.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sstoev <sstoev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/22 14:02:25 by sstoev            #+#    #+#             */
-/*   Updated: 2025/04/13 20:04:40 by cschnath         ###   ########.fr       */
+/*   Updated: 2025/03/22 14:04:54 by sstoev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <fcntl.h>
+#include "types.h"
+#include "minishell.h"
 #include "env_utils.h"
 #include "executioner.h"
-#include "minishell.h"
-#include "types.h"
 #include "utils.h"
-#include <fcntl.h>
+#include "signal_handlers.h"
 
 static int	setup_environment(t_shell *shell, char **envp);
 static void	setup_terminal_and_io(t_shell *shell);
@@ -75,9 +76,6 @@ static void	setup_terminal_and_io(t_shell *shell)
 	shell->std_err = dup(STDERR_FILENO);
 }
 
-// PLACEHOLDER FOR SIGNAL SETUP
-// E.g. setup_signals(void);
-// PLACEHOLDER FOR SIGNAL SETUP
 static int	setup_shell_context(t_shell *shell)
 {
 	char	cwd_buffer[PATH_MAX];
@@ -90,8 +88,8 @@ static int	setup_shell_context(t_shell *shell)
 		return (0);
 	shell->current_cmd = NULL;
 	shell->err_msg = NULL;
-	shell->error_code = 0;
 	shell->is_running = 1;
 	shell->last_exit_code = 0;
+	setup_interactive_signals();
 	return (1);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_init.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sstoev <sstoev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/19 13:00:06 by sstoev            #+#    #+#             */
-/*   Updated: 2025/04/12 23:11:57 by cschnath         ###   ########.fr       */
+/*   Updated: 2025/03/19 13:00:07 by sstoev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,9 +27,10 @@ t_list	*create_env_list(char **envp)
 	t_list	*env_node;
 	size_t	i;
 
-	if (!envp)
-		return (NULL);
 	env_list = NULL;
+	*get_env() = env_list;
+	if (!envp || !envp[0])
+		return (env_list);
 	i = 0;
 	while (envp[i])
 	{

@@ -3,26 +3,26 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sstoev <sstoev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 15:36:22 by sstoev            #+#    #+#             */
-/*   Updated: 2025/04/12 23:15:28 by cschnath         ###   ########.fr       */
+/*   Updated: 2025/03/26 15:36:23 by sstoev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ast_mock.h"
-#include "env_utils.h"
-#include "executioner.h"
-#include "minishell.h"
-#include "utils.h"
 #include <stdbool.h>
 #include <stdio.h>
+#include "ast_mock.h"
+#include "minishell.h"
+#include "env_utils.h"
+#include "executioner.h"
+#include "utils.h"
 
-static void	exec_cd_home(t_ast_node *node, char *oldpwd);
+static void	exec_cd_home(t_anode *node, char *oldpwd);
 static void	update_env_var(char *key, char *value);
-static void	handle_cd_error(t_ast_node *node, char *path);
+static void	handle_cd_error(t_anode *node, char *path);
 
-void	exec_cd(t_ast_node *node)
+void	exec_cd(t_anode *node)
 {
 	char	*cwd;
 
@@ -49,7 +49,7 @@ void	exec_cd(t_ast_node *node)
 	}
 }
 
-static void	exec_cd_home(t_ast_node *node, char *oldpwd)
+static void	exec_cd_home(t_anode *node, char *oldpwd)
 {
 	char	*path_home;
 	char	*new_cwd;
@@ -91,12 +91,12 @@ static void	update_env_var(char *key, char *value)
 	}
 	else
 	{
-		new_env_node = create_new_env_node(ft_strdup(key), ft_strdup(value));
+		new_env_node = create_env_node(ft_strdup(key), ft_strdup(value));
 		ft_lstadd_back(&current_env_node, new_env_node);
 	}
 }
 
-static void	handle_cd_error(t_ast_node *node, char *path)
+static void	handle_cd_error(t_anode *node, char *path)
 {
 	ft_putstr_fd("minishell: cd: ", STDERR_FILENO);
 	ft_putstr_fd(path, STDERR_FILENO);

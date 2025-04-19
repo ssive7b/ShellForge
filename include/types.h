@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   types.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sstoev <sstoev@student.42malaga.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/13 16:42:43 by cschnath          #+#    #+#             */
-/*   Updated: 2025/04/13 16:45:05 by cschnath         ###   ########.fr       */
+/*   Created: 2025/04/16 15:51:48 by sstoev            #+#    #+#             */
+/*   Updated: 2025/04/16 15:51:50 by sstoev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,10 @@
 
 typedef struct s_shell			t_shell;
 typedef struct s_token			t_token;
-typedef struct s_expand_context	t_expand_context;
+typedef struct s_expand_context	t_exp_ctx;
 typedef struct s_redirection	t_redir;
-typedef struct s_ast_node		t_ast_node;
-typedef struct s_ast_stack		t_ast_stack;
+typedef struct s_ast_node		t_anode;
+typedef struct s_ast_stack		t_stack;
 typedef struct s_cmd			t_cmd;
 typedef struct s_env			t_env;
 typedef struct s_history		t_history;
@@ -37,7 +37,7 @@ typedef enum e_node_type
 	NODE_LPAREN,
 	NODE_RPAREN,
 	NODE_TYPES_COUNT
-}								t_node_type;
+}	t_ntype;
 
 typedef enum e_redir_type
 {
@@ -45,7 +45,7 @@ typedef enum e_redir_type
 	REDIR_OUTPUT,
 	REDIR_APPEND,
 	REDIR_HEREDOC
-}								t_redir_type;
+}	t_redir_type;
 
 typedef enum e_token_type
 {
@@ -66,6 +66,6 @@ typedef enum e_token_type
 	TOKEN_RPAREN,
 	TOKEN_DELIMITER,
 	TOKEN_END
-}								t_token_type;
+}	t_token_type;
 
 #endif

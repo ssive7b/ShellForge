@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser_validation.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sstoev <sstoev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 22:04:44 by sstoev            #+#    #+#             */
-/*   Updated: 2025/04/10 19:36:40 by cschnath         ###   ########.fr       */
+/*   Updated: 2025/04/07 22:04:46 by sstoev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,16 +18,15 @@
 
 bool	validate_input(t_lexer *lexer, const char *input)
 {
-	if (!validate_quotes(input))
+	if (!validate_quotes(input)
+		|| !validate_parens(lexer)
+		|| !validate_ops(lexer)
+		|| !validate_pipes(lexer)
+		|| !validate_redirs(lexer))
+	{
+		lexer->error = 1;
 		return (false);
-	if (!validate_parentheses(lexer))
-		return (false);
-	if (!validate_operators(lexer))
-		return (false);
-	if (!validate_pipes(lexer))
-		return (false);
-	if (!validate_redirections(lexer))
-		return (false);
+	}
 	return (true);
 }
 
@@ -59,14 +58,7 @@ bool	validate_quotes(const char *input)
 	return (true);
 }
 
-void	vp2(t_lexer *lexer, char *str)
-{
-	lexer->error = 1;
-	ft_dprintf(STDERR_FILENO, "minishell: syntax error:");
-	ft_dprintf(STDERR_FILENO, "%s\n", str);
-}
-
-bool	validate_parentheses(t_lexer *lexer)
+bool	validate_parens(t_lexer *lexer)
 {
 	int		parentheses_count;
 	t_token	*current;
@@ -81,15 +73,15 @@ bool	validate_parentheses(t_lexer *lexer)
 			parentheses_count--;
 		if (parentheses_count < 0)
 		{
-			vp2(lexer, " unexpected ')', unmatched parentheses");
-			return (false);
+			ft_error_msg("minishell: syntax error: unmatched parentheses");
+			return (lexer->error = 1, false);
 		}
 		current = current->next;
 	}
 	if (parentheses_count > 0)
 	{
-		vp2(lexer, " unexpected EOF, unmatched parentheses");
-		return (false);
+		ft_error_msg("minishell: syntax error: unmatched parentheses");
+		return (lexer->error = 1, false);
 	}
 	return (true);
 }

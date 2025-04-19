@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser_redirections.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sstoev <sstoev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 00:18:47 by sstoev            #+#    #+#             */
-/*   Updated: 2025/04/10 21:52:26 by cschnath         ###   ########.fr       */
+/*   Updated: 2025/04/02 00:18:49 by sstoev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,42 +16,32 @@
 #include "parser.h"
 #include "utils.h"
 
-void	redir_to_cmd2(t_lexer *l, t_redir *r, t_ast_node *c)
-{
-	l->error = 1;
-	safe_free((void **)&r);
-	clear_redirections(&(c->redirections));
-}
+static bool	fail_redir(t_lexer *lex, t_anode *cmd, t_redir **redir, char *msg);
 
-bool	add_redirection_to_command(t_lexer *lexer, t_ast_node *cmd)
+bool	add_redir(t_lexer *lexer, t_anode *cmd)
 {
 	t_redir	*redir;
 
-	redir = create_redirection(lexer);
+	redir = new_redir(lexer);
 	if (!redir)
 		return (false);
-	advance_token(lexer);
+	next_token(lexer);
 	skip_delims(lexer);
-	if (!lexer->tokens || !is_argument_token(lexer->tokens->type))
-	{
-		ft_error_msg("Error: Expected word after redirection");
-		redir_to_cmd2(lexer, redir, cmd);
-		return (false);
-	}
-	if (!set_redirection_target(lexer, redir))
-	{
-		ft_error_msg("Error: Unable to set the redirection target");
-		redir_to_cmd2(lexer, redir, cmd);
-		return (false);
-	}
-	if (!cmd->redirections)
-		cmd->redirections = NULL;
-	ft_lstadd_back(&cmd->redirections, ft_lstnew(redir));
-	advance_token(lexer);
+	if (!lexer->tokens || !is_arg_tok(lexer->tokens->type))
+		return (fail_redir(lexer, cmd, &redir,
+				"Error: Expected word after redirection"));
+	if (!set_redir_tgt(lexer, redir))
+		return (fail_redir(lexer, cmd, &redir,
+				"Error: Unable to set the redirection target"));
+	if (!cmd->redirs)
+		cmd->redirs = NULL;
+	ft_lstadd_back(&cmd->redirs, ft_lstnew(redir));
+	if (lexer->tokens->next)
+		next_token(lexer);
 	return (true);
 }
 
-t_redir	*create_redirection(t_lexer *lexer)
+t_redir	*new_redir(t_lexer *lexer)
 {
 	t_redir			*redir;
 	t_token_type	token_type;
@@ -79,7 +69,7 @@ t_redir	*create_redirection(t_lexer *lexer)
 	return (redir);
 }
 
-bool	set_redirection_target(t_lexer *lexer, t_redir *redir)
+bool	set_redir_tgt(t_lexer *lexer, t_redir *redir)
 {
 	char	*value;
 
@@ -95,4 +85,13 @@ bool	set_redirection_target(t_lexer *lexer, t_redir *redir)
 	else
 		redir->file_name = value;
 	return (true);
+}
+
+static bool	fail_redir(t_lexer *lex, t_anode *cmd, t_redir **redir, char *msg)
+{
+	ft_error_msg(msg);
+	lex->error = 1;
+	safe_free((void **)redir);
+	clr_redirs(&(cmd->redirs));
+	return (false);
 }

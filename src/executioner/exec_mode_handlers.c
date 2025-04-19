@@ -3,51 +3,55 @@
 /*                                                        :::      ::::::::   */
 /*   exec_mode_handlers.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sstoev <sstoev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/22 13:24:34 by sstoev            #+#    #+#             */
-/*   Updated: 2025/04/13 20:28:12 by cschnath         ###   ########.fr       */
+/*   Updated: 2025/03/22 13:24:35 by sstoev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ast_mock.h"
-#include "env_utils.h"
-#include "executioner.h"
-#include "lexer.h"
-#include "minishell.h"
-#include "parser.h"
-#include "utils.h"
-#include <error.h>
+#include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/wait.h>
-#include <unistd.h>
+#include <error.h>
+#include "executioner.h"
+#include "parser.h"
+#include "lexer.h"
+#include "minishell.h"
+#include "ast_mock.h"
+#include "env_utils.h"
+#include "utils.h"
 
-void	*execute_command(t_shell *sh, t_ast_node *node)
+void	*exec_command(t_shell *sh, t_anode *node)
 {
 	pid_t	cpid;
 
 	if (!node || !node->args || !node->args[0])
-		return (NULL);
-	if (node->redirections)
-		execute_redirection(sh, node);
+		return (update_exit_code(sh, node), NULL);
+	if (node->redirs)
+	{
+		exec_redir(sh, node);
+		if (!node->redirs)
+			return (update_exit_code(sh, node), NULL);
+	}
 	if (is_builtin(node->args[0]))
 	{
 		exec_builtin(node);
-		return (NULL);
+		return (update_exit_code(sh, node), NULL);
 	}
-	if (!resolve_command_path(sh, node))
-		return (NULL);
-	cpid = fork_external_command(sh, node);
+	if (!resolve_path(sh, node))
+		return (update_exit_code(sh, node), NULL);
+	cpid = fork_extern_cmd(sh, node);
 	if (cpid == -1)
-		return (NULL);
+		return (update_exit_code(sh, node), NULL);
 	node->pid = cpid;
-	wait_for_child(sh, cpid, &node->exit_status);
+	wait_child(sh, cpid, &node->exit_status);
 	sh->last_exit_code = node->exit_status;
-	return (NULL);
+	return (update_exit_code(sh, node), NULL);
 }
 
-void	*execute_pipe(t_shell *sh, t_ast_node *node)
+void	*exec_pipe(t_shell *sh, t_anode *node)
 {
 	int		pipefd[2];
 	pid_t	left_pid;
@@ -55,67 +59,78 @@ void	*execute_pipe(t_shell *sh, t_ast_node *node)
 
 	if (!node || !create_pipe(sh, node, pipefd))
 		return (NULL);
-	if (!prepare_pipe_commands(sh, node))
-		return (close_pipe(pipefd), NULL);
-	left_pid = fork_pipe_process(sh, node->left, pipefd, 1);
+	left_pid = fork_pipe_cmd(sh, node->left, pipefd, 1);
 	if (left_pid == -1)
-		return (close_pipe(pipefd), NULL);
-	right_pid = fork_pipe_process(sh, node->right, pipefd, 0);
+	{
+		close_pipe(pipefd);
+		return (NULL);
+	}
+	right_pid = fork_pipe_cmd(sh, node->right, pipefd, 0);
 	if (right_pid == -1)
 	{
-		handle_fork_error(left_pid, pipefd);
+		handle_fork_err(left_pid, pipefd);
 		return (NULL);
 	}
 	close_pipe(pipefd);
-	wait_for_pipeline(sh, left_pid, right_pid, &node->exit_status);
+	wait_pipeline(sh, left_pid, right_pid, &node->exit_status);
 	return (NULL);
 }
 
-// to-do: allow for HEREDOC in the below implementation
-// exec_astree(sh, node);
-// Handles a single redirection
-static int	process_single_redirection(t_shell *sh, t_ast_node *node,
-		t_redir *redir)
-{
-	int	fd;
-
-	printf("Processing redirection: type=%d, file=%s\n", redir->type,
-		redir->file_name);
-	if (redir->type == REDIR_HEREDOC)
-		fd = get_heredoc_fd(redir);
-	else
-		fd = open_redirection_flle(sh, redir->file_name, redir->type);
-	if (fd == -1)
-	{
-		node->exit_status = 1;
-		return (-1);
-	}
-	if (redir->type == REDIR_INPUT || redir->type == REDIR_HEREDOC)
-		node->fd_in = fd;
-	else
-		node->fd_out = fd;
-	return (0);
-}
-
-// Iterates through the list of redirections
-void	*execute_redirection(t_shell *sh, t_ast_node *node)
+void	*exec_redir(t_shell *sh, t_anode *node)
 {
 	t_list	*redir_list;
 	t_redir	*redir;
+	int		fd;
 
-	if (!node || !node->redirections)
+	if (!node || !node->redirs)
 		return (NULL);
-	redir_list = node->redirections;
+	redir_list = node->redirs;
 	while (redir_list)
 	{
 		redir = (t_redir *)redir_list->content;
-		if (process_single_redirection(sh, node, redir) == -1)
-		{
-			clear_redirections(&redir_list);
-			return (NULL);
-		}
+		if (redir->type == REDIR_HEREDOC)
+			fd = get_hdoc_fd(redir);
+		else
+			fd = open_redir_flle(sh, redir->file_name, redir->type);
+		if (fd == -1)
+			return (node->exit_status = 1, clr_redirs(&(node->redirs)), NULL);
+		if (redir->type == REDIR_INPUT || redir->type == REDIR_HEREDOC)
+			node->fd_in = fd;
+		else
+			node->fd_out = fd;
 		redir_list = redir_list->next;
 	}
-	clear_redirections(&redir_list);
+	return (NULL);
+}
+
+void	*exec_and(t_shell *sh, t_anode *node)
+{
+	if (!node)
+		return (NULL);
+	exec_ast(sh, node->left);
+	if (node->left->exit_status == 0)
+	{
+		exec_ast(sh, node->right);
+		node->exit_status = node->right->exit_status;
+	}
+	else
+		node->exit_status = node->left->exit_status;
+	sh->last_exit_code = node->exit_status;
+	return (NULL);
+}
+
+void	*exec_or(t_shell *sh, t_anode *node)
+{
+	if (!node)
+		return (NULL);
+	exec_ast(sh, node->left);
+	if (node->left->exit_status != 0)
+	{
+		exec_ast(sh, node->right);
+		node->exit_status = node->right->exit_status;
+	}
+	else
+		node->exit_status = node->left->exit_status;
+	sh->last_exit_code = node->exit_status;
 	return (NULL);
 }

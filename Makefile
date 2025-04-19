@@ -17,7 +17,6 @@ SRC						=	$(SRC_DIR)/app/main.c											\
 							$(SRC_DIR)/env/env_aux.c										\
 							$(SRC_DIR)/env/env_utils.c										\
 							$(SRC_DIR)/parser/lexer/lexer.c									\
-							$(SRC_DIR)/parser/lexer/lexer2.c								\
 							$(SRC_DIR)/parser/lexer/lexer_utils.c							\
 							$(SRC_DIR)/parser/lexer/lexer_cleaners.c						\
 							$(SRC_DIR)/parser/expansions/expander.c							\
@@ -35,12 +34,11 @@ SRC						=	$(SRC_DIR)/app/main.c											\
 							$(SRC_DIR)/parser/get_ast_root.c								\
 							$(SRC_DIR)/parser/parser_error_handling.c						\
 							$(SRC_DIR)/parser/parser_mem_cleaners.c							\
-							$(SRC_DIR)/parser/signals/signals.c								\
 							$(SRC_DIR)/executioner/init_execs.c								\
 							$(SRC_DIR)/executioner/execute.c								\
 							$(SRC_DIR)/executioner/exec_mode_handlers.c						\
-							$(SRC_DIR)/executioner/pipe_utils.c								\
-							$(SRC_DIR)/executioner/pipe_utils2.c							\
+							$(SRC_DIR)/executioner/pipe_setup.c								\
+							$(SRC_DIR)/executioner/pipe_process.c							\
 							$(SRC_DIR)/executioner/cmd_path_resolution.c					\
 							$(SRC_DIR)/executioner/exec_utils.c								\
 							$(SRC_DIR)/executioner/heredoc.c								\
@@ -53,12 +51,13 @@ SRC						=	$(SRC_DIR)/app/main.c											\
 							$(SRC_DIR)/executioner/builtins/export_utils.c					\
 							$(SRC_DIR)/executioner/builtins/pwd.c							\
 							$(SRC_DIR)/executioner/builtins/unset.c							\
+							$(SRC_DIR)/signals/signal_setup.c								\
+							$(SRC_DIR)/signals/signal_handlers.c							\
 							$(SRC_DIR)/utils/string_utils.c									\
 							$(SRC_DIR)/utils/array_utils.c									\
 							$(SRC_DIR)/utils/memory_utils.c									\
 							$(SRC_DIR)/utils/error_handlers.c								\
 							$(SRC_DIR)/utils/debug_utils.c									\
-							$(SRC_DIR)/utils/utils.c										\
 							$(SRC_DIR)/utils/char_designation.c
 
 TOTAL_SRC_FILES			:=	$(words $(SRC))
@@ -131,9 +130,9 @@ $(OBJ_DIR)				:
 							@mkdir -p $(OBJ_DIR)/parser/lexer
 							@mkdir -p $(OBJ_DIR)/parser/parsing
 							@mkdir -p $(OBJ_DIR)/parser/validation
-							@mkdir -p $(OBJ_DIR)/parser/signals
 							@mkdir -p $(OBJ_DIR)/executioner
 							@mkdir -p $(OBJ_DIR)/executioner/builtins
+							@mkdir -p $(OBJ_DIR)/signals
 							@mkdir -p $(OBJ_DIR)/utils
 
 #	test

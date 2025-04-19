@@ -3,29 +3,29 @@
 /*                                                        :::      ::::::::   */
 /*   parser_mem_cleaners.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sstoev <sstoev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 14:32:56 by sstoev            #+#    #+#             */
-/*   Updated: 2025/04/12 23:13:51 by cschnath         ###   ########.fr       */
+/*   Updated: 2025/04/07 21:56:00 by sstoev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <stdlib.h>
+#include <unistd.h>
 #include "ast_mock.h"
 #include "parser.h"
 #include "utils.h"
-#include <stdlib.h>
-#include <unistd.h>
 
-void	free_ast_node(t_ast_node **node)
+void	node_free(t_anode **node)
 {
 	size_t	i;
 
 	if (!node || !*node)
 		return ;
 	if ((*node)->left)
-		free_ast_node(&(*node)->left);
+		node_free(&(*node)->left);
 	if ((*node)->right)
-		free_ast_node(&(*node)->right);
+		node_free(&(*node)->right);
 	if ((*node)->type == NODE_COMMAND)
 	{
 		safe_free((void **)&(*node)->cmd_pathname);
@@ -40,15 +40,15 @@ void	free_ast_node(t_ast_node **node)
 			safe_free((void **)&(*node)->args);
 		}
 	}
-	if ((*node)->redirections)
-		clear_redirections(&(*node)->redirections);
+	if ((*node)->redirs)
+		clr_redirs(&(*node)->redirs);
 	safe_free((void **)node);
 }
 
-void	free_ast_stack(t_ast_stack **stack)
+void	stack_free(t_stack **stack)
 {
-	t_ast_stack	*current;
-	t_ast_stack	*next;
+	t_stack	*current;
+	t_stack	*next;
 
 	if (!stack || !*stack)
 		return ;
@@ -56,47 +56,40 @@ void	free_ast_stack(t_ast_stack **stack)
 	while (current)
 	{
 		next = current->next;
-		free_ast_node(&current->node);
+		node_free(&current->node);
 		safe_free((void **)&current);
 		current = next;
 	}
 	*stack = NULL;
 }
 
-void	cleanup_parser_state(t_ast_stack **operator_stack,
-		t_ast_stack **operand_stack, t_ast_node **node)
+void	parser_cleanup(t_stack **ops, t_stack **opnds, t_anode **node)
 {
-	if (operand_stack)
-		free_ast_stack(operator_stack);
-	if (operand_stack)
-		free_ast_stack(operand_stack);
+	if (opnds)
+		stack_free(ops);
+	if (opnds)
+		stack_free(opnds);
 	if (node && *node)
-		free_ast_node(node);
+		node_free(node);
 }
 
-void	clear_redirections(t_list **redirections)
+void	clr_redirs(t_list **redirs)
 {
-	t_list	*current;
-	t_list	*next;
-
-	if (!redirections || !(*redirections))
+	if (!redirs)
 		return ;
-	current = *redirections;
-	while (current)
-	{
-		next = current->next;
-		free_redirection((t_redir **)&current->content);
-		safe_free((void **)&current);
-		current = next;
-	}
-	*redirections = NULL;
+	ft_lstclear(redirs, del_redir);
 }
 
-void	free_redirection(t_redir **redir)
+void	del_redir(void *content)
 {
-	if (!redir || !(*redir))
+	t_redir	*redir;
+
+	redir = (t_redir *)content;
+	if (!redir)
 		return ;
-	if ((*redir)->file_name)
-		safe_free((void **)&((*redir)->file_name));
-	safe_free((void **)redir);
+	if (redir->file_name)
+		safe_free((void **)&redir->file_name);
+	if (redir->delimiter_heredoc)
+		safe_free((void **)&redir->delimiter_heredoc);
+	safe_free((void **)&redir);
 }

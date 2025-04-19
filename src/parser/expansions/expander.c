@@ -6,32 +6,30 @@
 /*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/28 23:15:48 by cschnath          #+#    #+#             */
-/*   Updated: 2025/04/12 23:42:08 by cschnath         ###   ########.fr       */
+/*   Updated: 2025/04/03 14:54:15 by sstoev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ast_mock.h"
-#include "env_utils.h"
 #include "expansions.h"
 #include "lexer.h"
 #include "minishell.h"
+#include "env_utils.h"
 #include "utils.h"
 #include <ctype.h>
 #include <dirent.h>
 #include <stdio.h>
 #include <string.h>
 
-static bool	process_expansion_pass(char **result, const char *str, int *pos,
-				t_expand_context *context);
-static char	*expand_variable_in_string(const char *str,
-				t_expand_context *context);
+static bool	proc_exp_step(char **res, char *str, int *pos, t_exp_ctx *ctx);
+static char	*expand_str(char *str, t_exp_ctx *ctx);
 
-bool	expand_variables_in_tokens(t_token **tokens, t_expand_context *context)
+bool	expand_variables_in_tokens(t_token **tokens, t_exp_ctx *ctx)
 {
 	t_token	*current;
 	char	*expanded;
 
-	if (!tokens || !*tokens || !context)
+	if (!tokens || !*tokens || !ctx)
 		return (true);
 	current = *tokens;
 	while (current)
@@ -41,7 +39,7 @@ bool	expand_variables_in_tokens(t_token **tokens, t_expand_context *context)
 		{
 			if (needs_expansion(current->value))
 			{
-				expanded = expand_variable_in_string(current->value, context);
+				expanded = expand_str(current->value, ctx);
 				if (!expanded)
 					return (false);
 				safe_free((void **)&current->value);
@@ -53,10 +51,9 @@ bool	expand_variables_in_tokens(t_token **tokens, t_expand_context *context)
 	return (true);
 }
 
-static char	*expand_variable_in_string(const char *str,
-		t_expand_context *context)
+static char	*expand_str(char *str, t_exp_ctx *ctx)
 {
-	char	*result;
+	char	*res;
 	int		position;
 
 	position = 0;
@@ -64,24 +61,23 @@ static char	*expand_variable_in_string(const char *str,
 		return (NULL);
 	if (!needs_expansion(str))
 		return (ft_strdup(str));
-	result = ft_strdup("");
-	if (!result)
+	res = ft_strdup("");
+	if (!res)
 		return (NULL);
 	while (str[position])
 	{
-		if (!process_expansion_pass(&result, str, &position, context))
+		if (!proc_exp_step(&res, str, &position, ctx))
 		{
-			safe_free((void **)&result);
+			safe_free((void **)&res);
 			return (NULL);
 		}
 		if (str[position] == '\0')
 			break ;
 	}
-	return (result);
+	return (res);
 }
 
-static bool	process_expansion_pass(char **result, const char *str, int *pos,
-		t_expand_context *context)
+static bool	proc_exp_step(char **res, char *str, int *pos, t_exp_ctx *ctx)
 {
 	int	i;
 	int	start;
@@ -92,16 +88,16 @@ static bool	process_expansion_pass(char **result, const char *str, int *pos,
 	{
 		if (str[i] == '$' && str[i + 1])
 		{
-			if (!append_chunk(result, str, start, i))
+			if (!append_chunk(res, str, start, i))
 				return (false);
-			if (!process_dollar_sign(result, str, &i, context))
+			if (!proc_doll_sign(res, str, &i, ctx))
 				return (false);
 			*pos = i;
 			return (true);
 		}
 		i++;
 	}
-	if (!append_chunk(result, str, start, i))
+	if (!append_chunk(res, str, start, i))
 		return (false);
 	*pos = i;
 	return (true);

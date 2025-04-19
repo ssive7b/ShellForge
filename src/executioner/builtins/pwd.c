@@ -3,26 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   pwd.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sstoev <sstoev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 12:24:39 by sstoev            #+#    #+#             */
-/*   Updated: 2025/04/13 19:39:59 by cschnath         ###   ########.fr       */
+/*   Updated: 2025/03/20 12:24:41 by sstoev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdio.h>
 #include "ast_mock.h"
 #include "minishell.h"
+#include "utils.h"
 
-char	**get_cwd(void)
-{
-	static char	*cwd = NULL;
-
-	return (&cwd);
-}
-
-// free buffer at the end???
-void	exec_pwd(t_ast_node *node)
+void	exec_pwd(t_anode *node)
 {
 	char	*buffer;
 	size_t	size_buffer;
@@ -32,7 +25,12 @@ void	exec_pwd(t_ast_node *node)
 	buffer = malloc(sizeof(char) * size_buffer);
 	if (!buffer)
 		return ;
-	getcwd(buffer, size_buffer);
-	printf("%s\n", buffer);
-	*get_cwd() = buffer;
+	if (getcwd(buffer, size_buffer) == NULL)
+	{
+		perror("pwd");
+		safe_free((void **)&buffer);
+		return ;
+	}
+	ft_printf("%s\n", buffer);
+	safe_free((void **)&buffer);
 }

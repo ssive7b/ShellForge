@@ -3,19 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   unset.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cschnath <cschnath@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sstoev <sstoev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 13:48:20 by sstoev            #+#    #+#             */
-/*   Updated: 2025/04/12 23:53:11 by cschnath         ###   ########.fr       */
+/*   Updated: 2025/03/24 13:48:21 by sstoev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ast_mock.h"
-#include "char_designation.h"
-#include "env_utils.h"
-#include "minishell.h"
 #include <stdbool.h>
 #include <stdio.h>
+#include "char_designation.h"
+#include "ast_mock.h"
+#include "minishell.h"
+#include "env_utils.h"
 
 static bool	is_valid_var_name(const char *var)
 {
@@ -61,7 +61,7 @@ static void	unset_var(const char *var)
 	}
 }
 
-void	exec_unset(t_ast_node *node)
+void	exec_unset(t_anode *node)
 {
 	size_t	i;
 
