@@ -27,27 +27,29 @@ void	exec_cd(t_anode *node)
 {
 	char	*cwd;
 
+	if (node->args[1] && node->args[2])
+	{
+		ft_putstr_fd("minishell: cd: too many arguments\n", STDERR_FILENO);
+		node->exit_status = 1;
+		return ;
+	}
 	cwd = getcwd(NULL, 0);
 	if (!node->args[1])
 	{
 		exec_cd_home(node, cwd);
-		free(cwd);
+		safe_free((void **)&cwd);
 		return ;
 	}
 	if (chdir(node->args[1]) == 0)
 	{
 		update_env_var("OLDPWD", cwd);
-		free(cwd);
+		safe_free((void **)&cwd);
 		cwd = getcwd(NULL, 0);
 		update_env_var("PWD", cwd);
-		free(cwd);
-		node->exit_status = 0;
 	}
 	else
-	{
 		handle_cd_error(node, node->args[1]);
-		free(cwd);
-	}
+	safe_free((void **)&cwd);
 }
 
 static void	exec_cd_home(t_anode *node, char *oldpwd)
@@ -63,12 +65,12 @@ static void	exec_cd_home(t_anode *node, char *oldpwd)
 		update_env_var("OLDPWD", oldpwd);
 		new_cwd = getcwd(NULL, 0);
 		update_env_var("PWD", new_cwd);
-		free(new_cwd);
+		safe_free((void **)&new_cwd);
 		node->exit_status = 0;
 	}
 	else
 		handle_cd_error(node, path_home);
-	free(path_home);
+	safe_free((void **)&path_home);
 }
 
 static void	update_env_var(char *key, char *value)
@@ -83,7 +85,7 @@ static void	update_env_var(char *key, char *value)
 	env_entry = get_env_entry(key, current_env_node);
 	if (env_entry)
 	{
-		free(env_entry->value);
+		safe_free((void **)&(env_entry->value));
 		env_entry->value = ft_strdup(value);
 	}
 	else

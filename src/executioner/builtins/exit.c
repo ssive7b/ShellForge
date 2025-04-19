@@ -27,17 +27,11 @@ static bool	is_valid_number(char *str)
 		str++;
 	if (*str == '\0' || !ft_isdigit(*str))
 		return (false);
-	while (*str)
-	{
-		if (!ft_isdigit(*str))
-			return (false);
+	while (*str && ft_isdigit(*str))
 		str++;
-	}
-	while (is_whitespace(*str))
+	while (*str && is_whitespace(*str))
 		str++;
-	if (*str)
-		return (false);
-	return (true);
+	return (*str == '\0');
 }
 
 void	exec_exit(t_anode *node)
@@ -47,11 +41,11 @@ void	exec_exit(t_anode *node)
 	{
 		if (!is_valid_number(node->args[1]))
 		{
-			node->exit_status = 255;
+			node->exit_status = 2;
 			ft_putstr_fd("minishell: exit: ", STDERR_FILENO);
 			ft_putstr_fd(node->args[1], STDERR_FILENO);
 			ft_putstr_fd(": numeric argument required\n", STDERR_FILENO);
-			exit(255);
+			exit(2);
 		}
 		if (node->args[2])
 		{

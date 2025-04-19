@@ -66,11 +66,7 @@ void	exec_unset(t_anode *node)
 	size_t	i;
 
 	if (!node->args[1])
-	{
-		ft_putstr_fd("minishell: unset: too few arguments \n", STDERR_FILENO);
-		node->exit_status = 1;
 		return ;
-	}
 	i = 0;
 	while (node->args[++i])
 	{
