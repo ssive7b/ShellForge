@@ -16,7 +16,6 @@
 #include "parser.h"
 #include "utils.h"
 
-static bool	parse_command_arguments(t_lexer *lex, t_anode *cmd);
 static char	*join_consecutive_tokens(t_lexer *lex);
 
 bool	handle_op_prec(t_lexer *lex, t_stack **ops, t_stack **opnds)
@@ -89,7 +88,7 @@ t_anode	*parse_paren_expr(t_lexer *lex, t_stack **ops, t_stack **opnds)
 	return (expr);
 }
 
-static bool	parse_command_arguments(t_lexer *lex, t_anode *cmd)
+bool	parse_command_arguments(t_lexer *lex, t_anode *cmd)
 {
 	char	*arg;
 	bool	success;

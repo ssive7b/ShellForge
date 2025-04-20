@@ -38,6 +38,7 @@ t_ntype	tok_to_node(t_token_type type);
 bool	handle_op_prec(t_lexer *lex, t_stack **ops, t_stack **opnds);
 t_anode	*parse_cmd(t_lexer *lex);
 t_anode	*parse_paren_expr(t_lexer *lex, t_stack **ops, t_stack **opnds);
+bool	parse_command_arguments(t_lexer *lex, t_anode *cmd);
 
 // parser_redirections.c
 bool	add_redir(t_lexer *lex, t_anode *cmd);
