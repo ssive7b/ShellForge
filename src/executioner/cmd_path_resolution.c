@@ -35,9 +35,11 @@ char	*find_cmd_path(t_shell *sh, t_list *env_list, char *cmd_name)
 
 	if (!cmd_name || !*cmd_name)
 		return (NULL);
-	direct_path = try_direct_execution(cmd_name, sh);
-	if (direct_path)
+	if (ft_strchr(cmd_name, '/'))
+	{
+		direct_path = try_direct_execution(cmd_name, sh);
 		return (direct_path);
+	}
 	path_value = get_envp_value("PATH", env_list);
 	if (!path_value || !(*path_value))
 		return (try_current_directory(cmd_name, sh));
