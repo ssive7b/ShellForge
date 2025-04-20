@@ -40,8 +40,14 @@ int	main(int argc, char **argv, char **envp)
 		shell->input = readline(SHELL_PROMPT);
 		if (!shell->input || check_termination_signal())
 			exit_on_eof(shell);
-		if (!process_cmd_iteration(shell))
-			display_error(shell);
+		if (*(shell->input))
+		{
+			add_history(shell->input);
+			if (!process_cmd_iteration(shell))
+				display_error(shell);
+		}
+		else
+			safe_free((void **)&shell->input);
 	}
 	cleanup_shell(shell);
 	return (0);
@@ -49,15 +55,13 @@ int	main(int argc, char **argv, char **envp)
 
 static bool	process_cmd_iteration(t_shell *sh)
 {
-	if (!sh->input || !*(sh->input))
+	if (!sh->input)
 	{
 		set_error(sh, 1, "Error: Unable to read input");
 		return (false);
 	}
-	if (*(sh->input))
-		add_history(sh->input);
 	sh->ast_root = ast_root(sh->input, sh->env_list, &sh->last_exit_code);
-	if (!sh->ast_root)
+	if (!sh->ast_root && sh->last_exit_code)
 	{
 		set_error(sh, 1, "Error: Failed while setting up the AST");
 		cleanup_iteration(sh);

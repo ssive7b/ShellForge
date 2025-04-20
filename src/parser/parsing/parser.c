@@ -22,6 +22,8 @@ t_anode	*parse_toks(t_lexer *lex)
 	t_stack	*opnds;
 	t_anode	*result_expr;
 
+	if (!lex->tokens)
+		return (NULL);
 	ops = NULL;
 	opnds = NULL;
 	result_expr = parse_expr(lex, &ops, &opnds);
