@@ -27,6 +27,7 @@ void	*exec_command(t_shell *sh, t_anode *node)
 {
 	pid_t	cpid;
 
+	shift_empty_args_left(node);
 	if (!node || !node->args || !node->args[0] || node->args[0][0] == '\0')
 		return (update_exit_code(sh, node), NULL);
 	if (node->redirs)
