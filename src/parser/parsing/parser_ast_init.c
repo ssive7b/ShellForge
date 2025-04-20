@@ -20,9 +20,8 @@
 #include <stdbool.h>
 
 static void	initialize_ast_node(t_anode *node, t_ntype type);
-static bool	setup_command_node(t_anode *node, char *value);
 
-t_anode	*node_new(t_ntype type, t_token *token)
+t_anode	*setup_empty_node(t_ntype type, t_token *token)
 {
 	t_anode	*new;
 
@@ -35,15 +34,6 @@ t_anode	*node_new(t_ntype type, t_token *token)
 	if (!new)
 		return (NULL);
 	initialize_ast_node(new, type);
-	if (type == NODE_COMMAND)
-	{
-		if (!setup_command_node(new, token->value))
-		{
-			ft_error_msg("Error: Memory allocation failed in node_new()");
-			node_free(&new);
-			return (NULL);
-		}
-	}
 	return (new);
 }
 
@@ -63,7 +53,7 @@ static void	initialize_ast_node(t_anode *node, t_ntype type)
 	node->right = NULL;
 }
 
-static bool	setup_command_node(t_anode *node, char *value)
+bool	setup_command_node(t_anode *node, char *value)
 {
 	node->cmd_pathname = NULL;
 	node->args = malloc(2 * sizeof(char *));

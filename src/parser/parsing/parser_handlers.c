@@ -29,7 +29,7 @@ bool	handle_op_prec(t_lexer *lex, t_stack **ops, t_stack **opnds)
 		if (!apply_op(ops, opnds))
 			return (false);
 	}
-	op_node = node_new(current_op_type, lex->tokens);
+	op_node = setup_empty_node(current_op_type, lex->tokens);
 	if (!op_node)
 		return (false);
 	if (!stack_push(ops, op_node))
@@ -42,21 +42,22 @@ t_anode	*parse_cmd(t_lexer *lex)
 {
 	t_anode	*node;
 
-	if (!lex->tokens || !is_cmd_tok(lex->tokens->type))
-	{
-		ft_error_msg("Syntax error: Expected command");
-		parse_err(lex, NULL, NULL, NULL);
-		return (NULL);
-	}
-	node = node_new(NODE_COMMAND, lex->tokens);
+	if (!lex->tokens
+		|| (!is_arg_tok(lex->tokens->type) && !is_redir_tok(lex->tokens->type)))
+		return (parse_err(lex, NULL, NULL, NULL), NULL);
+	node = setup_empty_node(NODE_COMMAND, lex->tokens);
 	if (!node)
 		return (parse_err(lex, NULL, NULL, NULL), NULL);
-	if (!next_token(lex))
+	if (is_redir_tok(lex->tokens->type))
+		return (node);
+	if (!setup_command_node(node, lex->tokens->value))
 	{
-		parse_err(lex, NULL, NULL, NULL);
-		ft_error_msg("Syntax error: Couldn't advance tokens");
+		ft_error_msg("Error: Memory allocation failed in node_new()");
+		node_free(&node);
 		return (NULL);
 	}
+	if (!next_token(lex))
+		return (parse_err(lex, NULL, NULL, NULL), NULL);
 	if (!parse_command_arguments(lex, node))
 	{
 		parse_err(lex, NULL, NULL, &node);

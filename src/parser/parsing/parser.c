@@ -29,7 +29,6 @@ t_anode	*parse_toks(t_lexer *lex)
 	result_expr = parse_expr(lex, &ops, &opnds);
 	if (!result_expr || lex->tokens || lex->error)
 	{
-		print_tokens(lex->tokens);
 		ft_error_msg("Error: Failed while parsing tokens");
 		parse_err(lex, NULL, NULL, &result_expr);
 		return (NULL);

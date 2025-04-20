@@ -25,7 +25,8 @@ t_anode	*finalize_expr(t_stack **ops, t_stack **opnds, t_lexer *lex);
 t_anode	*parse_cmd_redir(t_lexer *lex, t_stack **ops, t_stack **opnds);
 
 // parser_ast_init.c
-t_anode	*node_new(t_ntype type, t_token *tok);
+t_anode	*setup_empty_node(t_ntype type, t_token *tok);
+bool	setup_command_node(t_anode *node, char *value);
 
 // parser_ast_utils.c
 int		op_precedence(t_ntype type);
