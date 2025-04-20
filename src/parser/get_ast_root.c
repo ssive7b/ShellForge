@@ -44,14 +44,12 @@ static t_lexer	*lex_validate(const char *input, int *exit_code)
 	lexer = run_tokenizer(input);
 	if (!lexer || lexer->error)
 	{
-		ft_printf("here-l?\n");
 		*exit_code = 1;
 		cleanup_lexer(&lexer);
 		return (NULL);
 	}
 	if (!validate_input(lexer, input))
 	{
-		ft_printf("here-v?\n");
 		*exit_code = 1;
 		cleanup_lexer(&lexer);
 		return (NULL);

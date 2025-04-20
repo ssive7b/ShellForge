@@ -16,8 +16,6 @@
 #include "parser.h"
 #include "utils.h"
 
-static char	*join_consecutive_tokens(t_lexer *lex);
-
 bool	handle_op_prec(t_lexer *lex, t_stack **ops, t_stack **opnds)
 {
 	t_ntype	current_op_type;
@@ -109,7 +107,7 @@ bool	parse_command_arguments(t_lexer *lex, t_anode *cmd)
 	return (true);
 }
 
-static char	*join_consecutive_tokens(t_lexer *lex)
+char	*join_consecutive_tokens(t_lexer *lex)
 {
 	char	*arg;
 	char	*temp;

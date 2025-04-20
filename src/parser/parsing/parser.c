@@ -111,14 +111,14 @@ t_anode	*parse_cmd_redir(t_lexer *lex, t_stack **ops, t_stack **opnds)
 	{
 		if (is_redir_tok(lex->tokens->type))
 		{
-		if (!add_redir(lex, cmd))
-			return (parse_err(lex, NULL, NULL, &cmd), NULL);
-		next_token(lex);
+			if (!add_redir(lex, cmd))
+				return (parse_err(lex, NULL, NULL, &cmd), NULL);
+			skip_delims(lex);
 		}
 		else if (is_arg_tok(lex->tokens->type))
 		{
-		if (!parse_command_arguments(lex, cmd))
-			return (parse_err(lex, NULL, NULL, &cmd), NULL);
+			if (!parse_command_arguments(lex, cmd))
+				return (parse_err(lex, NULL, NULL, &cmd), NULL);
 		}
 	}
 	return (cmd);
