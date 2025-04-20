@@ -42,7 +42,7 @@ static t_lexer	*lex_validate(const char *input, int *exit_code)
 	if (!input || !(*input))
 		return (NULL);
 	lexer = run_tokenizer(input);
-	if (!lexer || !lexer->tokens || lexer->error)
+	if (!lexer || lexer->error)
 	{
 		*exit_code = 1;
 		cleanup_lexer(&lexer);
@@ -64,8 +64,13 @@ static t_anode	*build_ast(t_lexer *lexer, t_list *env_list, int *exit_code)
 
 	context.env_list = env_list;
 	context.last_exit_status = *exit_code;
-	if (!expand_variables_in_tokens(&lexer->tokens, &context))
+	if (!expand_variables_in_tokens(&lexer->tokens, &context) || lexer->error)
+	{
+		*exit_code = 1;
 		return (NULL);
+	}
 	ast_root = parse_toks(lexer);
+	if (lexer->error)
+		*exit_code = 1;
 	return (ast_root);
 }

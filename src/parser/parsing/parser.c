@@ -22,6 +22,8 @@ t_anode	*parse_toks(t_lexer *lex)
 	t_stack	*opnds;
 	t_anode	*result_expr;
 
+	if (!lex->tokens)
+		return (NULL);
 	ops = NULL;
 	opnds = NULL;
 	result_expr = parse_expr(lex, &ops, &opnds);
@@ -103,14 +105,20 @@ t_anode	*parse_cmd_redir(t_lexer *lex, t_stack **ops, t_stack **opnds)
 	cmd = parse_cmd(lex);
 	if (!cmd)
 		return (NULL);
-	while (lex->tokens && is_redir_tok(lex->tokens->type))
+	while (lex->tokens
+		&& (is_arg_tok(lex->tokens->type) || is_redir_tok(lex->tokens->type)))
 	{
-		if (!add_redir(lex, cmd))
+		if (is_redir_tok(lex->tokens->type))
 		{
-			parse_err(lex, NULL, NULL, &cmd);
-			return (NULL);
+			if (!add_redir(lex, cmd))
+				return (parse_err(lex, NULL, NULL, &cmd), NULL);
+			skip_delims(lex);
 		}
-		next_token(lex);
+		else if (is_arg_tok(lex->tokens->type))
+		{
+			if (!parse_command_arguments(lex, cmd))
+				return (parse_err(lex, NULL, NULL, &cmd), NULL);
+		}
 	}
 	return (cmd);
 }

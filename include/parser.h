@@ -25,7 +25,8 @@ t_anode	*finalize_expr(t_stack **ops, t_stack **opnds, t_lexer *lex);
 t_anode	*parse_cmd_redir(t_lexer *lex, t_stack **ops, t_stack **opnds);
 
 // parser_ast_init.c
-t_anode	*node_new(t_ntype type, t_token *tok);
+t_anode	*setup_empty_node(t_ntype type, t_token *tok);
+bool	setup_command_node(t_anode *node, char *value);
 
 // parser_ast_utils.c
 int		op_precedence(t_ntype type);
@@ -38,6 +39,8 @@ t_ntype	tok_to_node(t_token_type type);
 bool	handle_op_prec(t_lexer *lex, t_stack **ops, t_stack **opnds);
 t_anode	*parse_cmd(t_lexer *lex);
 t_anode	*parse_paren_expr(t_lexer *lex, t_stack **ops, t_stack **opnds);
+bool	parse_command_arguments(t_lexer *lex, t_anode *cmd);
+char	*join_consecutive_tokens(t_lexer *lex);
 
 // parser_redirections.c
 bool	add_redir(t_lexer *lex, t_anode *cmd);

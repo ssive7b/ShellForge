@@ -82,12 +82,17 @@ void	print_tokens(t_token *tokens)
 	char	*token_value;
 	int		token_type;
 
+	if (!tokens)
+	{
+		ft_printf("No tokens to display\n");
+		return ;
+	}
 	current_token = tokens;
 	while (current_token)
 	{
 		token_value = current_token->value;
 		token_type = current_token->type;
-		printf("Token: value: <%s>\ttype: <%d>\n", token_value, token_type);
+		ft_printf("Token: value: <%s>\ttype: <%d>\n", token_value, token_type);
 		current_token = current_token->next;
 	}
 }

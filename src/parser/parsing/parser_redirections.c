@@ -36,8 +36,6 @@ bool	add_redir(t_lexer *lexer, t_anode *cmd)
 	if (!cmd->redirs)
 		cmd->redirs = NULL;
 	ft_lstadd_back(&cmd->redirs, ft_lstnew(redir));
-	if (lexer->tokens->next)
-		next_token(lexer);
 	return (true);
 }
 
@@ -73,7 +71,7 @@ bool	set_redir_tgt(t_lexer *lexer, t_redir *redir)
 {
 	char	*value;
 
-	value = ft_strdup(lexer->tokens->value);
+	value = join_consecutive_tokens(lexer);
 	if (!value)
 	{
 		ft_error_msg("Error: Failed to duplicate redirection target");
