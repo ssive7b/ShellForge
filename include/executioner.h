@@ -47,6 +47,9 @@ bool	resolve_path(t_shell *sh, t_anode *node);
 void	setup_redirs(t_anode *node);
 int		open_redir_flle(t_shell *sh, char *file_name, t_redir_type redir_type);
 
+// cmd_utils.c
+int		shift_empty_args_left(t_anode *node);
+
 // execute.c
 void	exec_ast(t_shell *sh, t_anode *node);
 

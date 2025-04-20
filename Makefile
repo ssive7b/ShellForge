@@ -37,6 +37,7 @@ SRC						=	$(SRC_DIR)/app/main.c											\
 							$(SRC_DIR)/parser/parser_mem_cleaners.c							\
 							$(SRC_DIR)/executioner/init_execs.c								\
 							$(SRC_DIR)/executioner/execute.c								\
+							$(SRC_DIR)/executioner/cmd_utils.c								\
 							$(SRC_DIR)/executioner/exec_mode_handlers.c						\
 							$(SRC_DIR)/executioner/pipe_setup.c								\
 							$(SRC_DIR)/executioner/pipe_process.c							\
