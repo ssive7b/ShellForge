@@ -78,21 +78,6 @@ LDFLAGS					=	-lreadline -Llibft -lft
 RM						=	rm -rf
 COUNT					:=	0
 
-###	</Testing set-up
-TEST_DIR				=	tests
-TEST_SRC_DIR			=	$(TEST_DIR)/src
-TEST_OBJ_DIR			=	$(TEST_DIR)/obj
-TEST_SRC				= 	$(TEST_SRC_DIR)/test_lexer.c									\
-							$(TEST_SRC_DIR)/test_lexer_utils.c								\
-							$(TEST_SRC_DIR)/test_env.c										\
-							$(TEST_SRC_DIR)/test_executioner.c								\
-							$(TEST_SRC_DIR)/test_builtins.c
-TEST_OBJ				=	$(filter-out $(OBJ_DIR)/app/%, $(OBJ))							\
-							$(patsubst $(TEST_SRC_DIR)/%, $(TEST_OBJ_DIR)/%, $(TEST_SRC:.c=.o))
-CFLAGS_TEST				=	$(CFLAGS) -DCRITERION_LOGGING_LEVEL=CR_LOG_INFO
-LDFLAGS_TEST			=	$(LDFLAGS) -lcriterion 
-###	Testing set-up />
-
 ###	Color Schemes
 DEF_COLOR		=	\033[0;37m # Light gray
 BOLD_GREEN		=	\033[1;32m
@@ -113,14 +98,8 @@ $(NAME)					:	$(OBJ)
 							@printf "\n$(DEF_COLOR)✅ Dependencies fulfilled.$(DEF_COLOR)\n"
 							@$(CC) $(CFLAGS) -o $(NAME) $(OBJ) $(LDFLAGS)
 							@printf "\n$(BOLD_GREEN)[$(NAME)]:\t✅ $(NAME) compiled successfully!$(DEF_COLOR)\n"
-#	test
-$(TEST_EXEC)			:	$(TEST_OBJ)
-							@make -C $(LIBFT) 
-							@echo "$(ORANGE)[$(NAME)]:\t🔧 Testing mode activated.$(DEF_COLOR)"
-							@$(CC) $(CFLAGS) -o $(TEST_EXEC) $(TEST_OBJ) $(LDFLAGS_TEST)
 
 $(OBJ)					:	$(OBJ_DIR)
-$(TEST_OBJ)				:	$(TEST_OBJ_DIR)
 
 #	Create the object directory if it doesn't exist
 $(OBJ_DIR)				:	
@@ -137,24 +116,13 @@ $(OBJ_DIR)				:
 							@mkdir -p $(OBJ_DIR)/signals
 							@mkdir -p $(OBJ_DIR)/utils
 
-#	test
-$(TEST_OBJ_DIR)			:
-							@mkdir -p $(TEST_OBJ_DIR)
-
 ###	Rules for creating compiling .c files into obj
 ##	prod
 $(OBJ_DIR)/%.o			:	$(SRC_DIR)/%.c | $(OBJ_DIR)
 							$(PROGRESS_BAR)
 							@$(CC) $(CFLAGS) -I$(INCLUDES) -c $< -o $@
 
-##	test
-$(TEST_OBJ_DIR)/%.o		:	$(TEST_SRC_DIR)/%.c | $(TEST_OBJ_DIR)
-							@$(CC) $(CFLAGS_TEST) -I$(INCLUDES) -c $< -o $@
-
 libft					:	@make -C $(LIBFT)
-
-test					:	$(TEST_EXEC)
-							@env CRITERION_LOG_LEVEL=INFO CRITERION_JOBS=1 ./$(TEST_EXEC) --verbose
 
 clean					:
 							@$(RM) $(OBJ_DIR) $(TEST_OBJ_DIR)
@@ -169,7 +137,7 @@ fclean					:	clean
 re						:	fclean all
 							@echo "$(BOLD_GREEN)[$(NAME)]:\t🚀 Cleaned and rebuilt all.$(DEF_COLOR)"
 
-.PHONY					:	all clean fclean re test
+.PHONY					:	all clean fclean re
 
 ###	Progress Bar
 #	Macro to update progress bar
