@@ -20,11 +20,11 @@ static void	print_redirections(t_list *redirs, int level);
 
 void	print_stack(t_stack *stack, const char *name)
 {
-	printf("Stack %s:\n", name);
+	ft_printf("Stack %s:\n", name);
 	while (stack)
 	{
-		printf("  Node type: %d\n", stack->node->type);
-		printf("  Node pathname: %s\n", stack->node->cmd_pathname);
+		ft_printf("  Node type: %d\n", stack->node->type);
+		ft_printf("  Node pathname: %s\n", stack->node->cmd_pathname);
 		stack = stack->next;
 	}
 }
