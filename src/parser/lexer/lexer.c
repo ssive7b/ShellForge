@@ -99,7 +99,10 @@ static t_lexer_state	delimiter_state(t_lexer *lx)
 	count_skipped_spaces = skip_whitesps(&lx->input[lx->idx]);
 	next_non_whitespace_char = lx->input[lx->idx + count_skipped_spaces];
 	if (next_non_whitespace_char == '\0')
-		return (NULL);
+	{
+		lx->idx += count_skipped_spaces - 1;
+		return ((t_lexer_state) word_state);
+	}
 	if (count_skipped_spaces)
 	{
 		lx->idx += count_skipped_spaces - 1;
