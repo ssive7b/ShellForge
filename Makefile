@@ -1,5 +1,5 @@
 ###	Variables
-NAME					=	minishell
+NAME					=	cshellforge
 TEST_EXEC				=	test_runner
 LIBFT 					=	libft
 INCLUDES				=	./include
