@@ -1,2 +1,57 @@
-l_tester
+# Object files
+*.o
+*.obj
+
+# Precompiled headers
+*.gch
+*.pch
+
+# Static libraries
+*.a
+*.lib
+
+# Shared libraries
+*.so
+*.dll
+*.dylib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# Debug files
+*.dSYM/
+*.dmp
+
+# Build directories
+/build/
+/bin/
+/Debug/
+/Release/
+
+# Makefile-generated files
+Makefile~
+
+# Dependency files
+*.d
+
+# Coverage files
+*.gcda
+*.gcno
+*.gcov
+
+# IDE and editor files
+*.vscode/
+*.idea/
+*.sublime-project
+*.sublime-workspace
+*.code-workspace
+
+# Temporary files
+*~
+*.swp
+*.tmp
+
+# Testers
 tests
