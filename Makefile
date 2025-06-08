@@ -1,5 +1,5 @@
 ###	Variables
-NAME					=	cshellforge
+NAME					=	shellforge
 TEST_EXEC				=	test_runner
 LIBFT 					=	libft
 INCLUDES				=	./include
