@@ -3,11 +3,8 @@
 ![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
 ![Language: C](https://img.shields.io/badge/Language-C-green.svg)
 ![Status: Active](https://img.shields.io/badge/Status-Active-brightgreen.svg)
-![Last Updated](https://img.shields.io/badge/Last%20Updated-2025--06--08-orange.svg)
 
 A robust and efficient implementation of a Unix shell in C, designed with a focus on modularity, performance, and extensibility.
-
-![ShellForge Shell](https://i.imgur.com/XJ8uR9a.png)
 
 ## Overview
 
